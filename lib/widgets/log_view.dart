@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
@@ -25,11 +26,11 @@ class LogViewerState extends State<LogViewer> {
         leading: BackButton(onPressed: () => context.go('/')),
         actions: [
           IconButton(
-            icon: const Icon(Icons.zoom_in_outlined),
+            icon: const FaIcon(FontAwesomeIcons.magnifyingGlassPlus),
             onPressed: () => setState(() => fontSize++),
           ),
           IconButton(
-            icon: const Icon(Icons.zoom_out_outlined),
+            icon: const FaIcon(FontAwesomeIcons.magnifyingGlassMinus),
             onPressed: () => setState(() => fontSize--),
           ),
           PopupMenuButton<Level>(

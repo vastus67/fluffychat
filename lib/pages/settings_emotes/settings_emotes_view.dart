@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
-import 'package:fluffychat/widgets/mxc_image_viewer.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/url_launcher.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/widgets/mxc_image.dart';
+import 'package:afterdamage/widgets/mxc_image_viewer.dart';
 import '../../widgets/matrix.dart';
 import 'settings_emotes.dart';
 
@@ -108,7 +109,7 @@ class EmotesSettingsView extends StatelessWidget {
                               horizontal: 4.0,
                             ),
                             child: FilterChip(
-                              label: const Icon(Icons.add_outlined, size: 20),
+                              label: const Icon(FontAwesomeIcons.plus, size: 20),
                               onSelected: controller.showSave
                                   ? null
                                   : (_) => controller.createImagePack(),
@@ -183,7 +184,7 @@ class EmotesSettingsView extends StatelessWidget {
                     suffixIcon: attributionUrl == null
                         ? null
                         : IconButton(
-                            icon: const Icon(Icons.link_outlined),
+                            icon: const Icon(FontAwesomeIcons.link),
                             onPressed: () => UrlLauncher(
                               context,
                               attributionUrl.toString(),
@@ -198,7 +199,7 @@ class EmotesSettingsView extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton.icon(
                   onPressed: controller.createStickers,
-                  icon: const Icon(Icons.upload_outlined),
+                  icon: const Icon(FontAwesomeIcons.upload),
                   label: Text(L10n.of(context).createSticker),
                 ),
               ),
@@ -302,7 +303,7 @@ class EmotesSettingsView extends StatelessWidget {
                                               ImagePackUsage.sticker,
                                             ) ??
                                             true)
-                                          const Icon(Icons.check_outlined),
+                                          const Icon(FontAwesomeIcons.check),
                                         const SizedBox(width: 12),
                                         Text(L10n.of(context).useAsSticker),
                                       ],
@@ -317,14 +318,14 @@ class EmotesSettingsView extends StatelessWidget {
                                               ImagePackUsage.emoticon,
                                             ) ??
                                             true)
-                                          const Icon(Icons.check_outlined),
+                                          const Icon(FontAwesomeIcons.check),
                                         const SizedBox(width: 12),
                                         Text(L10n.of(context).useAsEmoji),
                                       ],
                                     ),
                                   ),
                                 ],
-                                icon: const Icon(Icons.edit_outlined),
+                                icon: const Icon(FontAwesomeIcons.penToSquare),
                               ),
                           ],
                         ),
@@ -335,7 +336,7 @@ class EmotesSettingsView extends StatelessWidget {
                                 tooltip: L10n.of(context).delete,
                                 onPressed: () =>
                                     controller.removeImageAction(imageCode),
-                                icon: const Icon(Icons.delete_outlined),
+                                icon: const Icon(FontAwesomeIcons.trash),
                               ),
                       );
                     },

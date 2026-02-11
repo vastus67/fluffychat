@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/device_settings/device_settings.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/device_settings/device_settings.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'user_device_list_item.dart';
 
 class DevicesSettingsView extends StatelessWidget {
@@ -29,7 +30,7 @@ class DevicesSettingsView extends StatelessWidget {
                 child: Column(
                   mainAxisSize: .min,
                   children: <Widget>[
-                    const Icon(Icons.error_outlined),
+                    const Icon(FontAwesomeIcons.circleExclamation),
                     Text(snapshot.error.toString()),
                   ],
                 ),
@@ -54,7 +55,7 @@ class DevicesSettingsView extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: ListTile(
                             leading: const CircleAvatar(
-                              child: Icon(Icons.info_outlined),
+                              child: Icon(FontAwesomeIcons.circleInfo),
                             ),
                             subtitle: Text(
                               L10n.of(
@@ -107,7 +108,7 @@ class DevicesSettingsView extends StatelessWidget {
                                 backgroundColor:
                                     theme.colorScheme.errorContainer,
                               ),
-                              icon: const Icon(Icons.delete_outline),
+                              icon: const Icon(FontAwesomeIcons.trash),
                               onPressed: () => controller.removeDevicesAction(
                                 controller.notThisDevice,
                               ),

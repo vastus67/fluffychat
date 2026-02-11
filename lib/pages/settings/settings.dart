@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
@@ -8,13 +9,13 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/file_selector.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import '../../widgets/matrix.dart';
 import 'settings_view.dart';
 
@@ -89,19 +90,19 @@ class SettingsController extends State<Settings> {
           value: AvatarAction.camera,
           label: L10n.of(context).openCamera,
           isDefaultAction: true,
-          icon: const Icon(Icons.camera_alt_outlined),
+          icon: const Icon(FontAwesomeIcons.camera),
         ),
       AdaptiveModalAction(
         value: AvatarAction.file,
         label: L10n.of(context).openGallery,
-        icon: const Icon(Icons.photo_outlined),
+        icon: const Icon(FontAwesomeIcons.image),
       ),
       if (profile?.avatarUrl != null)
         AdaptiveModalAction(
           value: AvatarAction.remove,
           label: L10n.of(context).removeYourAvatar,
           isDestructive: true,
-          icon: const Icon(Icons.delete_outlined),
+          icon: const Icon(FontAwesomeIcons.trash),
         ),
     ];
     final action = actions.length == 1

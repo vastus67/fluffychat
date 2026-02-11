@@ -4,12 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:fluffychat/config/routes.dart';
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/widgets/app_lock.dart';
-import 'package:fluffychat/widgets/theme_builder.dart';
+import 'package:afterdamage/config/routes.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/theme/dracula_accents.dart';
+import 'package:afterdamage/widgets/app_lock.dart';
+import 'package:afterdamage/widgets/theme_builder.dart';
 import '../utils/custom_scroll_behaviour.dart';
 import 'matrix.dart';
 
@@ -42,31 +43,45 @@ class FluffyChatApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ThemeBuilder(
-      builder: (context, themeMode, primaryColor) => MaterialApp.router(
-        title: AppSettings.applicationName.value,
-        themeMode: themeMode,
-        theme: FluffyThemes.buildTheme(context, Brightness.light, primaryColor),
-        darkTheme: FluffyThemes.buildTheme(
-          context,
-          Brightness.dark,
-          primaryColor,
-        ),
-        scrollBehavior: CustomScrollBehavior(),
-        localizationsDelegates: L10n.localizationsDelegates,
-        supportedLocales: L10n.supportedLocales,
-        routerConfig: router,
-        builder: (context, child) => AppLockWidget(
-          pincode: pincode,
-          clients: clients,
-          // Need a navigator above the Matrix widget for
-          // displaying dialogs
-          child: Matrix(
-            clients: clients,
-            store: store,
-            child: testWidget ?? child,
+      builder: (context, themeMode, primaryColor) {
+        // Get the current Dracula accent from settings
+        final accentName = AppSettings.draculaAccent.value;
+        final draculaAccent = DraculaAccent.values.firstWhere(
+          (accent) => accent.name == accentName,
+          orElse: () => DraculaAccent.red,  // Default to red accent
+        );
+
+        return MaterialApp.router(
+          title: AppSettings.applicationName.value,
+          themeMode: themeMode,
+          // Use light theme for light mode
+          theme: FluffyThemes.buildTheme(
+            context,
+            Brightness.light,
+            primaryColor,
           ),
-        ),
-      ),
+          // Use Dracula accent theme for dark mode
+          darkTheme: FluffyThemes.buildAccentTheme(
+            context,
+            draculaAccent,
+          ),
+          scrollBehavior: CustomScrollBehavior(),
+          localizationsDelegates: L10n.localizationsDelegates,
+          supportedLocales: L10n.supportedLocales,
+          routerConfig: router,
+          builder: (context, child) => AppLockWidget(
+            pincode: pincode,
+            clients: clients,
+            // Need a navigator above the Matrix widget for
+            // displaying dialogs
+            child: Matrix(
+              clients: clients,
+              store: store,
+              child: testWidget ?? child,
+            ),
+          ),
+        );
+      },
     );
   }
 }

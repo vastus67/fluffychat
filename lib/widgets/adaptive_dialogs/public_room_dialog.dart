@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import '../../config/themes.dart';
 import '../../utils/url_launcher.dart';
 import '../avatar.dart';
@@ -144,8 +145,8 @@ class PublicRoomDialog extends StatelessWidget {
                                             : 1.0,
                                         child: Icon(
                                           copied
-                                              ? Icons.check_circle
-                                              : Icons.copy,
+                                              ? FontAwesomeIcons.solidCircleCheck
+                                              : FontAwesomeIcons.copy,
                                           size: 12,
                                           color: copied ? Colors.green : null,
                                         ),

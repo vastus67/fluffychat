@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat/recording_view_model.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat/recording_view_model.dart';
 
 class RecordingInputRow extends StatelessWidget {
   final RecordingViewModelState state;
@@ -23,20 +24,20 @@ class RecordingInputRow extends StatelessWidget {
       children: [
         IconButton(
           tooltip: L10n.of(context).cancel,
-          icon: const Icon(Icons.delete_outlined),
+          icon: const Icon(FontAwesomeIcons.trash),
           color: theme.colorScheme.error,
           onPressed: state.cancel,
         ),
         if (state.isPaused)
           IconButton(
             tooltip: L10n.of(context).resume,
-            icon: const Icon(Icons.play_circle_outline_outlined),
+            icon: const Icon(FontAwesomeIcons.circlePlay),
             onPressed: state.resume,
           )
         else
           IconButton(
             tooltip: L10n.of(context).pause,
-            icon: const Icon(Icons.pause_circle_outline_outlined),
+            icon: const Icon(FontAwesomeIcons.circlePause),
             onPressed: state.pause,
           ),
         Text(time),
@@ -80,7 +81,7 @@ class RecordingInputRow extends StatelessWidget {
                   dimension: 24,
                   child: CircularProgressIndicator.adaptive(),
                 )
-              : const Icon(Icons.send_outlined),
+              : const Icon(FontAwesomeIcons.paperPlane),
           onPressed: state.isSending ? null : () => state.stopAndSend(onSend),
         ),
       ],

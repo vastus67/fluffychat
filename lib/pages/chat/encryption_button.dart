@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:badges/badges.dart' as b;
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
+import 'package:afterdamage/l10n/l10n.dart';
 import '../../widgets/matrix.dart';
 
 class EncryptionButton extends StatelessWidget {
@@ -46,8 +47,8 @@ class EncryptionButton extends StatelessWidget {
               ),
               child: Icon(
                 room.encrypted
-                    ? Icons.lock_outlined
-                    : Icons.no_encryption_outlined,
+                    ? FontAwesomeIcons.lock
+                    : FontAwesomeIcons.lockOpen,
                 size: 20,
                 color: (shouldBeEncrypted && !room.encrypted)
                     ? theme.colorScheme.error

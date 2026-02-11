@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/widgets/layouts/login_scaffold.dart';
 import 'login.dart';
 
 class LoginView extends StatelessWidget {
@@ -35,7 +36,7 @@ class LoginView extends StatelessWidget {
               children: <Widget>[
                 Hero(
                   tag: 'info-logo',
-                  child: Image.asset('assets/banner_transparent.png'),
+                  child: Image.asset('assets/afterdamage-logo.png'),
                 ),
                 const SizedBox(height: 16),
                 Padding(
@@ -52,7 +53,7 @@ class LoginView extends StatelessWidget {
                         ? null
                         : [AutofillHints.username],
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.account_box_outlined),
+                      prefixIcon: const Icon(FontAwesomeIcons.circleUser),
                       errorText: controller.usernameError,
                       errorStyle: const TextStyle(color: Colors.orange),
                       hintText: '@username:domain',
@@ -74,15 +75,15 @@ class LoginView extends StatelessWidget {
                     obscureText: !controller.showPassword,
                     onSubmitted: (_) => controller.login(),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.lock_outlined),
+                      prefixIcon: const Icon(FontAwesomeIcons.lock),
                       errorText: controller.passwordError,
                       errorStyle: const TextStyle(color: Colors.orange),
                       suffixIcon: IconButton(
                         onPressed: controller.toggleShowPassword,
                         icon: Icon(
                           controller.showPassword
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
+                              ? FontAwesomeIcons.eyeSlash
+                              : FontAwesomeIcons.eye,
                           color: Colors.black,
                         ),
                       ),

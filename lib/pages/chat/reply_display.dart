@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/theme/dracula_theme.dart';
 import '../../config/themes.dart';
 import 'chat.dart';
 import 'events/reply_content.dart';
@@ -23,12 +25,17 @@ class ReplyDisplay extends StatelessWidget {
           ? 56
           : 0,
       clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(color: theme.colorScheme.onInverseSurface),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onInverseSurface,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: DraculaTheme.spacingSm,
+      ),
       child: Row(
         children: <Widget>[
           IconButton(
             tooltip: L10n.of(context).close,
-            icon: const Icon(Icons.close),
+            icon: const Icon(FontAwesomeIcons.xmark),
             onPressed: controller.cancelReplyEventAction,
           ),
           Expanded(
@@ -61,8 +68,8 @@ class _EditContent extends StatelessWidget {
     }
     return Row(
       children: <Widget>[
-        Icon(Icons.edit, color: theme.colorScheme.primary),
-        Container(width: 15.0),
+        Icon(FontAwesomeIcons.penToSquare, color: theme.colorScheme.primary),
+        const SizedBox(width: DraculaTheme.spacingMd),
         Text(
           event.calcLocalizedBodyFallback(
             MatrixLocals(L10n.of(context)),

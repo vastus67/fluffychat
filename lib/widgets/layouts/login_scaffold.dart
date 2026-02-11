@@ -4,10 +4,10 @@ import 'package:particles_network/particles_network.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
 
 class LoginScaffold extends StatelessWidget {
   final Widget body;

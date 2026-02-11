@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:async/async.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -11,12 +12,12 @@ import 'package:matrix/matrix.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/utils/error_reporter.dart';
-import 'package:fluffychat/utils/file_description.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/utils/error_reporter.dart';
+import 'package:afterdamage/utils/file_description.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/utils/url_launcher.dart';
 import '../../../utils/matrix_sdk_extensions/event_extension.dart';
 import '../../../widgets/fluffy_chat_app.dart';
 import '../../../widgets/matrix.dart';
@@ -78,8 +79,8 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                     }
                   },
                   icon: audioPlayer.playing && !audioPlayer.isAtEndPosition
-                      ? const Icon(Icons.pause_outlined)
-                      : const Icon(Icons.play_arrow_outlined),
+                      ? const Icon(FontAwesomeIcons.pause)
+                      : const Icon(FontAwesomeIcons.play),
                 ),
               ),
               content: StreamBuilder(
@@ -89,7 +90,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                     '/rooms/${widget.event.room.id}?event=${widget.event.eventId}',
                   ),
                   child: Text(
-                    '🎙️ ${audioPlayer.position.minuteSecondString} / ${audioPlayer.duration?.minuteSecondString} - ${widget.event.senderFromMemoryOrFallback.calcDisplayname()}',
+                    'Ã°Å¸Å½â„¢Ã¯Â¸Â ${audioPlayer.position.minuteSecondString} / ${audioPlayer.duration?.minuteSecondString} - ${widget.event.senderFromMemoryOrFallback.calcDisplayname()}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -109,7 +110,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                       ).clearMaterialBanners();
                     });
                   },
-                  icon: const Icon(Icons.close_outlined),
+                  icon: const Icon(FontAwesomeIcons.xmark),
                 ),
               ],
             ),
@@ -348,8 +349,8 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                                       audioPlayer?.playing == true &&
                                               audioPlayer?.isAtEndPosition ==
                                                   false
-                                          ? Icons.pause_outlined
-                                          : Icons.play_arrow_outlined,
+                                          ? FontAwesomeIcons.pause
+                                          : FontAwesomeIcons.play,
                                       color: widget.color,
                                     ),
                                   ),
@@ -437,7 +438,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                           firstChild: Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: Icon(
-                              Icons.mic_none_outlined,
+                              FontAwesomeIcons.microphone,
                               color: widget.color,
                             ),
                           ),

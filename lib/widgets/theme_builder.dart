@@ -5,7 +5,8 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:fluffychat/utils/color_value.dart';
+import 'package:afterdamage/theme/dracula_accents.dart';
+import 'package:afterdamage/utils/color_value.dart';
 
 class ThemeBuilder extends StatefulWidget {
   final Widget Function(
@@ -34,7 +35,7 @@ class ThemeController extends State<ThemeBuilder> {
   ThemeMode? _themeMode;
   Color? _primaryColor;
 
-  ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
+  ThemeMode get themeMode => _themeMode ?? ThemeMode.dark;  // Default to dark theme
 
   Color? get primaryColor => _primaryColor;
 
@@ -79,6 +80,12 @@ class ThemeController extends State<ThemeBuilder> {
     setState(() {
       _primaryColor = newPrimaryColor;
     });
+  }
+
+  /// Update Dracula accent theme (triggers rebuild)
+  Future<void> setDraculaAccent(DraculaAccent accent) async {
+    // Accent is stored in AppSettings, just trigger rebuild
+    setState(() {});
   }
 
   @override

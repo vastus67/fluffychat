@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_list/unread_bubble.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/room_status_extension.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/hover_builder.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_list/unread_bubble.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/room_status_extension.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/hover_builder.dart';
+import 'package:afterdamage/theme/dracula_theme.dart';
 import '../../config/themes.dart';
 import '../../utils/date_time_extension.dart';
 import '../../widgets/avatar.dart';
@@ -51,6 +53,9 @@ class ChatListItem extends StatelessWidget {
     final backgroundColor = activeChat
         ? theme.colorScheme.secondaryContainer
         : null;
+    final hoverBackgroundColor = activeChat
+        ? theme.colorScheme.secondaryContainer
+        : theme.colorScheme.surfaceContainerHighest.withOpacity(0.5);
     final displayname = room.getLocalizedDisplayname(
       MatrixLocals(L10n.of(context)),
     );
@@ -65,15 +70,27 @@ class ChatListItem extends StatelessWidget {
     final space = this.space;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+      padding: const EdgeInsets.symmetric(
+        horizontal: DraculaTheme.spacingSm,
+        vertical: 2,
+      ),
       child: Material(
-        borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+        borderRadius: DraculaTheme.radiusMdAll,
         clipBehavior: Clip.hardEdge,
         color: backgroundColor,
         child: FutureBuilder(
           future: room.name.isEmpty ? room.loadHeroUsers() : null,
           builder: (context, _) => HoverBuilder(
-            builder: (context, listTileHovered) => ListTile(
+            builder: (context, listTileHovered) => AnimatedContainer(
+              duration: FluffyThemes.animationDuration,
+              curve: FluffyThemes.animationCurve,
+              decoration: BoxDecoration(
+                color: listTileHovered && !activeChat
+                    ? hoverBackgroundColor
+                    : backgroundColor,
+                borderRadius: DraculaTheme.radiusMdAll,
+              ),
+              child: ListTile(
               visualDensity: const VisualDensity(vertical: -0.5),
               contentPadding: const EdgeInsets.symmetric(horizontal: 8),
               onLongPress: () => onLongPress?.call(context),
@@ -152,7 +169,7 @@ class ChatListItem extends StatelessWidget {
                                 color: backgroundColor,
                                 borderRadius: BorderRadius.circular(16),
                                 child: const Icon(
-                                  Icons.arrow_drop_down_circle_outlined,
+                                  FontAwesomeIcons.circleChevronDown,
                                   size: 18,
                                 ),
                               ),
@@ -182,7 +199,7 @@ class ChatListItem extends StatelessWidget {
                   if (isMuted)
                     const Padding(
                       padding: EdgeInsets.only(left: 4.0),
-                      child: Icon(Icons.notifications_off_outlined, size: 16),
+                      child: Icon(FontAwesomeIcons.bellSlash, size: 16),
                     ),
                   if (room.isFavourite)
                     Padding(
@@ -190,7 +207,7 @@ class ChatListItem extends StatelessWidget {
                         right: hasNotifications ? 4.0 : 0.0,
                       ),
                       child: Icon(
-                        Icons.push_pin,
+                        FontAwesomeIcons.thumbtack,
                         size: 16,
                         color: theme.colorScheme.primary,
                       ),
@@ -232,7 +249,7 @@ class ChatListItem extends StatelessWidget {
                         ? Padding(
                             padding: const EdgeInsets.only(right: 4.0),
                             child: Icon(
-                              Icons.edit_outlined,
+                              FontAwesomeIcons.penToSquare,
                               color: theme.colorScheme.secondary,
                               size: 16,
                             ),
@@ -256,7 +273,7 @@ class ChatListItem extends StatelessWidget {
                               mainAxisSize: .min,
                               children: [
                                 Icon(
-                                  Icons.message_outlined,
+                                  FontAwesomeIcons.comment,
                                   size: 12,
                                   color: theme.colorScheme.outline,
                                 ),
@@ -353,7 +370,7 @@ class ChatListItem extends StatelessWidget {
                   ? room.membership == Membership.invite
                         ? IconButton(
                             tooltip: L10n.of(context).declineInvitation,
-                            icon: const Icon(Icons.delete_forever_outlined),
+                            icon: const Icon(FontAwesomeIcons.trash),
                             color: theme.colorScheme.error,
                             onPressed: () async {
                               final consent = await showOkCancelAlertDialog(
@@ -373,9 +390,10 @@ class ChatListItem extends StatelessWidget {
                           )
                         : null
                   : IconButton(
-                      icon: const Icon(Icons.delete_outlined),
+                      icon: const Icon(FontAwesomeIcons.trash),
                       onPressed: onForget,
                     ),
+              ),
             ),
           ),
         ),

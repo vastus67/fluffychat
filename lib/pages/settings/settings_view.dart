@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/fluffy_share.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/navigation_rail.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/fluffy_share.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/navigation_rail.dart';
 import '../../widgets/mxc_image_viewer.dart';
 import 'settings.dart';
 
@@ -91,7 +92,7 @@ class SettingsView extends StatelessWidget {
                                       onPressed: controller.setAvatarAction,
                                       heroTag: null,
                                       child: const Icon(
-                                        Icons.camera_alt_outlined,
+                                        FontAwesomeIcons.camera,
                                       ),
                                     ),
                                   ),
@@ -106,7 +107,7 @@ class SettingsView extends StatelessWidget {
                                 TextButton.icon(
                                   onPressed: controller.setDisplaynameAction,
                                   icon: const Icon(
-                                    Icons.edit_outlined,
+                                    FontAwesomeIcons.penToSquare,
                                     size: 16,
                                   ),
                                   style: TextButton.styleFrom(
@@ -125,7 +126,7 @@ class SettingsView extends StatelessWidget {
                                   onPressed: () =>
                                       FluffyShare.share(mxid, context),
                                   icon: const Icon(
-                                    Icons.copy_outlined,
+                                    FontAwesomeIcons.copy,
                                     size: 14,
                                   ),
                                   style: TextButton.styleFrom(
@@ -161,9 +162,9 @@ class SettingsView extends StatelessWidget {
                         return const SizedBox.shrink();
                       }
                       return ListTile(
-                        leading: const Icon(Icons.account_circle_outlined),
+                        leading: const Icon(FontAwesomeIcons.circleUser),
                         title: Text(L10n.of(context).manageAccount),
-                        trailing: const Icon(Icons.open_in_new_outlined),
+                        trailing: const Icon(FontAwesomeIcons.arrowUpRightFromSquare),
                         onTap: () => launchUrlString(
                           accountManageUrl,
                           mode: LaunchMode.inAppBrowserView,
@@ -174,7 +175,7 @@ class SettingsView extends StatelessWidget {
                   Divider(color: theme.dividerColor),
                   if (showChatBackupBanner == null)
                     ListTile(
-                      leading: const Icon(Icons.backup_outlined),
+                      leading: const Icon(FontAwesomeIcons.cloudArrowUp),
                       title: Text(L10n.of(context).chatBackup),
                       trailing: const CircularProgressIndicator.adaptive(),
                     )
@@ -182,13 +183,13 @@ class SettingsView extends StatelessWidget {
                     SwitchListTile.adaptive(
                       controlAffinity: ListTileControlAffinity.trailing,
                       value: controller.showChatBackupBanner == false,
-                      secondary: const Icon(Icons.backup_outlined),
+                      secondary: const Icon(FontAwesomeIcons.cloudArrowUp),
                       title: Text(L10n.of(context).chatBackup),
                       onChanged: controller.firstRunBootstrapAction,
                     ),
                   Divider(color: theme.dividerColor),
                   ListTile(
-                    leading: const Icon(Icons.format_paint_outlined),
+                    leading: const Icon(FontAwesomeIcons.paintbrush),
                     title: Text(L10n.of(context).changeTheme),
                     tileColor: activeRoute.startsWith('/rooms/settings/style')
                         ? theme.colorScheme.surfaceContainerHigh
@@ -196,7 +197,7 @@ class SettingsView extends StatelessWidget {
                     onTap: () => context.go('/rooms/settings/style'),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.notifications_outlined),
+                    leading: const Icon(FontAwesomeIcons.bell),
                     title: Text(L10n.of(context).notifications),
                     tileColor:
                         activeRoute.startsWith('/rooms/settings/notifications')
@@ -205,7 +206,7 @@ class SettingsView extends StatelessWidget {
                     onTap: () => context.go('/rooms/settings/notifications'),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.devices_outlined),
+                    leading: const Icon(FontAwesomeIcons.laptop),
                     title: Text(L10n.of(context).devices),
                     onTap: () => context.go('/rooms/settings/devices'),
                     tileColor: activeRoute.startsWith('/rooms/settings/devices')
@@ -213,7 +214,7 @@ class SettingsView extends StatelessWidget {
                         : null,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.forum_outlined),
+                    leading: const Icon(FontAwesomeIcons.comments),
                     title: Text(L10n.of(context).chat),
                     onTap: () => context.go('/rooms/settings/chat'),
                     tileColor: activeRoute.startsWith('/rooms/settings/chat')
@@ -221,7 +222,7 @@ class SettingsView extends StatelessWidget {
                         : null,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.shield_outlined),
+                    leading: const Icon(FontAwesomeIcons.shield),
                     title: Text(L10n.of(context).security),
                     onTap: () => context.go('/rooms/settings/security'),
                     tileColor:
@@ -231,7 +232,7 @@ class SettingsView extends StatelessWidget {
                   ),
                   Divider(color: theme.dividerColor),
                   ListTile(
-                    leading: const Icon(Icons.dns_outlined),
+                    leading: const Icon(FontAwesomeIcons.server),
                     title: Text(
                       L10n.of(context).aboutHomeserver(
                         Matrix.of(context).client.userID?.domain ??
@@ -245,18 +246,18 @@ class SettingsView extends StatelessWidget {
                         : null,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.privacy_tip_outlined),
+                    leading: const Icon(FontAwesomeIcons.userShield),
                     title: Text(L10n.of(context).privacy),
                     onTap: () => launchUrl(AppConfig.privacyUrl),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.info_outline_rounded),
+                    leading: const Icon(FontAwesomeIcons.circleInfo),
                     title: Text(L10n.of(context).about),
                     onTap: () => PlatformInfos.showDialog(context),
                   ),
                   Divider(color: theme.dividerColor),
                   ListTile(
-                    leading: const Icon(Icons.logout_outlined),
+                    leading: const Icon(FontAwesomeIcons.rightFromBracket),
                     title: Text(L10n.of(context).logout),
                     onTap: controller.logoutAction,
                   ),

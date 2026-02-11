@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_search/search_footer.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/avatar.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_search/search_footer.dart';
+import 'package:afterdamage/utils/date_time_extension.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/url_launcher.dart';
+import 'package:afterdamage/widgets/avatar.dart';
 
 class ChatSearchMessageTab extends StatelessWidget {
   final String searchQuery;
@@ -37,7 +38,7 @@ class ChatSearchMessageTab extends StatelessWidget {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.search_outlined, size: 64),
+          const Icon(FontAwesomeIcons.magnifyingGlass, size: 64),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -134,7 +135,7 @@ class _MessageSearchResultListTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       trailing: IconButton(
-        icon: const Icon(Icons.chevron_right_outlined),
+        icon: const Icon(FontAwesomeIcons.chevronRight),
         onPressed: () => context.go(
           '/${Uri(pathSegments: ['rooms', room.id], queryParameters: {'event': event.eventId})}',
         ),

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_search/search_footer.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_search/search_footer.dart';
+import 'package:afterdamage/utils/date_time_extension.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/event_extension.dart';
 
 class ChatSearchFilesTab extends StatelessWidget {
   final Room room;
@@ -89,7 +90,7 @@ class ChatSearchFilesTab extends StatelessWidget {
                   color: theme.colorScheme.onInverseSurface,
                   clipBehavior: Clip.hardEdge,
                   child: ListTile(
-                    leading: const Icon(Icons.file_present_outlined),
+                    leading: const Icon(FontAwesomeIcons.file),
                     title: Text(
                       filename,
                       maxLines: 1,

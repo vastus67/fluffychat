@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:app_links/app_links.dart';
@@ -11,19 +12,19 @@ import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/show_scaffold_dialog.dart';
-import 'package:fluffychat/utils/show_update_snackbar.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_list/chat_list_view.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/show_scaffold_dialog.dart';
+import 'package:afterdamage/utils/show_update_snackbar.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/share_scaffold_dialog.dart';
 import '../../../utils/account_bundles.dart';
 import '../../config/setting_keys.dart';
 import '../../utils/url_launcher.dart';
@@ -496,8 +497,8 @@ class ChatListController extends State<ChatList>
               children: [
                 Icon(
                   room.pushRuleState == PushRuleState.notify
-                      ? Icons.notifications_off_outlined
-                      : Icons.notifications_off,
+                      ? FontAwesomeIcons.bellSlash
+                      : FontAwesomeIcons.bellSlash,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -515,8 +516,8 @@ class ChatListController extends State<ChatList>
               children: [
                 Icon(
                   room.markedUnread
-                      ? Icons.mark_as_unread
-                      : Icons.mark_as_unread_outlined,
+                      ? FontAwesomeIcons.envelopeOpen
+                      : FontAwesomeIcons.envelopeOpen,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -533,7 +534,7 @@ class ChatListController extends State<ChatList>
               mainAxisSize: .min,
               children: [
                 Icon(
-                  room.isFavourite ? Icons.push_pin : Icons.push_pin_outlined,
+                  room.isFavourite ? FontAwesomeIcons.thumbtack : FontAwesomeIcons.thumbtack,
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -550,7 +551,7 @@ class ChatListController extends State<ChatList>
               child: Row(
                 mainAxisSize: .min,
                 children: [
-                  const Icon(Icons.group_work_outlined),
+                  const Icon(FontAwesomeIcons.objectGroup),
                   const SizedBox(width: 12),
                   Text(L10n.of(context).addToSpace),
                 ],
@@ -563,7 +564,7 @@ class ChatListController extends State<ChatList>
             mainAxisSize: .min,
             children: [
               Icon(
-                Icons.delete_outlined,
+                FontAwesomeIcons.trash,
                 color: Theme.of(context).colorScheme.onErrorContainer,
               ),
               const SizedBox(width: 12),
@@ -585,7 +586,7 @@ class ChatListController extends State<ChatList>
               mainAxisSize: .min,
               children: [
                 Icon(
-                  Icons.block_outlined,
+                  FontAwesomeIcons.ban,
                   color: Theme.of(context).colorScheme.onErrorContainer,
                 ),
                 const SizedBox(width: 12),

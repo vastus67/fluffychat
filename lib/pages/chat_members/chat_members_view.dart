@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
 import '../../widgets/layouts/max_width_body.dart';
 import '../../widgets/matrix.dart';
 import '../chat_details/participant_list_item.dart';
@@ -46,7 +47,7 @@ class ChatMembersView extends StatelessWidget {
           if (room.canInvite)
             IconButton(
               onPressed: () => context.go('/rooms/${room.id}/invite'),
-              icon: const Icon(Icons.person_add_outlined),
+              icon: const Icon(FontAwesomeIcons.userPlus),
             ),
         ],
       ),
@@ -60,12 +61,12 @@ class ChatMembersView extends StatelessWidget {
                   child: Column(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(Icons.error_outline),
+                      const Icon(FontAwesomeIcons.circleExclamation),
                       Text(error.toLocalizedString(context)),
                       const SizedBox(height: 8),
                       OutlinedButton.icon(
                         onPressed: controller.refreshMembers,
-                        icon: const Icon(Icons.refresh_outlined),
+                        icon: const Icon(FontAwesomeIcons.arrowsRotate),
                         label: Text(L10n.of(context).tryAgain),
                       ),
                     ],
@@ -115,7 +116,7 @@ class ChatMembersView extends StatelessWidget {
                                 color: theme.colorScheme.onPrimaryContainer,
                                 fontWeight: FontWeight.normal,
                               ),
-                              prefixIcon: const Icon(Icons.search_outlined),
+                              prefixIcon: const Icon(FontAwesomeIcons.magnifyingGlass),
                               hintText: L10n.of(context).search,
                             ),
                           ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/date_time_extension.dart';
 
 class SearchFooter extends StatelessWidget {
   final DateTime? searchedUntil;
@@ -57,7 +58,7 @@ class SearchFooter extends StatelessWidget {
                         strokeWidth: 2,
                       ),
                     )
-                  : const Icon(Icons.arrow_downward_outlined),
+                  : const Icon(FontAwesomeIcons.arrowDown),
               label: Text(L10n.of(context).searchMore),
             ),
           ],

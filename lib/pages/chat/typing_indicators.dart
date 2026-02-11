@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/pages/chat/chat.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 
 class TypingIndicators extends StatelessWidget {
   final ChatController controller;

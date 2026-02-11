@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -59,7 +60,7 @@ class MapBubble extends StatelessWidget {
                           // Might have to do with psychological perception of where the tip exactly is
                           offset: const Offset(0, -12.5),
                           child: const Icon(
-                            Icons.location_pin,
+                            FontAwesomeIcons.locationDot,
                             color: Colors.red,
                             size: 30,
                           ),
@@ -72,7 +73,7 @@ class MapBubble extends StatelessWidget {
               Container(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  ' © OpenStreetMap contributors ',
+                  ' Â© OpenStreetMap contributors ',
                   style: TextStyle(
                     color: theme.brightness == Brightness.dark
                         ? Colors.white

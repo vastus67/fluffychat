@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/new_private_chat/new_private_chat.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/new_private_chat/new_private_chat.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/url_launcher.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 import '../../widgets/qr_code_viewer.dart';
 
 class NewPrivateChatView extends StatelessWidget {
@@ -69,7 +70,7 @@ class NewPrivateChatView extends StatelessWidget {
                     fontWeight: FontWeight.normal,
                   ),
                   prefixIcon: searchResponse == null
-                      ? const Icon(Icons.search_outlined)
+                      ? const Icon(FontAwesomeIcons.magnifyingGlass)
                       : FutureBuilder(
                           future: searchResponse,
                           builder: (context, snapshot) {
@@ -85,13 +86,13 @@ class NewPrivateChatView extends StatelessWidget {
                                 ),
                               );
                             }
-                            return const Icon(Icons.search_outlined);
+                            return const Icon(FontAwesomeIcons.magnifyingGlass);
                           },
                         ),
                   suffixIcon: controller.controller.text.isEmpty
                       ? null
                       : IconButton(
-                          icon: const Icon(Icons.clear_outlined),
+                          icon: const Icon(FontAwesomeIcons.xmark),
                           onPressed: () {
                             controller.controller.clear();
                             controller.searchUsers();
@@ -137,7 +138,7 @@ class NewPrivateChatView extends StatelessWidget {
                                   theme.colorScheme.secondaryContainer,
                               foregroundColor:
                                   theme.colorScheme.onSecondaryContainer,
-                              child: Icon(Icons.adaptive.share_outlined),
+                              child: Icon(FontAwesomeIcons.shareNodes),
                             ),
                             title: Text(L10n.of(context).shareInviteLink),
                             onTap: controller.inviteAction,
@@ -148,7 +149,7 @@ class NewPrivateChatView extends StatelessWidget {
                                   theme.colorScheme.tertiaryContainer,
                               foregroundColor:
                                   theme.colorScheme.onTertiaryContainer,
-                              child: const Icon(Icons.group_add_outlined),
+                              child: const Icon(FontAwesomeIcons.userGroup),
                             ),
                             title: Text(L10n.of(context).createGroup),
                             onTap: () => context.go('/rooms/newgroup'),
@@ -161,7 +162,7 @@ class NewPrivateChatView extends StatelessWidget {
                                 foregroundColor:
                                     theme.colorScheme.onPrimaryContainer,
                                 child: const Icon(
-                                  Icons.qr_code_scanner_outlined,
+                                  FontAwesomeIcons.qrcode,
                                 ),
                               ),
                               title: Text(L10n.of(context).scanQrCode),
@@ -233,7 +234,7 @@ class NewPrivateChatView extends StatelessWidget {
                                 const SizedBox(height: 12),
                                 OutlinedButton.icon(
                                   onPressed: controller.searchUsers,
-                                  icon: const Icon(Icons.refresh_outlined),
+                                  icon: const Icon(FontAwesomeIcons.arrowsRotate),
                                   label: Text(L10n.of(context).tryAgain),
                                 ),
                               ],
@@ -248,7 +249,7 @@ class NewPrivateChatView extends StatelessWidget {
                             return Column(
                               mainAxisAlignment: .center,
                               children: [
-                                const Icon(Icons.search_outlined, size: 86),
+                                const Icon(FontAwesomeIcons.magnifyingGlass, size: 86),
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Text(

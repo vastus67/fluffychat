@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/theme/dracula_theme.dart';
+import 'package:afterdamage/theme/dracula_accents.dart';
 import 'app_config.dart';
 
 abstract class FluffyThemes {
@@ -36,17 +38,40 @@ abstract class FluffyThemes {
   static const Duration animationDuration = Duration(milliseconds: 250);
   static const Curve animationCurve = Curves.easeInOut;
 
+  /// Build theme using the new Dracula accent system.
+  /// 
+  /// This provides access to the 7 accent themes while maintaining
+  /// consistent base surfaces and typography.
+  /// 
+  /// Available accents: cyan, green, orange, pink, purple, red, yellow
+  static ThemeData buildAccentTheme(
+    BuildContext context,
+    DraculaAccent accent,
+  ) {
+    final isColumnMode = FluffyThemes.isColumnMode(context);
+    return DraculaThemeResolver.getTheme(
+      accent,
+      context,
+      isColumnMode: isColumnMode,
+    );
+  }
+
   static ThemeData buildTheme(
     BuildContext context,
     Brightness brightness, [
     Color? seed,
   ]) {
-    final colorScheme = ColorScheme.fromSeed(
-      brightness: brightness,
-      seedColor: seed ?? Color(AppSettings.colorSchemeSeedInt.value),
-    );
+    final isDark = brightness == Brightness.dark;
+    final colorScheme = isDark
+        ? DraculaTheme.darkColorScheme(
+            seedOverride: seed ?? Color(AppSettings.colorSchemeSeedInt.value),
+          )
+        : ColorScheme.fromSeed(
+            brightness: brightness,
+            seedColor: seed ?? Color(AppSettings.colorSchemeSeedInt.value),
+          );
     final isColumnMode = FluffyThemes.isColumnMode(context);
-    return ThemeData(
+    final baseTheme = ThemeData(
       visualDensity: VisualDensity.standard,
       useMaterial3: true,
       brightness: brightness,
@@ -130,11 +155,44 @@ abstract class FluffyThemes {
           backgroundColor: colorScheme.secondaryContainer,
           foregroundColor: colorScheme.onSecondaryContainer,
           elevation: 0,
-          padding: const EdgeInsets.all(16),
-          textStyle: const TextStyle(fontSize: 16),
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DraculaTheme.spacingLg,
+            vertical: DraculaTheme.spacingMd,
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(DraculaTheme.radiusMedium),
+          ),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DraculaTheme.spacingLg,
+            vertical: DraculaTheme.spacingMd,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(DraculaTheme.radiusMedium),
+          ),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(DraculaTheme.radiusMedium),
+          ),
         ),
       ),
     );
+
+    // Apply Dracula-specific typography and surfaces for dark mode only.
+    return isDark ? DraculaTheme.applyDraculaTheme(baseTheme) : baseTheme;
   }
 }
 

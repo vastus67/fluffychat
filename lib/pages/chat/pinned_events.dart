@@ -1,15 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pages/chat/chat_app_bar_list_tile.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat/chat.dart';
+import 'package:afterdamage/pages/chat/chat_app_bar_list_tile.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
 
 class PinnedEvents extends StatelessWidget {
   final ChatController controller;
@@ -38,7 +39,7 @@ class PinnedEvents extends StatelessWidget {
                 .map(
                   (event) => AdaptiveModalAction(
                     value: event?.eventId ?? '',
-                    icon: const Icon(Icons.push_pin_outlined),
+                    icon: const Icon(FontAwesomeIcons.thumbtack),
                     label:
                         event?.calcLocalizedBodyFallback(
                           MatrixLocals(L10n.of(context)),
@@ -80,7 +81,7 @@ class PinnedEvents extends StatelessWidget {
             splashRadius: 18,
             iconSize: 18,
             color: theme.colorScheme.onSurfaceVariant,
-            icon: const Icon(Icons.push_pin),
+            icon: const Icon(FontAwesomeIcons.thumbtack),
             tooltip: L10n.of(context).unpin,
             onPressed: controller.room.canSendEvent(EventTypes.RoomPinnedEvents)
                 ? () => controller.unpinEvent(event!.eventId)

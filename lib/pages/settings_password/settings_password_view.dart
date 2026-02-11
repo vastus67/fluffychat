@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/settings_password/settings_password.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/settings_password/settings_password.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 
 class SettingsPasswordView extends StatelessWidget {
   final SettingsPasswordController controller;
@@ -31,7 +32,7 @@ class SettingsPasswordView extends StatelessWidget {
                   autofocus: true,
                   readOnly: controller.loading,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock_outlined),
+                    prefixIcon: const Icon(FontAwesomeIcons.lock),
                     hintText: '********',
                     labelText: L10n.of(context).pleaseEnterYourCurrentPassword,
                     errorText: controller.oldPasswordError,
@@ -44,7 +45,7 @@ class SettingsPasswordView extends StatelessWidget {
                   autocorrect: false,
                   readOnly: controller.loading,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.lock_reset_outlined),
+                    prefixIcon: const Icon(FontAwesomeIcons.key),
                     hintText: '********',
                     labelText: L10n.of(context).newPassword,
                     errorText: controller.newPassword1Error,
@@ -57,7 +58,7 @@ class SettingsPasswordView extends StatelessWidget {
                   autocorrect: false,
                   readOnly: controller.loading,
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.repeat_outlined),
+                    prefixIcon: const Icon(FontAwesomeIcons.repeat),
                     hintText: '********',
                     labelText: L10n.of(context).repeatPassword,
                     errorText: controller.newPassword2Error,

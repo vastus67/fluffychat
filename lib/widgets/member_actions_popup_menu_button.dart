@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/widgets/permission_slider_dialog.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/widgets/permission_slider_dialog.dart';
 import 'adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'adaptive_dialogs/show_text_input_dialog.dart';
 import 'adaptive_dialogs/user_dialog.dart';
@@ -84,7 +85,7 @@ void showMemberActionsPopupMenu({
           value: _MemberActions.mention,
           child: Row(
             children: [
-              const Icon(Icons.alternate_email_outlined),
+              const FaIcon(FontAwesomeIcons.at),
               const SizedBox(width: 18),
               Text(L10n.of(context).mention),
             ],
@@ -95,7 +96,7 @@ void showMemberActionsPopupMenu({
           value: _MemberActions.approve,
           child: Row(
             children: [
-              const Icon(Icons.how_to_reg_outlined),
+              const FaIcon(FontAwesomeIcons.userCheck),
               const SizedBox(width: 18),
               Text(L10n.of(context).approve),
             ],
@@ -106,7 +107,7 @@ void showMemberActionsPopupMenu({
         value: _MemberActions.setRole,
         child: Row(
           children: [
-            const Icon(Icons.admin_panel_settings_outlined),
+            const FaIcon(FontAwesomeIcons.userShield),
             const SizedBox(width: 18),
             Column(
               mainAxisSize: .min,
@@ -132,7 +133,7 @@ void showMemberActionsPopupMenu({
           child: Row(
             children: [
               Icon(
-                Icons.person_remove_outlined,
+                FontAwesomeIcons.userMinus,
                 color: theme.colorScheme.onErrorContainer,
               ),
               const SizedBox(width: 18),
@@ -149,7 +150,7 @@ void showMemberActionsPopupMenu({
           child: Row(
             children: [
               Icon(
-                Icons.block_outlined,
+                FontAwesomeIcons.ban,
                 color: theme.colorScheme.onErrorContainer,
               ),
               const SizedBox(width: 18),
@@ -165,7 +166,7 @@ void showMemberActionsPopupMenu({
           value: _MemberActions.unban,
           child: Row(
             children: [
-              const Icon(Icons.warning),
+              const FaIcon(FontAwesomeIcons.triangleExclamation),
               const SizedBox(width: 18),
               Text(L10n.of(context).unbanFromChat),
             ],
@@ -176,8 +177,8 @@ void showMemberActionsPopupMenu({
           value: _MemberActions.report,
           child: Row(
             children: [
-              Icon(
-                Icons.gavel_outlined,
+              FaIcon(
+                FontAwesomeIcons.gavel,
                 color: theme.colorScheme.onErrorContainer,
               ),
               const SizedBox(width: 18),

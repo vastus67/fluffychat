@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat/add_widget_tile.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat/add_widget_tile.dart';
 
 class AddWidgetTileView extends StatelessWidget {
   final AddWidgetTileState controller;
@@ -13,7 +14,7 @@ class AddWidgetTileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpansionTile(
       title: Text(L10n.of(context).addWidget),
-      leading: const Icon(Icons.add),
+      leading: const Icon(FontAwesomeIcons.plus),
       initiallyExpanded: controller.initiallyExpanded,
       children: [
         CupertinoSegmentedControl(
@@ -42,7 +43,7 @@ class AddWidgetTileView extends StatelessWidget {
             controller: controller.nameController,
             autofocus: true,
             decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.label),
+              prefixIcon: const Icon(FontAwesomeIcons.tag),
               label: Text(L10n.of(context).widgetName),
               errorText: controller.nameError,
             ),
@@ -53,7 +54,7 @@ class AddWidgetTileView extends StatelessWidget {
           child: TextField(
             controller: controller.urlController,
             decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.add_link),
+              prefixIcon: const Icon(FontAwesomeIcons.link),
               label: Text(L10n.of(context).link),
               errorText: controller.urlError,
             ),

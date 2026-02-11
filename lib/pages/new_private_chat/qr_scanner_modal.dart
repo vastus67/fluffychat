@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
+import 'package:afterdamage/l10n/l10n.dart';
 
 class QrScannerModal extends StatefulWidget {
   final void Function(String) onScan;
@@ -34,7 +35,7 @@ class QrScannerModalState extends State<QrScannerModal> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close_outlined),
+          icon: const Icon(FontAwesomeIcons.xmark),
           onPressed: Navigator.of(context).pop,
           tooltip: L10n.of(context).close,
         ),

@@ -1,28 +1,29 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:badges/badges.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pages/chat/chat_app_bar_list_tile.dart';
-import 'package:fluffychat/pages/chat/chat_app_bar_title.dart';
-import 'package:fluffychat/pages/chat/chat_event_list.dart';
-import 'package:fluffychat/pages/chat/encryption_button.dart';
-import 'package:fluffychat/pages/chat/pinned_events.dart';
-import 'package:fluffychat/pages/chat/reply_display.dart';
-import 'package:fluffychat/utils/account_config.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
-import 'package:fluffychat/widgets/unread_rooms_badge.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat/chat.dart';
+import 'package:afterdamage/pages/chat/chat_app_bar_list_tile.dart';
+import 'package:afterdamage/pages/chat/chat_app_bar_title.dart';
+import 'package:afterdamage/pages/chat/chat_event_list.dart';
+import 'package:afterdamage/pages/chat/encryption_button.dart';
+import 'package:afterdamage/pages/chat/pinned_events.dart';
+import 'package:afterdamage/pages/chat/reply_display.dart';
+import 'package:afterdamage/utils/account_config.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/widgets/chat_settings_popup_menu.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/mxc_image.dart';
+import 'package:afterdamage/widgets/unread_rooms_badge.dart';
 import '../../utils/stream_extension.dart';
 import 'chat_emoji_picker.dart';
 import 'chat_input_row.dart';
@@ -39,7 +40,7 @@ class ChatView extends StatelessWidget {
       return [
         if (controller.canEditSelectedEvents)
           IconButton(
-            icon: const Icon(Icons.edit_outlined),
+            icon: const Icon(FontAwesomeIcons.penToSquare),
             tooltip: L10n.of(context).edit,
             onPressed: controller.editSelectedEventAction,
           ),
@@ -47,20 +48,20 @@ class ChatView extends StatelessWidget {
             controller.activeThreadId == null &&
             controller.room.canSendDefaultMessages)
           IconButton(
-            icon: const Icon(Icons.message_outlined),
+            icon: const Icon(FontAwesomeIcons.comment),
             tooltip: L10n.of(context).replyInThread,
             onPressed: () => controller.enterThread(
               controller.selectedEvents.single.eventId,
             ),
           ),
         IconButton(
-          icon: const Icon(Icons.copy_outlined),
+          icon: const Icon(FontAwesomeIcons.copy),
           tooltip: L10n.of(context).copyToClipboard,
           onPressed: controller.copyEventsAction,
         ),
         if (controller.canRedactSelectedEvents)
           IconButton(
-            icon: const Icon(Icons.delete_outlined),
+            icon: const Icon(FontAwesomeIcons.trash),
             tooltip: L10n.of(context).redactMessage,
             onPressed: controller.redactEventsAction,
           ),
@@ -86,7 +87,7 @@ class ChatView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(Icons.push_pin_outlined),
+                      const Icon(FontAwesomeIcons.thumbtack),
                       const SizedBox(width: 12),
                       Text(L10n.of(context).pinMessage),
                     ],
@@ -99,7 +100,7 @@ class ChatView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(Icons.download_outlined),
+                      const Icon(FontAwesomeIcons.download),
                       const SizedBox(width: 12),
                       Text(L10n.of(context).downloadFile),
                     ],
@@ -110,7 +111,7 @@ class ChatView extends StatelessWidget {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(Icons.info_outlined),
+                    const Icon(FontAwesomeIcons.circleInfo),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).messageInfo),
                   ],
@@ -122,7 +123,7 @@ class ChatView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(Icons.shield_outlined, color: Colors.red),
+                      const Icon(FontAwesomeIcons.shield, color: Colors.red),
                       const SizedBox(width: 12),
                       Text(L10n.of(context).reportMessage),
                     ],
@@ -138,7 +139,7 @@ class ChatView extends StatelessWidget {
             controller.room.isDirectChat)
           IconButton(
             onPressed: controller.onPhoneButtonTap,
-            icon: const Icon(Icons.call_outlined),
+            icon: const Icon(FontAwesomeIcons.phone),
             tooltip: L10n.of(context).placeCall,
           ),
         EncryptionButton(controller.room),
@@ -212,14 +213,14 @@ class ChatView extends StatelessWidget {
                 automaticallyImplyLeading: false,
                 leading: controller.selectMode
                     ? IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(FontAwesomeIcons.xmark),
                         onPressed: controller.clearSelectedEvents,
                         tooltip: L10n.of(context).close,
                         color: theme.colorScheme.onTertiaryContainer,
                       )
                     : activeThreadId != null
                     ? IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(FontAwesomeIcons.xmark),
                         onPressed: controller.closeThread,
                         tooltip: L10n.of(context).backToMainChat,
                         color: theme.colorScheme.onSecondaryContainer,
@@ -252,7 +253,7 @@ class ChatView extends StatelessWidget {
                             child: TextButton.icon(
                               onPressed: () =>
                                   controller.scrollToEventId(activeThreadId),
-                              icon: const Icon(Icons.message),
+                              icon: const Icon(FontAwesomeIcons.solidComment),
                               label: Text(L10n.of(context).replyInThread),
                               style: TextButton.styleFrom(
                                 foregroundColor:
@@ -269,7 +270,7 @@ class ChatView extends StatelessWidget {
                         ChatAppBarListTile(
                           leading: IconButton(
                             color: theme.colorScheme.onSurfaceVariant,
-                            icon: const Icon(Icons.close),
+                            icon: const Icon(FontAwesomeIcons.xmark),
                             tooltip: L10n.of(context).close,
                             onPressed: () {
                               controller.discardScrollUpBannerEventId();
@@ -300,7 +301,7 @@ class ChatView extends StatelessWidget {
                         mini: true,
                         backgroundColor: theme.colorScheme.surface,
                         foregroundColor: theme.colorScheme.onSurface,
-                        child: const Icon(Icons.arrow_downward_outlined),
+                        child: const Icon(FontAwesomeIcons.arrowDown),
                       ),
                     )
                   : null,
@@ -345,7 +346,7 @@ class ChatView extends StatelessWidget {
                               margin: EdgeInsets.all(bottomSheetPadding),
                               width: double.infinity,
                               child: ElevatedButton.icon(
-                                icon: const Icon(Icons.chevron_right),
+                                icon: const Icon(FontAwesomeIcons.chevronRight),
                                 label: Text(L10n.of(context).enterNewChat),
                                 onPressed: controller.goToNewRoomAction,
                               ),
@@ -364,9 +365,25 @@ class ChatView extends StatelessWidget {
                                     ? theme.colorScheme.tertiaryContainer
                                     : theme.colorScheme.surfaceContainerHigh,
                                 borderRadius: const BorderRadius.all(
-                                  Radius.circular(24),
+                                  Radius.circular(28),
                                 ),
-                                child: controller.room.isAbandonedDMRoom == true
+                                elevation: 0,
+                                shadowColor: Colors.transparent,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(28),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: theme.colorScheme.shadow
+                                            .withOpacity(0.2),
+                                        blurRadius: 16,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: controller.room.isAbandonedDMRoom == true
                                     ? Row(
                                         mainAxisAlignment: .spaceEvenly,
                                         children: [
@@ -377,7 +394,7 @@ class ChatView extends StatelessWidget {
                                                   theme.colorScheme.error,
                                             ),
                                             icon: const Icon(
-                                              Icons.archive_outlined,
+                                              FontAwesomeIcons.boxArchive,
                                             ),
                                             onPressed: controller.leaveChat,
                                             label: Text(L10n.of(context).leave),
@@ -387,7 +404,7 @@ class ChatView extends StatelessWidget {
                                               padding: const EdgeInsets.all(16),
                                             ),
                                             icon: const Icon(
-                                              Icons.forum_outlined,
+                                              FontAwesomeIcons.comments,
                                             ),
                                             onPressed: controller.recreateChat,
                                             label: Text(
@@ -404,6 +421,7 @@ class ChatView extends StatelessWidget {
                                           ChatEmojiPicker(controller),
                                         ],
                                       ),
+                                ),
                               ),
                             ),
                         ],
@@ -413,7 +431,7 @@ class ChatView extends StatelessWidget {
                       Container(
                         color: theme.scaffoldBackgroundColor.withAlpha(230),
                         alignment: Alignment.center,
-                        child: const Icon(Icons.upload_outlined, size: 100),
+                        child: const Icon(FontAwesomeIcons.upload, size: 100),
                       ),
                   ],
                 ),

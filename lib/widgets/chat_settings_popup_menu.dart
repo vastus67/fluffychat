@@ -1,13 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import 'matrix.dart';
 
 enum ChatPopupMenuActions { details, mute, unmute, emote, leave, search }
@@ -103,7 +104,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                 value: ChatPopupMenuActions.details,
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline_rounded),
+                    const FaIcon(FontAwesomeIcons.circleInfo),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).chatDetails),
                   ],
@@ -114,7 +115,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                 value: ChatPopupMenuActions.mute,
                 child: Row(
                   children: [
-                    const Icon(Icons.notifications_off_outlined),
+                    const FaIcon(FontAwesomeIcons.bellSlash),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).muteChat),
                   ],
@@ -125,7 +126,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                 value: ChatPopupMenuActions.unmute,
                 child: Row(
                   children: [
-                    const Icon(Icons.notifications_on_outlined),
+                    const FaIcon(FontAwesomeIcons.bell),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).unmuteChat),
                   ],
@@ -135,7 +136,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
               value: ChatPopupMenuActions.search,
               child: Row(
                 children: [
-                  const Icon(Icons.search_outlined),
+                  const FaIcon(FontAwesomeIcons.magnifyingGlass),
                   const SizedBox(width: 12),
                   Text(L10n.of(context).search),
                 ],
@@ -145,7 +146,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
               value: ChatPopupMenuActions.emote,
               child: Row(
                 children: [
-                  const Icon(Icons.emoji_emotions_outlined),
+                  const FaIcon(FontAwesomeIcons.faceSmile),
                   const SizedBox(width: 12),
                   Text(L10n.of(context).emoteSettings),
                 ],
@@ -155,7 +156,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
               value: ChatPopupMenuActions.leave,
               child: Row(
                 children: [
-                  const Icon(Icons.delete_outlined),
+                  const FaIcon(FontAwesomeIcons.trash),
                   const SizedBox(width: 12),
                   Text(L10n.of(context).leave),
                 ],

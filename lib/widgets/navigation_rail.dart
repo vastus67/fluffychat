@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_list/navi_rail_item.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/stream_extension.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_list/navi_rail_item.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/stream_extension.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 
 class SpacesNavigationRail extends StatelessWidget {
   final String? activeSpaceId;
@@ -59,11 +61,11 @@ class SpacesNavigationRail extends StatelessWidget {
                             onTap: onGoToChats,
                             icon: const Padding(
                               padding: EdgeInsets.all(10.0),
-                              child: Icon(Icons.forum_outlined),
+                              child: Icon(FontAwesomeIcons.comments),
                             ),
                             selectedIcon: const Padding(
                               padding: EdgeInsets.all(10.0),
-                              child: Icon(Icons.forum),
+                              child: Icon(FontAwesomeIcons.solidComments),
                             ),
                             toolTip: L10n.of(context).chats,
                             unreadBadgeFilter: (room) => true,
@@ -76,7 +78,7 @@ class SpacesNavigationRail extends StatelessWidget {
                             onTap: () => context.go('/rooms/newspace'),
                             icon: const Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: Icon(Icons.add),
+                              child: Icon(FontAwesomeIcons.plus),
                             ),
                             toolTip: L10n.of(context).createNewSpace,
                           );
@@ -115,11 +117,11 @@ class SpacesNavigationRail extends StatelessWidget {
                     onTap: () => context.go('/rooms/settings'),
                     icon: const Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: Icon(Icons.settings_outlined),
+                      child: Icon(FontAwesomeIcons.gear),
                     ),
                     selectedIcon: const Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: Icon(Icons.settings),
+                      child: Icon(FontAwesomeIcons.gear),
                     ),
                     toolTip: L10n.of(context).settings,
                   ),

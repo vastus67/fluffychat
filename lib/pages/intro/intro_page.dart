@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/intro/flows/restore_backup_flow.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/intro/flows/restore_backup_flow.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/widgets/layouts/login_scaffold.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
@@ -39,7 +40,7 @@ class IntroPage extends StatelessWidget {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(Icons.import_export_outlined),
+                    const Icon(FontAwesomeIcons.arrowRightArrowLeft),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).hydrate),
                   ],
@@ -50,7 +51,7 @@ class IntroPage extends StatelessWidget {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(Icons.privacy_tip_outlined),
+                    const Icon(FontAwesomeIcons.userShield),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).privacy),
                   ],
@@ -61,7 +62,7 @@ class IntroPage extends StatelessWidget {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(Icons.info_outlined),
+                    const Icon(FontAwesomeIcons.circleInfo),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).about),
                   ],
@@ -85,7 +86,7 @@ class IntroPage extends StatelessWidget {
                       child: Hero(
                         tag: 'info-logo',
                         child: Image.asset(
-                          './assets/banner_transparent.png',
+                          './assets/afterdamage-logo.png',
                           fit: BoxFit.fitWidth,
                         ),
                       ),

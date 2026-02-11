@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_search/chat_search_files_tab.dart';
-import 'package:fluffychat/pages/chat_search/chat_search_images_tab.dart';
-import 'package:fluffychat/pages/chat_search/chat_search_message_tab.dart';
-import 'package:fluffychat/pages/chat_search/chat_search_page.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_search/chat_search_files_tab.dart';
+import 'package:afterdamage/pages/chat_search/chat_search_images_tab.dart';
+import 'package:afterdamage/pages/chat_search/chat_search_message_tab.dart';
+import 'package:afterdamage/pages/chat_search/chat_search_page.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 
 class ChatSearchView extends StatelessWidget {
   final ChatSearchController controller;
@@ -56,7 +57,7 @@ class ChatSearchView extends StatelessWidget {
                 enabled: controller.tabController.index == 0,
                 decoration: InputDecoration(
                   hintText: L10n.of(context).search,
-                  prefixIcon: const Icon(Icons.search_outlined),
+                  prefixIcon: const Icon(FontAwesomeIcons.magnifyingGlass),
                   filled: true,
                   fillColor: theme.colorScheme.secondaryContainer,
                   border: OutlineInputBorder(

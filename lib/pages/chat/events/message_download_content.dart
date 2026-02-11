@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/utils/file_description.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/utils/file_description.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:afterdamage/utils/url_launcher.dart';
 
 class MessageDownloadContent extends StatelessWidget {
   final Event event;
@@ -52,7 +53,7 @@ class MessageDownloadContent extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     backgroundColor: textColor.withAlpha(32),
-                    child: Icon(Icons.file_download_outlined, color: textColor),
+                    child: Icon(FontAwesomeIcons.download, color: textColor),
                   ),
                   Flexible(
                     child: Column(

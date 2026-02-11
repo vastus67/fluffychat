@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/settings_switch_list_tile.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/settings_switch_list_tile.dart';
 import 'settings_chat.dart';
 
 class SettingsChatView extends StatelessWidget {
@@ -73,7 +74,7 @@ class SettingsChatView extends StatelessWidget {
                 onTap: () => context.go('/rooms/settings/chat/emotes'),
                 trailing: const Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Icon(Icons.chevron_right_outlined),
+                  child: Icon(FontAwesomeIcons.chevronRight),
                 ),
               ),
               Divider(color: theme.dividerColor),

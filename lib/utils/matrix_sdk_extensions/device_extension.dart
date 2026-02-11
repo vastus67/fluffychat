@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:matrix/matrix.dart';
 
 IconData _getIconFromName(String displayname) {
   final name = displayname.toLowerCase();
   if ({'android'}.any((s) => name.contains(s))) {
-    return Icons.phone_android_outlined;
+    return FontAwesomeIcons.mobileScreen;
   }
   if ({'ios', 'ipad', 'iphone', 'ipod'}.any((s) => name.contains(s))) {
-    return Icons.phone_iphone_outlined;
+    return FontAwesomeIcons.mobile;
   }
   if ({
     'web',
@@ -20,7 +22,7 @@ IconData _getIconFromName(String displayname) {
     'safari',
     'opera',
   }.any((s) => name.contains(s))) {
-    return Icons.web_outlined;
+    return FontAwesomeIcons.globe;
   }
   if ({
     'desktop',
@@ -29,9 +31,9 @@ IconData _getIconFromName(String displayname) {
     'linux',
     'ubuntu',
   }.any((s) => name.contains(s))) {
-    return Icons.desktop_mac_outlined;
+    return FontAwesomeIcons.desktop;
   }
-  return Icons.device_unknown_outlined;
+  return FontAwesomeIcons.question;
 }
 
 extension DeviceExtension on Device {

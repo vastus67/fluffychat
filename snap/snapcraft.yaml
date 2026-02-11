@@ -29,7 +29,7 @@ description: |
   - And much more...
 
 
-  ## FluffyChat comes with a dream
+  ## Afterdamage comes with a dream
 
   Imagine a world where everyone can choose the messenger they like and is still able to chat with all of their friends.
 
@@ -102,11 +102,11 @@ slots:
   dbus-svc:
     interface: dbus
     bus: session
-    name: chat.fluffy.fluffychat
+    name: chat.fluffy.afterdamage
 
 apps:
-  fluffychat:
-    command: bin/fluffychat
+  afterdamage:
+    command: bin/afterdamage
     extensions: [ gnome ]
     plugs:
       - audio-playback

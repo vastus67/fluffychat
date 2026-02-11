@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:collection/collection.dart';
@@ -15,28 +16,28 @@ import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat/chat_view.dart';
-import 'package:fluffychat/pages/chat/event_info_dialog.dart';
-import 'package:fluffychat/pages/chat/start_poll_bottom_sheet.dart';
-import 'package:fluffychat/pages/chat_details/chat_details.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
-import 'package:fluffychat/utils/error_reporter.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/other_party_can_receive.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/show_scaffold_dialog.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat/chat_view.dart';
+import 'package:afterdamage/pages/chat/event_info_dialog.dart';
+import 'package:afterdamage/pages/chat/start_poll_bottom_sheet.dart';
+import 'package:afterdamage/pages/chat_details/chat_details.dart';
+import 'package:afterdamage/utils/adaptive_bottom_sheet.dart';
+import 'package:afterdamage/utils/error_reporter.dart';
+import 'package:afterdamage/utils/file_selector.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/other_party_can_receive.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/show_scaffold_dialog.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/share_scaffold_dialog.dart';
 import '../../utils/account_bundles.dart';
 import '../../utils/localized_exception_extension.dart';
 import 'send_file_dialog.dart';
@@ -1332,12 +1333,12 @@ class ChatController extends State<ChatPageWithRoom>
       actions: [
         AdaptiveModalAction(
           label: L10n.of(context).voiceCall,
-          icon: const Icon(Icons.phone_outlined),
+          icon: const Icon(FontAwesomeIcons.phone),
           value: CallType.kVoice,
         ),
         AdaptiveModalAction(
           label: L10n.of(context).videoCall,
-          icon: const Icon(Icons.video_call_outlined),
+          icon: const Icon(FontAwesomeIcons.video),
           value: CallType.kVideo,
         ),
       ],
@@ -1396,7 +1397,7 @@ class ChatController extends State<ChatPageWithRoom>
                   child: ChatDetails(
                     roomId: roomId,
                     embeddedCloseButton: IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(FontAwesomeIcons.xmark),
                       onPressed: toggleDisplayChatDetailsColumn,
                     ),
                   ),

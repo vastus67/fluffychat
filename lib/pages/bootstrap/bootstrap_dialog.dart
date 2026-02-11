@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/error_reporter.dart';
-import 'package:fluffychat/utils/fluffy_share.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/sync_status_localization.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/error_reporter.dart';
+import 'package:afterdamage/utils/fluffy_share.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/sync_status_localization.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/layouts/login_scaffold.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 import '../key_verification/key_verification_dialog.dart';
 
 class BootstrapDialog extends StatefulWidget {
@@ -184,7 +185,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
                   trailing: CircleAvatar(
                     backgroundColor: Colors.transparent,
                     child: Icon(
-                      Icons.info_outlined,
+                      FontAwesomeIcons.circleInfo,
                       color: theme.colorScheme.primary,
                     ),
                   ),
@@ -199,7 +200,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
                   controller: TextEditingController(text: key),
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(16),
-                    suffixIcon: Icon(Icons.key_outlined),
+                    suffixIcon: Icon(FontAwesomeIcons.key),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -232,7 +233,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
-                  icon: const Icon(Icons.check_outlined),
+                  icon: const Icon(FontAwesomeIcons.check),
                   label: Text(L10n.of(context).next),
                   onPressed:
                       (_recoveryKeyCopied || _storeInSecureStorage == true)
@@ -302,7 +303,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
                         horizontal: 8.0,
                       ),
                       trailing: Icon(
-                        Icons.info_outlined,
+                        FontAwesomeIcons.circleInfo,
                         color: theme.colorScheme.primary,
                       ),
                       subtitle: Text(
@@ -325,7 +326,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
                         hintStyle: TextStyle(
                           fontFamily: theme.textTheme.bodyLarge?.fontFamily,
                         ),
-                        prefixIcon: const Icon(Icons.key_outlined),
+                        prefixIcon: const Icon(FontAwesomeIcons.key),
                         labelText: L10n.of(context).recoveryKey,
                         hintText: 'Es** **** **** ****',
                         errorText: _recoveryKeyInputError,
@@ -341,7 +342,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
                       ),
                       icon: _recoveryKeyInputLoading
                           ? const CircularProgressIndicator.adaptive()
-                          : const Icon(Icons.lock_open_outlined),
+                          : const Icon(FontAwesomeIcons.lockOpen),
                       label: Text(L10n.of(context).unlockOldMessages),
                       onPressed: _recoveryKeyInputLoading
                           ? null
@@ -411,7 +412,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
-                      icon: const Icon(Icons.cast_connected_outlined),
+                      icon: const Icon(FontAwesomeIcons.wifi),
                       label: Text(L10n.of(context).transferFromAnotherDevice),
                       onPressed: _recoveryKeyInputLoading
                           ? null
@@ -472,7 +473,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
                         foregroundColor: theme.colorScheme.onErrorContainer,
                         iconColor: theme.colorScheme.onErrorContainer,
                       ),
-                      icon: const Icon(Icons.delete_outlined),
+                      icon: const Icon(FontAwesomeIcons.trash),
                       label: Text(L10n.of(context).recoveryKeyLost),
                       onPressed: _recoveryKeyInputLoading
                           ? null
@@ -523,7 +524,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
           break;
         case BootstrapState.error:
           titleText = L10n.of(context).oopsSomethingWentWrong;
-          body = const Icon(Icons.error_outline, color: Colors.red, size: 80);
+          body = const Icon(FontAwesomeIcons.circleExclamation, color: Colors.red, size: 80);
           buttons.add(
             ElevatedButton(
               onPressed: () => _goBackAction(false),
@@ -537,7 +538,7 @@ class BootstrapDialogState extends State<BootstrapDialog> {
             mainAxisSize: .min,
             children: [
               const Icon(
-                Icons.check_circle_rounded,
+                FontAwesomeIcons.solidCircleCheck,
                 size: 120,
                 color: Colors.green,
               ),

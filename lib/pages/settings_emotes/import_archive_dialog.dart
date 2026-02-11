@@ -1,17 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:archive/archive.dart';
 import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/settings_emotes/settings_emotes.dart';
-import 'package:fluffychat/utils/client_manager.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/settings_emotes/settings_emotes.dart';
+import 'package:afterdamage/utils/client_manager.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 
 class ImportEmoteArchiveDialog extends StatefulWidget {
   final EmotesSettingsController controller;
@@ -229,7 +230,7 @@ class _EmojiImportPreviewState extends State<_EmojiImportPreview> {
       children: [
         IconButton(
           onPressed: widget.onRemove,
-          icon: const Icon(Icons.remove_circle),
+          icon: const Icon(FontAwesomeIcons.circleXmark),
           tooltip: L10n.of(context).remove,
         ),
         ValueListenableBuilder(
@@ -314,7 +315,7 @@ class _ImageFileError extends StatelessWidget {
           mainAxisSize: .min,
           crossAxisAlignment: .center,
           children: [
-            const Icon(Icons.error),
+            const Icon(FontAwesomeIcons.circleExclamation),
             Text(
               L10n.of(context).notAnImage,
               textAlign: TextAlign.center,

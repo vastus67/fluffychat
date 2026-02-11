@@ -20,24 +20,24 @@ abstract class AppConfig {
   static const double borderRadius = 18.0;
   static const double columnWidth = 360.0;
 
-  static const String website = 'https://fluffy.chat';
+  static const String website = 'https://matrix.org';
   static const String enablePushTutorial =
-      'https://fluffy.chat/faq/#push_without_google_services';
+      'https://matrix.org/docs/';
   static const String encryptionTutorial =
-      'https://fluffy.chat/faq/#how_to_use_end_to_end_encryption';
+      'https://matrix.org/docs/guides/end-to-end-encryption';
   static const String startChatTutorial =
-      'https://fluffy.chat/faq/#how_do_i_find_other_users';
+      'https://joinmatrix.org/';
   static const String howDoIGetStickersTutorial =
-      'https://fluffy.chat/faq/#how_do_i_get_stickers';
+      'https://matrix.org/docs/';
   static const String appId = 'im.fluffychat.FluffyChat';
   static const String appOpenUrlScheme = 'im.fluffychat';
 
   static const String sourceCodeUrl =
       'https://github.com/krille-chan/fluffychat';
   static const String supportUrl =
-      'https://github.com/krille-chan/fluffychat/issues';
-  static const String changelogUrl = 'https://fluffy.chat/en/changelog/';
-  static const String donationUrl = 'https://ko-fi.com/krille';
+      'https://matrix.org/support';
+  static const String changelogUrl = 'https://matrix.org';
+  static const String donationUrl = '';
 
   static const Set<String> defaultReactions = {'👍', '❤️', '😂', '😮', '😢'};
 
@@ -55,8 +55,8 @@ abstract class AppConfig {
 
   static final Uri privacyUrl = Uri(
     scheme: 'https',
-    host: 'fluffy.chat',
-    path: '/en/privacy',
+    host: 'matrix.org',
+    path: '/legal/privacy-notice',
   );
 
   static const String mainIsolatePortName = 'main_isolate';

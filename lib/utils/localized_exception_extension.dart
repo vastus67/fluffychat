@@ -8,8 +8,8 @@ import 'package:http/http.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/other_party_can_receive.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/other_party_can_receive.dart';
 import 'uia_request_manager.dart';
 
 extension LocalizedExceptionExtension on Object {

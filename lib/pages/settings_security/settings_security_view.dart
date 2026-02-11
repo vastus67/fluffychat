@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/beautify_string_extension.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/settings_switch_list_tile.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/beautify_string_extension.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/settings_switch_list_tile.dart';
 import 'settings_security.dart';
 
 class SettingsSecurityView extends StatelessWidget {
@@ -71,7 +72,7 @@ class SettingsSecurityView extends StatelessWidget {
                     setting: AppSettings.sendPublicReadReceipts,
                   ),
                   ListTile(
-                    trailing: const Icon(Icons.chevron_right_outlined),
+                    trailing: const Icon(FontAwesomeIcons.chevronRight),
                     title: Text(L10n.of(context).blockedUsers),
                     subtitle: Text(
                       L10n.of(context).thereAreCountUsersBlocked(
@@ -84,7 +85,7 @@ class SettingsSecurityView extends StatelessWidget {
                   if (Matrix.of(context).client.encryption != null) ...{
                     if (PlatformInfos.isMobile)
                       ListTile(
-                        trailing: const Icon(Icons.chevron_right_outlined),
+                        trailing: const Icon(FontAwesomeIcons.chevronRight),
                         title: Text(L10n.of(context).appLock),
                         subtitle: Text(L10n.of(context).appLockDescription),
                         onTap: controller.setAppLockAction,
@@ -139,7 +140,7 @@ class SettingsSecurityView extends StatelessWidget {
                   ),
                   ListTile(
                     title: Text(L10n.of(context).yourPublicKey),
-                    leading: const Icon(Icons.vpn_key_outlined),
+                    leading: const Icon(FontAwesomeIcons.key),
                     subtitle: SelectableText(
                       Matrix.of(context).client.fingerprintKey.beautified,
                       style: const TextStyle(fontFamily: 'RobotoMono'),
@@ -148,15 +149,15 @@ class SettingsSecurityView extends StatelessWidget {
                   if (capabilities?.mChangePassword?.enabled != false ||
                       error != null)
                     ListTile(
-                      leading: const Icon(Icons.password_outlined),
-                      trailing: const Icon(Icons.chevron_right_outlined),
+                      leading: const Icon(FontAwesomeIcons.key),
+                      trailing: const Icon(FontAwesomeIcons.chevronRight),
                       title: Text(L10n.of(context).changePassword),
                       onTap: () =>
                           context.go('/rooms/settings/security/password'),
                     ),
                   ListTile(
                     iconColor: Colors.orange,
-                    leading: const Icon(Icons.delete_sweep_outlined),
+                    leading: const Icon(FontAwesomeIcons.trash),
                     title: Text(
                       L10n.of(context).dehydrate,
                       style: const TextStyle(color: Colors.orange),
@@ -166,7 +167,7 @@ class SettingsSecurityView extends StatelessWidget {
                   Divider(color: theme.dividerColor),
                   ListTile(
                     iconColor: Colors.red,
-                    leading: const Icon(Icons.delete_outlined),
+                    leading: const Icon(FontAwesomeIcons.trash),
                     title: Text(
                       L10n.of(context).deleteAccount,
                       style: const TextStyle(color: Colors.red),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/config/themes.dart';
+import 'package:afterdamage/config/themes.dart';
 
 class AvatarPageHeader extends StatelessWidget {
   final Widget avatar;
@@ -40,7 +41,7 @@ class AvatarPageHeader extends StatelessWidget {
                       elevation: 2,
                       onPressed: onAvatarEdit,
                       heroTag: null,
-                      child: const Icon(Icons.camera_alt_outlined),
+                      child: const FaIcon(FontAwesomeIcons.camera),
                     ),
                   ),
               ],

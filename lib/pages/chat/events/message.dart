@@ -1,23 +1,26 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/file_description.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/string_color.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/member_actions_popup_menu_button.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/adaptive_bottom_sheet.dart';
+import 'package:afterdamage/utils/date_time_extension.dart';
+import 'package:afterdamage/utils/file_description.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/string_color.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/member_actions_popup_menu_button.dart';
+import 'package:afterdamage/theme/dracula_theme.dart';
+import 'package:afterdamage/theme/dracula_colors.dart';
 import '../../../config/app_config.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
@@ -142,8 +145,8 @@ class Message extends StatelessWidget {
         : MainAxisAlignment.start;
 
     final displayEvent = event.getDisplayEvent(timeline);
-    const hardCorner = Radius.circular(4);
-    const roundedCorner = Radius.circular(AppConfig.borderRadius);
+    const hardCorner = Radius.circular(DraculaTheme.radiusSmall);
+    const roundedCorner = Radius.circular(DraculaTheme.radiusLarge);
     final borderRadius = BorderRadius.only(
       topLeft: !ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
       topRight: ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
@@ -216,7 +219,7 @@ class Message extends StatelessWidget {
         key: ValueKey(event.eventId),
         background: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0),
-          child: Center(child: Icon(Icons.check_outlined)),
+          child: Center(child: Icon(FontAwesomeIcons.check)),
         ),
         direction: AppSettings.swipeRightToLeftToReply.value
             ? SwipeDirection.endToStart
@@ -227,10 +230,10 @@ class Message extends StatelessWidget {
             maxWidth: FluffyThemes.maxTimelineWidth,
           ),
           padding: EdgeInsets.only(
-            left: 8.0,
-            right: 8.0,
-            top: nextEventSameSender ? 1.0 : 4.0,
-            bottom: previousEventSameSender ? 1.0 : 4.0,
+            left: DraculaTheme.spacingSm,
+            right: DraculaTheme.spacingSm,
+            top: nextEventSameSender ? 2.0 : DraculaTheme.spacingMd,
+            bottom: previousEventSameSender ? 2.0 : DraculaTheme.spacingMd,
           ),
           child: Column(
             mainAxisSize: .min,
@@ -244,11 +247,9 @@ class Message extends StatelessWidget {
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 4.0),
-                      child: Material(
-                        borderRadius: BorderRadius.circular(
-                          AppConfig.borderRadius * 2,
-                        ),
-                        color: theme.colorScheme.surface.withAlpha(128),
+                        child: Material(
+                        borderRadius: DraculaTheme.radiusLgAll,
+                        color: theme.colorScheme.surface.withOpacity(0.7),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
@@ -258,8 +259,10 @@ class Message extends StatelessWidget {
                             event.originServerTs.localizedTime(context),
                             style: TextStyle(
                               fontSize: 12 * AppSettings.fontSizeFactor.value,
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.secondary,
+                              fontWeight: FontWeight.w500,
+                              color: DraculaTheme.mutedForeground(
+                                theme.colorScheme,
+                              ),
                             ),
                           ),
                         ),
@@ -327,8 +330,8 @@ class Message extends StatelessWidget {
                                         tooltip: L10n.of(context).select,
                                         icon: Icon(
                                           selected
-                                              ? Icons.check_circle
-                                              : Icons.circle_outlined,
+                                              ? FontAwesomeIcons.solidCircleCheck
+                                              : FontAwesomeIcons.circle,
                                         ),
                                         onPressed: () => onSelect(event),
                                       ),
@@ -343,7 +346,7 @@ class Message extends StatelessWidget {
                                           child:
                                               event.status == EventStatus.error
                                               ? const Icon(
-                                                  Icons.error,
+                                                  FontAwesomeIcons.circleExclamation,
                                                   color: Colors.red,
                                                 )
                                               : event.fileSendingStatus != null
@@ -404,10 +407,13 @@ class Message extends StatelessWidget {
                                                               .calcDisplayname();
                                                       return Text(
                                                         displayname,
-                                                        style: TextStyle(
-                                                          fontSize: 11,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                        style: theme
+                                                            .textTheme
+                                                            .labelMedium
+                                                            ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
                                                           color:
                                                               (theme.brightness ==
                                                                   Brightness
@@ -471,6 +477,33 @@ class Message extends StatelessWidget {
                                                       ? Colors.transparent
                                                       : color,
                                                   borderRadius: borderRadius,
+                                                  boxShadow: noBubble
+                                                      ? null
+                                                      : [
+                                                          // Soft shadow for depth
+                                                          BoxShadow(
+                                                            color: theme
+                                                                .colorScheme
+                                                                .shadow
+                                                                .withOpacity(
+                                                                  0.25,
+                                                                ),
+                                                            blurRadius: 16,
+                                                            offset:
+                                                                const Offset(
+                                                              0,
+                                                              6,
+                                                            ),
+                                                          ),
+                                                          // Subtle glow for own messages using accent color
+                                                          if (ownMessage && theme.brightness == Brightness.dark)
+                                                            BoxShadow(
+                                                              color: theme.colorScheme.primary
+                                                                  .withOpacity(0.15),
+                                                              blurRadius: 20,
+                                                              spreadRadius: -4,
+                                                            ),
+                                                        ],
                                                 ),
                                                 clipBehavior: Clip.antiAlias,
                                                 child: BubbleBackground(
@@ -884,7 +917,7 @@ class Message extends StatelessWidget {
                                     theme.colorScheme.secondaryContainer,
                               ),
                               onPressed: () => enterThread(event.eventId),
-                              icon: const Icon(Icons.message),
+                              icon: const Icon(FontAwesomeIcons.solidComment),
                               label: Text(
                                 '${L10n.of(context).countReplies(threadChildren.length)} | ${threadChildren.first.calcLocalizedBodyFallback(MatrixLocals(L10n.of(context)), withSenderNamePrefix: true)}',
                                 maxLines: 1,

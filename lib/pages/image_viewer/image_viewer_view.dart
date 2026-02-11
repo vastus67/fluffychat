@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/image_viewer/video_player.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/hover_builder.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/image_viewer/video_player.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/widgets/hover_builder.dart';
+import 'package:afterdamage/widgets/mxc_image.dart';
 import 'image_viewer.dart';
 
 class ImageViewerView extends StatelessWidget {
@@ -29,7 +30,7 @@ class ImageViewerView extends StatelessWidget {
           elevation: 0,
           leading: IconButton(
             style: iconButtonStyle,
-            icon: const Icon(Icons.close),
+            icon: const Icon(FontAwesomeIcons.xmark),
             onPressed: Navigator.of(context).pop,
             color: Colors.white,
             tooltip: L10n.of(context).close,
@@ -38,7 +39,7 @@ class ImageViewerView extends StatelessWidget {
           actions: [
             IconButton(
               style: iconButtonStyle,
-              icon: const Icon(Icons.reply_outlined),
+              icon: const Icon(FontAwesomeIcons.reply),
               onPressed: controller.forwardAction,
               color: Colors.white,
               tooltip: L10n.of(context).share,
@@ -46,7 +47,7 @@ class ImageViewerView extends StatelessWidget {
             const SizedBox(width: 8),
             IconButton(
               style: iconButtonStyle,
-              icon: const Icon(Icons.download_outlined),
+              icon: const Icon(FontAwesomeIcons.download),
               onPressed: () => controller.saveFileAction(context),
               color: Colors.white,
               tooltip: L10n.of(context).downloadFile,
@@ -62,7 +63,7 @@ class ImageViewerView extends StatelessWidget {
                     onPressed: () => controller.shareFileAction(context),
                     tooltip: L10n.of(context).share,
                     color: Colors.white,
-                    icon: Icon(Icons.adaptive.share_outlined),
+                    icon: Icon(FontAwesomeIcons.shareNodes),
                   ),
                 ),
               ),
@@ -132,7 +133,7 @@ class ImageViewerView extends StatelessWidget {
                           child: IconButton(
                             style: iconButtonStyle,
                             tooltip: L10n.of(context).previous,
-                            icon: const Icon(Icons.arrow_upward_outlined),
+                            icon: const Icon(FontAwesomeIcons.arrowUp),
                             onPressed: controller.prevImage,
                           ),
                         ),
@@ -142,7 +143,7 @@ class ImageViewerView extends StatelessWidget {
                           child: IconButton(
                             style: iconButtonStyle,
                             tooltip: L10n.of(context).next,
-                            icon: const Icon(Icons.arrow_downward_outlined),
+                            icon: const Icon(FontAwesomeIcons.arrowDown),
                             onPressed: controller.nextImage,
                           ),
                         ),

@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_details/chat_details_view.dart';
-import 'package:fluffychat/pages/settings/settings.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_details/chat_details_view.dart';
+import 'package:afterdamage/pages/settings/settings.dart';
+import 'package:afterdamage/utils/file_selector.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 
 enum AliasActions { copy, delete, setCanonical }
 
@@ -93,19 +94,19 @@ class ChatDetailsController extends State<ChatDetails> {
           value: AvatarAction.camera,
           label: L10n.of(context).openCamera,
           isDefaultAction: true,
-          icon: const Icon(Icons.camera_alt_outlined),
+          icon: const Icon(FontAwesomeIcons.camera),
         ),
       AdaptiveModalAction(
         value: AvatarAction.file,
         label: L10n.of(context).openGallery,
-        icon: const Icon(Icons.photo_outlined),
+        icon: const Icon(FontAwesomeIcons.image),
       ),
       if (room?.avatar != null)
         AdaptiveModalAction(
           value: AvatarAction.remove,
           label: L10n.of(context).delete,
           isDestructive: true,
-          icon: const Icon(Icons.delete_outlined),
+          icon: const Icon(FontAwesomeIcons.trash),
         ),
     ];
     final action = actions.length == 1

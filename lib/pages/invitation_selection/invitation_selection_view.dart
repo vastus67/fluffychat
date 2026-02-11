@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/invitation_selection/invitation_selection.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/invitation_selection/invitation_selection.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 import '../../widgets/adaptive_dialogs/user_dialog.dart';
 
 class InvitationSelectionView extends StatelessWidget {
@@ -69,7 +70,7 @@ class InvitationSelectionView extends StatelessWidget {
                             ),
                           ),
                         )
-                      : const Icon(Icons.search_outlined),
+                      : const Icon(FontAwesomeIcons.magnifyingGlass),
                 ),
                 onChanged: controller.searchUserWithCoolDown,
               ),
@@ -194,7 +195,7 @@ class _InviteContactListTile extends StatelessWidget {
       trailing: TextButton.icon(
         onPressed: isMember ? null : onTap,
         label: Text(isMember ? l10n.participant : l10n.invite),
-        icon: Icon(isMember ? Icons.check : Icons.add),
+        icon: Icon(isMember ? FontAwesomeIcons.check : FontAwesomeIcons.plus),
       ),
     );
   }

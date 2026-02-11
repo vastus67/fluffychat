@@ -1,18 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/utils/file_description.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/blur_hash.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/utils/file_description.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/url_launcher.dart';
+import 'package:afterdamage/widgets/blur_hash.dart';
+import 'package:afterdamage/widgets/mxc_image.dart';
 import '../../image_viewer/image_viewer.dart';
 
 class EventVideoPlayer extends StatelessWidget {
@@ -105,8 +106,8 @@ class EventVideoPlayer extends StatelessWidget {
                     Center(
                       child: CircleAvatar(
                         child: supportsVideoPlayer
-                            ? const Icon(Icons.play_arrow_outlined)
-                            : const Icon(Icons.file_download_outlined),
+                            ? const Icon(FontAwesomeIcons.play)
+                            : const Icon(FontAwesomeIcons.download),
                       ),
                     ),
                     if (duration != null)

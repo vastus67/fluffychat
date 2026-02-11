@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
 
 class StartPollBottomSheet extends StatefulWidget {
   final Room room;
@@ -103,7 +104,7 @@ class _StartPollBottomSheetState extends State<StartPollBottomSheet> {
                   suffixIcon: _answers.length == 2
                       ? null
                       : IconButton(
-                          icon: const Icon(Icons.cancel_outlined),
+                          icon: const Icon(FontAwesomeIcons.circleXmark),
                           onPressed: () => setState(() {
                             _answers.remove(answerController..dispose());
                           }),
@@ -115,7 +116,7 @@ class _StartPollBottomSheetState extends State<StartPollBottomSheet> {
           Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
-              icon: const Icon(Icons.add_outlined),
+              icon: const Icon(FontAwesomeIcons.plus),
               onPressed: _answers.length < maxAnswers
                   ? () => setState(() {
                       _answers.add(TextEditingController());

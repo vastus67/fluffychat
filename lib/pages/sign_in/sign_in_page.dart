@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/sign_in/view_model/flows/check_homeserver.dart';
-import 'package:fluffychat/pages/sign_in/view_model/model/public_homeserver_data.dart';
-import 'package:fluffychat/pages/sign_in/view_model/sign_in_view_model.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/view_model_builder.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/sign_in/view_model/flows/check_homeserver.dart';
+import 'package:afterdamage/pages/sign_in/view_model/model/public_homeserver_data.dart';
+import 'package:afterdamage/pages/sign_in/view_model/sign_in_view_model.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/widgets/layouts/login_scaffold.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/view_model_builder.dart';
 
 class SignInPage extends StatelessWidget {
   final bool signUp;
@@ -66,7 +67,7 @@ class SignInPage extends StatelessWidget {
                         ),
                         errorText: state.publicHomeservers.error
                             ?.toLocalizedString(context),
-                        prefixIcon: const Icon(Icons.search_outlined),
+                        prefixIcon: const Icon(FontAwesomeIcons.magnifyingGlass),
                         hintText: 'Search or enter homeserver address',
                       ),
                     ),
@@ -93,7 +94,7 @@ class SignInPage extends StatelessWidget {
                             value: server,
                             radioScaleFactor: 2,
                             secondary: IconButton(
-                              icon: const Icon(Icons.link_outlined),
+                              icon: const Icon(FontAwesomeIcons.link),
                               onPressed: () => launchUrlString(
                                 server.homepage ?? 'https://${server.name}',
                               ),

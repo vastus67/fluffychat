@@ -1,20 +1,21 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat/events/poll.dart';
-import 'package:fluffychat/pages/chat/events/video_player.dart';
-import 'package:fluffychat/pages/image_viewer/image_viewer.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat/events/poll.dart';
+import 'package:afterdamage/pages/chat/events/video_player.dart';
+import 'package:afterdamage/pages/image_viewer/image_viewer.dart';
+import 'package:afterdamage/utils/adaptive_bottom_sheet.dart';
+import 'package:afterdamage/utils/date_time_extension.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 import '../../../config/app_config.dart';
 import '../../../utils/event_checkbox_extension.dart';
 import '../../../utils/platform_infos.dart';
@@ -87,7 +88,7 @@ class MessageContent extends StatelessWidget {
                 ),
                 title: Text(sender.calcDisplayname()),
                 subtitle: Text(event.originServerTs.localizedTime(context)),
-                trailing: const Icon(Icons.lock_outlined),
+                trailing: const Icon(FontAwesomeIcons.lock),
               ),
               const Divider(),
               Text(event.calcLocalizedBodyFallback(MatrixLocals(l10n))),
@@ -192,7 +193,7 @@ class MessageContent extends StatelessWidget {
             return _ButtonContent(
               textColor: buttonTextColor,
               onPressed: () => _verifyOrRequestKey(context),
-              icon: '🔒',
+              icon: 'ðŸ”’',
               label: L10n.of(context).encrypted,
               fontSize: fontSize,
             );
@@ -219,7 +220,7 @@ class MessageContent extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     OutlinedButton.icon(
-                      icon: Icon(Icons.location_on_outlined, color: textColor),
+                      icon: Icon(FontAwesomeIcons.locationDot, color: textColor),
                       onPressed: UrlLauncher(
                         context,
                         geoUri.toString(),
@@ -311,7 +312,7 @@ class MessageContent extends StatelessWidget {
                 snapshot.data?.calcDisplayname() ??
                     event.senderFromMemoryOrFallback.calcDisplayname(),
               ),
-              icon: '📞',
+              icon: 'ðŸ“ž',
               textColor: buttonTextColor,
               onPressed: () => onInfoTab!(event),
               fontSize: fontSize,
@@ -328,7 +329,7 @@ class MessageContent extends StatelessWidget {
                     event.senderFromMemoryOrFallback.calcDisplayname(),
                 event.type,
               ),
-              icon: 'ℹ️',
+              icon: 'â„¹ï¸',
               textColor: buttonTextColor,
               onPressed: () => onInfoTab!(event),
               fontSize: fontSize,
@@ -367,7 +368,7 @@ class RedactionWidget extends StatelessWidget {
           label: reason == null
               ? L10n.of(context).redactedBy(redactedBy)
               : L10n.of(context).redactedByBecause(redactedBy, reason),
-          icon: '🗑️',
+          icon: 'ðŸ—‘ï¸',
           textColor: buttonTextColor.withAlpha(128),
           onPressed: () => onInfoTab!(event),
           fontSize: fontSize,

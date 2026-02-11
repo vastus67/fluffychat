@@ -21,6 +21,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -29,11 +30,11 @@ import 'package:just_audio/just_audio.dart';
 import 'package:matrix/matrix.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/voip/video_renderer.dart';
-import 'package:fluffychat/widgets/avatar.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/voip/video_renderer.dart';
+import 'package:afterdamage/widgets/avatar.dart';
 import 'pip/pip_view.dart';
 
 class _StreamView extends StatelessWidget {
@@ -97,7 +98,7 @@ class _StreamView extends StatelessWidget {
               left: 4.0,
               bottom: 4.0,
               child: Icon(
-                audioMuted ? Icons.mic_off : Icons.mic,
+                audioMuted ? FontAwesomeIcons.microphoneSlash : FontAwesomeIcons.microphone,
                 color: Colors.white,
                 size: 18.0,
               ),
@@ -350,12 +351,12 @@ class MyCallingPage extends State<Calling> {
       heroTag: 'switchCamera',
       onPressed: _switchCamera,
       backgroundColor: Colors.black45,
-      child: const Icon(Icons.switch_camera),
+      child: const Icon(FontAwesomeIcons.cameraRotate),
     );
     /*
     var switchSpeakerButton = FloatingActionButton(
       heroTag: 'switchSpeaker',
-      child: Icon(_speakerOn ? Icons.volume_up : Icons.volume_off),
+      child: Icon(_speakerOn ? FontAwesomeIcons.volumeHigh : FontAwesomeIcons.volumeXmark),
       onPressed: _switchSpeaker,
       foregroundColor: Colors.black54,
       backgroundColor: Theme.of(widget.context).backgroundColor,
@@ -366,7 +367,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _hangUp,
       tooltip: 'Hangup',
       backgroundColor: _state == CallState.kEnded ? Colors.black45 : Colors.red,
-      child: const Icon(Icons.call_end),
+      child: const Icon(FontAwesomeIcons.phoneSlash),
     );
 
     final answerButton = FloatingActionButton(
@@ -374,7 +375,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _answerCall,
       tooltip: 'Answer',
       backgroundColor: Colors.green,
-      child: const Icon(Icons.phone),
+      child: const Icon(FontAwesomeIcons.phone),
     );
 
     final muteMicButton = FloatingActionButton(
@@ -382,7 +383,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _muteMic,
       foregroundColor: isMicrophoneMuted ? Colors.black26 : Colors.white,
       backgroundColor: isMicrophoneMuted ? Colors.white : Colors.black45,
-      child: Icon(isMicrophoneMuted ? Icons.mic_off : Icons.mic),
+      child: Icon(isMicrophoneMuted ? FontAwesomeIcons.microphoneSlash : FontAwesomeIcons.microphone),
     );
 
     final screenSharingButton = FloatingActionButton(
@@ -390,7 +391,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _screenSharing,
       foregroundColor: isScreensharingEnabled ? Colors.black26 : Colors.white,
       backgroundColor: isScreensharingEnabled ? Colors.white : Colors.black45,
-      child: const Icon(Icons.desktop_mac),
+      child: const Icon(FontAwesomeIcons.desktop),
     );
 
     final holdButton = FloatingActionButton(
@@ -398,7 +399,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _remoteOnHold,
       foregroundColor: isRemoteOnHold ? Colors.black26 : Colors.white,
       backgroundColor: isRemoteOnHold ? Colors.white : Colors.black45,
-      child: const Icon(Icons.pause),
+      child: const Icon(FontAwesomeIcons.pause),
     );
 
     final muteCameraButton = FloatingActionButton(
@@ -406,7 +407,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _muteCamera,
       foregroundColor: isLocalVideoMuted ? Colors.black26 : Colors.white,
       backgroundColor: isLocalVideoMuted ? Colors.white : Colors.black45,
-      child: Icon(isLocalVideoMuted ? Icons.videocam_off : Icons.videocam),
+      child: Icon(isLocalVideoMuted ? FontAwesomeIcons.videoSlash : FontAwesomeIcons.video),
     );
 
     switch (_state) {
@@ -461,7 +462,7 @@ class MyCallingPage extends State<Calling> {
           child: Column(
             mainAxisAlignment: .center,
             children: [
-              const Icon(Icons.pause, size: 48.0, color: Colors.white),
+              const Icon(FontAwesomeIcons.pause, size: 48.0, color: Colors.white),
               Text(
                 title,
                 style: const TextStyle(color: Colors.white, fontSize: 24.0),
@@ -595,7 +596,7 @@ class MyCallingPage extends State<Calling> {
                         left: 24.0,
                         child: IconButton(
                           color: Colors.black45,
-                          icon: const Icon(Icons.arrow_back),
+                          icon: const Icon(FontAwesomeIcons.arrowLeft),
                           onPressed: () {
                             PIPView.of(context)?.setFloating(true);
                           },

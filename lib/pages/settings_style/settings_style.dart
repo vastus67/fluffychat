@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/utils/account_config.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/theme_builder.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/theme/dracula_accents.dart';
+import 'package:afterdamage/utils/account_config.dart';
+import 'package:afterdamage/utils/file_selector.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/theme_builder.dart';
 import '../../widgets/matrix.dart';
 import 'settings_style_view.dart';
 
@@ -155,6 +156,21 @@ class SettingsStyleController extends State<SettingsStyle> {
 
   void changeFontSizeFactor(double d) async {
     await AppSettings.fontSizeFactor.setItem(d);
+    setState(() {});
+  }
+
+  // Dracula accent theme methods
+  DraculaAccent get currentDraculaAccent {
+    final accentName = AppSettings.draculaAccent.value;
+    return DraculaAccent.values.firstWhere(
+      (accent) => accent.name == accentName,
+      orElse: () => DraculaAccent.red,  // Default to red accent
+    );
+  }
+
+  Future<void> setDraculaAccent(DraculaAccent accent) async {
+    await AppSettings.draculaAccent.setItem(accent.name);
+    ThemeController.of(context).setDraculaAccent(accent);
     setState(() {});
   }
 

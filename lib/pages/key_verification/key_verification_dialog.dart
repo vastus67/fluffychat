@@ -2,16 +2,17 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
 
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
 
 class KeyVerificationDialog extends StatefulWidget {
   Future<bool?> show(BuildContext context) => showAdaptiveDialog<bool>(
@@ -295,7 +296,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         body = const Padding(
           padding: EdgeInsets.all(16.0),
           child: Icon(
-            Icons.verified_outlined,
+            FontAwesomeIcons.shieldHalved,
             color: Colors.green,
             size: 128.0,
           ),
@@ -314,7 +315,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
           mainAxisSize: .min,
           children: <Widget>[
             const SizedBox(height: 16),
-            Icon(Icons.cancel, color: theme.colorScheme.error, size: 64.0),
+            Icon(FontAwesomeIcons.circleXmark, color: theme.colorScheme.error, size: 64.0),
             const SizedBox(height: 16),
             // TODO: Add better error UI to user
             Text(

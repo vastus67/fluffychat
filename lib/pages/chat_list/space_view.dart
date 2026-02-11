@@ -1,28 +1,29 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:collection/collection.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_list/unread_bubble.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/stream_extension.dart';
-import 'package:fluffychat/utils/string_color.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/public_room_dialog.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/hover_builder.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_list/unread_bubble.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:afterdamage/utils/stream_extension.dart';
+import 'package:afterdamage/utils/string_color.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/public_room_dialog.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/hover_builder.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 
 enum AddRoomType { chat, subspace }
 
@@ -287,7 +288,7 @@ class _SpaceViewState extends State<SpaceView> {
           child: Row(
             mainAxisSize: .min,
             children: [
-              const Icon(Icons.move_down_outlined),
+              const Icon(FontAwesomeIcons.arrowDown),
               const SizedBox(width: 12),
               Text(L10n.of(context).moveToDifferentSpace),
             ],
@@ -298,7 +299,7 @@ class _SpaceViewState extends State<SpaceView> {
           child: Row(
             mainAxisSize: .min,
             children: [
-              const Icon(Icons.edit_outlined),
+              const Icon(FontAwesomeIcons.penToSquare),
               const SizedBox(width: 12),
               Text(L10n.of(context).edit),
             ],
@@ -309,7 +310,7 @@ class _SpaceViewState extends State<SpaceView> {
           child: Row(
             mainAxisSize: .min,
             children: [
-              const Icon(Icons.group_remove_outlined),
+              const Icon(FontAwesomeIcons.userXmark),
               const SizedBox(width: 12),
               Text(L10n.of(context).removeFromSpace),
             ],
@@ -415,7 +416,7 @@ class _SpaceViewState extends State<SpaceView> {
         actions: [
           if (isAdmin)
             PopupMenuButton<AddRoomType>(
-              icon: const Icon(Icons.add_outlined),
+              icon: const Icon(FontAwesomeIcons.plus),
               onSelected: _addChatOrSubspace,
               tooltip: L10n.of(context).addChatOrSubSpace,
               itemBuilder: (context) => [
@@ -424,7 +425,7 @@ class _SpaceViewState extends State<SpaceView> {
                   child: Row(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(Icons.group_add_outlined),
+                      const Icon(FontAwesomeIcons.userGroup),
                       const SizedBox(width: 12),
                       Text(L10n.of(context).newGroup),
                     ],
@@ -435,7 +436,7 @@ class _SpaceViewState extends State<SpaceView> {
                   child: Row(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(Icons.workspaces_outlined),
+                      const Icon(FontAwesomeIcons.cubes),
                       const SizedBox(width: 12),
                       Text(L10n.of(context).newSubSpace),
                     ],
@@ -452,7 +453,7 @@ class _SpaceViewState extends State<SpaceView> {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(Icons.settings_outlined),
+                    const Icon(FontAwesomeIcons.gear),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).settings),
                   ],
@@ -463,7 +464,7 @@ class _SpaceViewState extends State<SpaceView> {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(Icons.person_add_outlined),
+                    const Icon(FontAwesomeIcons.userPlus),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).invite),
                   ],
@@ -474,7 +475,7 @@ class _SpaceViewState extends State<SpaceView> {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(Icons.group_outlined),
+                    const Icon(FontAwesomeIcons.users),
                     const SizedBox(width: 12),
                     Text(
                       L10n.of(context).countParticipants(
@@ -489,7 +490,7 @@ class _SpaceViewState extends State<SpaceView> {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(Icons.delete_outlined),
+                    const Icon(FontAwesomeIcons.trash),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).leave),
                   ],
@@ -500,7 +501,7 @@ class _SpaceViewState extends State<SpaceView> {
         ],
       ),
       body: room == null
-          ? const Center(child: Icon(Icons.search_outlined, size: 80))
+          ? const Center(child: Icon(FontAwesomeIcons.magnifyingGlass, size: 80))
           : StreamBuilder(
               stream: room.client.onSync.stream
                   .where((s) => s.hasRoomUpdate)
@@ -535,7 +536,7 @@ class _SpaceViewState extends State<SpaceView> {
                           prefixIcon: IconButton(
                             onPressed: () {},
                             icon: Icon(
-                              Icons.search_outlined,
+                              FontAwesomeIcons.magnifyingGlass,
                               color: theme.colorScheme.onPrimaryContainer,
                             ),
                           ),
@@ -625,7 +626,7 @@ class _SpaceViewState extends State<SpaceView> {
                                                 context,
                                                 item.roomId,
                                               ),
-                                          icon: const Icon(Icons.edit_outlined),
+                                          icon: const Icon(FontAwesomeIcons.penToSquare),
                                         ),
                                       )
                                     : Avatar(
@@ -665,7 +666,7 @@ class _SpaceViewState extends State<SpaceView> {
                                     if (joinedRoom != null)
                                       UnreadBubble(room: joinedRoom)
                                     else
-                                      const Icon(Icons.chevron_right_outlined),
+                                      const Icon(FontAwesomeIcons.chevronRight),
                                   ],
                                 ),
                               ),

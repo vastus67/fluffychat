@@ -1,19 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:cross_file/cross_file.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:fluffychat/utils/other_party_can_receive.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/size_string.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/dialog_text_field.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:afterdamage/utils/other_party_can_receive.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/size_string.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/dialog_text_field.dart';
 import '../../utils/resize_video.dart';
 
 class SendFileDialog extends StatefulWidget {
@@ -260,7 +261,7 @@ class SendFileDialogState extends State<SendFileDialog> {
                                           width: 256,
                                           height: 256,
                                           child: Icon(
-                                            Icons.broken_image_outlined,
+                                            FontAwesomeIcons.image,
                                             size: 64,
                                           ),
                                         ),
@@ -284,7 +285,7 @@ class SendFileDialogState extends State<SendFileDialog> {
                                             width: 256,
                                             height: 256,
                                             child: Icon(
-                                              Icons.broken_image_outlined,
+                                              FontAwesomeIcons.image,
                                               size: 64,
                                             ),
                                           ),
@@ -306,12 +307,12 @@ class SendFileDialogState extends State<SendFileDialog> {
                         children: [
                           Icon(
                             uniqueFileType == null
-                                ? Icons.description_outlined
+                                ? FontAwesomeIcons.fileLines
                                 : uniqueFileType == 'video'
-                                ? Icons.video_file_outlined
+                                ? FontAwesomeIcons.fileVideo
                                 : uniqueFileType == 'audio'
-                                ? Icons.audio_file_outlined
-                                : Icons.description_outlined,
+                                ? FontAwesomeIcons.fileAudio
+                                : FontAwesomeIcons.fileLines,
                             size: 32,
                           ),
                           const SizedBox(width: 8),

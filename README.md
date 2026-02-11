@@ -1,21 +1,20 @@
-![Screenshot](https://github.com/krille-chan/fluffychat/blob/main/assets/banner_transparent.png?raw=true)
+# Afterdamage Chat
 
-[FluffyChat](https://fluffy.chat) is an open source, nonprofit and cute [[matrix](https://matrix.org)] client written in [Flutter](https://flutter.dev). The goal of the app is to create an easy to use instant messenger which is open source and accessible for everyone.
+**Afterdamage Chat** is an open source [Matrix](https://matrix.org) client written in [Flutter](https://flutter.dev). The goal of the app is to create an easy to use instant messenger which is open source and accessible for everyone.
+
+> **Note:** This is a customized fork. For the original project, visit [FluffyChat](https://github.com/krille-chan/fluffychat).
+
+## Features
+
+### Navigation
+- **Responsive Navigation**: Adaptive UI that provides drawer on mobile and persistent navigation rail on desktop/web
+- **Dracula Theme**: Complete theme system with 7 accent color variants (Cyan, Green, Orange, Pink, Purple, Red, Yellow)
+- **Multi-Platform**: Works seamlessly on iOS, Android, Web, Windows, macOS, and Linux
 
 ### Links:
 
-- 🌐 [[Weblate] Translate FluffyChat into your language](https://hosted.weblate.org/projects/fluffychat/)
-- 🌍 [[m] Join the community](https://matrix.to/#/#fluffy-space:matrix.org)
-- 📰 [[Mastodon] Get updates on social media](https://troet.cafe/@krille)
-- 🖥️ [[Famedly] Server hosting and professional support](https://famedly.com/kontakt)
-- 💝 [[Liberapay] Support FluffyChat development](https://de.liberapay.com/KrilleChritzelius)
-
-<a href='https://ko-fi.com/C1C86VN53' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi5.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
-### Screenshots:
-
-<img src="https://github.com/krille-chan/fluffychat-website/blob/main/src/assets/screenshots/mobile.png?raw=true" height="300">
-<img src="https://github.com/krille-chan/fluffychat-website/blob/main/src/assets/screenshots/desktop.png?raw=true" height="300">
+- 🌍 [[matrix.org] Learn more about Matrix](https://matrix.org)
+- 📖 [[Matrix Spec] Technical documentation](https://spec.matrix.org)
 
 # Features
 
@@ -48,7 +47,7 @@ Please visit the website for installation instructions:
 
 # How to build
 
-1. To build FluffyChat you need [Flutter](https://flutter.dev) and [Rust](https://www.rust-lang.org/tools/install)
+1. To build Afterdamage you need [Flutter](https://flutter.dev) and [Rust](https://www.rust-lang.org/tools/install)
 
 2. Clone the repo:
 ```
@@ -84,7 +83,7 @@ cd fluffychat
 flutter build web --release
 ```
 
-* Optionally configure by serving a `config.json` at the same path as fluffychat.
+* Optionally configure by serving a `config.json` at the same path as afterdamage.
   An example can be found at `config.sample.json`. All values there are optional.
   **Please only the values, you really need**. If you e.g. only want
   to change the default homeserver, then only modify the `defaultHomeserver` key.
@@ -115,7 +114,7 @@ flutter build macos --release
 
 * Thanks to MTRNord and Sorunome for developing.
 
-* Also thanks to all translators and testers! With your help, fluffychat is now available in more than 12 languages.
+* Also thanks to all translators and testers! With your help, afterdamage is now available in more than 12 languages.
 
 * <a href="https://github.com/madsrh/WoodenBeaver">WoodenBeaver</a> sound theme for the notification sound.
 

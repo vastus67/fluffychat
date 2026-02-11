@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/new_group/new_group.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/new_group/new_group.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 
 class NewGroupView extends StatelessWidget {
   final NewGroupController controller;
@@ -59,7 +60,7 @@ class NewGroupView extends StatelessWidget {
               child: CircleAvatar(
                 radius: Avatar.defaultSize,
                 child: avatar == null
-                    ? const Icon(Icons.add_a_photo_outlined)
+                    ? const Icon(FontAwesomeIcons.cameraRetro)
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(90),
                         child: Image.memory(
@@ -80,7 +81,7 @@ class NewGroupView extends StatelessWidget {
                 autocorrect: false,
                 readOnly: controller.loading,
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.people_outlined),
+                  prefixIcon: const Icon(FontAwesomeIcons.users),
                   labelText: controller.createGroupType == CreateGroupType.space
                       ? L10n.of(context).spaceName
                       : L10n.of(context).groupName,
@@ -90,7 +91,7 @@ class NewGroupView extends StatelessWidget {
             const SizedBox(height: 16),
             SwitchListTile.adaptive(
               contentPadding: const EdgeInsets.symmetric(horizontal: 32),
-              secondary: const Icon(Icons.public_outlined),
+              secondary: const Icon(FontAwesomeIcons.globe),
               title: Text(
                 controller.createGroupType == CreateGroupType.space
                     ? L10n.of(context).spaceIsPublic
@@ -107,7 +108,7 @@ class NewGroupView extends StatelessWidget {
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 32,
                       ),
-                      secondary: const Icon(Icons.search_outlined),
+                      secondary: const Icon(FontAwesomeIcons.magnifyingGlass),
                       title: Text(L10n.of(context).groupCanBeFoundViaSearch),
                       value: controller.groupCanBeFound,
                       onChanged: controller.loading
@@ -126,7 +127,7 @@ class NewGroupView extends StatelessWidget {
                         horizontal: 32,
                       ),
                       secondary: Icon(
-                        Icons.lock_outlined,
+                        FontAwesomeIcons.lock,
                         color: theme.colorScheme.onSurface,
                       ),
                       title: Text(
@@ -147,7 +148,7 @@ class NewGroupView extends StatelessWidget {
                       ),
                       trailing: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Icon(Icons.info_outlined),
+                        child: Icon(FontAwesomeIcons.circleInfo),
                       ),
                       subtitle: Text(L10n.of(context).newSpaceDescription),
                     )
@@ -178,7 +179,7 @@ class NewGroupView extends StatelessWidget {
                   ? const SizedBox.shrink()
                   : ListTile(
                       leading: Icon(
-                        Icons.warning_outlined,
+                        FontAwesomeIcons.triangleExclamation,
                         color: theme.colorScheme.error,
                       ),
                       title: Text(

@@ -6,14 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/new_private_chat/new_private_chat_view.dart';
-import 'package:fluffychat/pages/new_private_chat/qr_scanner_modal.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
-import 'package:fluffychat/utils/fluffy_share.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/new_private_chat/new_private_chat_view.dart';
+import 'package:afterdamage/pages/new_private_chat/qr_scanner_modal.dart';
+import 'package:afterdamage/utils/adaptive_bottom_sheet.dart';
+import 'package:afterdamage/utils/fluffy_share.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/url_launcher.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 import '../../widgets/adaptive_dialogs/user_dialog.dart';
 
 class NewPrivateChat extends StatefulWidget {

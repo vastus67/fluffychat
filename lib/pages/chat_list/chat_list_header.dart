@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_list/chat_list.dart';
-import 'package:fluffychat/pages/chat_list/client_chooser_button.dart';
-import 'package:fluffychat/utils/sync_status_localization.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_list/chat_list.dart';
+import 'package:afterdamage/pages/chat_list/client_chooser_button.dart';
+import 'package:afterdamage/utils/sync_status_localization.dart';
+import 'package:afterdamage/widgets/app_destinations.dart';
 import '../../widgets/matrix.dart';
 
 class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
@@ -24,6 +27,11 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final client = Matrix.of(context).client;
 
+    // Show hamburger menu on compact layouts when not using column mode or navigation rail
+    final showMenuButton = AppDestinations.isCompact(context) &&
+        !FluffyThemes.isColumnMode(context) &&
+        !AppSettings.displayNavigationRail.value;
+
     return SliverAppBar(
       floating: true,
       toolbarHeight: 72,
@@ -31,6 +39,15 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       backgroundColor: Colors.transparent,
       automaticallyImplyLeading: false,
+      leading: showMenuButton
+          ? IconButton(
+              icon: const Icon(FontAwesomeIcons.bars),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: L10n.of(context).openAppDrawer,
+            )
+          : null,
       title: StreamBuilder(
         stream: client.onSyncStatus.stream,
         builder: (context, snapshot) {
@@ -68,14 +85,14 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                   ? controller.isSearchMode
                         ? IconButton(
                             tooltip: L10n.of(context).cancel,
-                            icon: const Icon(Icons.close_outlined),
+                            icon: const Icon(FontAwesomeIcons.xmark),
                             onPressed: controller.cancelSearch,
                             color: theme.colorScheme.onPrimaryContainer,
                           )
                         : IconButton(
                             onPressed: controller.startSearch,
                             icon: Icon(
-                              Icons.search_outlined,
+                              FontAwesomeIcons.magnifyingGlass,
                               color: theme.colorScheme.onPrimaryContainer,
                             ),
                           )
@@ -117,7 +134,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                               ),
                               textStyle: const TextStyle(fontSize: 12),
                             ),
-                            icon: const Icon(Icons.edit_outlined, size: 16),
+                            icon: const Icon(FontAwesomeIcons.penToSquare, size: 16),
                             label: Text(
                               controller.searchServer ??
                                   Matrix.of(context).client.homeserver!.host,

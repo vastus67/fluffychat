@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_list/chat_list.dart';
-import 'package:fluffychat/widgets/navigation_rail.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_list/chat_list.dart';
+import 'package:afterdamage/widgets/app_destinations.dart';
+import 'package:afterdamage/widgets/app_navigation_shell.dart';
+import 'package:afterdamage/widgets/navigation_rail.dart';
 import 'chat_list_body.dart';
 
 class ChatListView extends StatelessWidget {
@@ -16,7 +19,12 @@ class ChatListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
+    // Use custom navigation shell only when NOT in column mode
+    // and navigation rail is not explicitly enabled
+    final useCustomNavigation = !FluffyThemes.isColumnMode(context) &&
+        !AppSettings.displayNavigationRail.value;
+
+    final scaffoldBody = PopScope(
       canPop: !controller.isSearchMode && controller.activeSpaceId == null,
       onPopInvokedWithResult: (pop, _) {
         if (pop) return;
@@ -45,24 +53,36 @@ class ChatListView extends StatelessWidget {
               onTap: FocusManager.instance.primaryFocus?.unfocus,
               excludeFromSemantics: true,
               behavior: HitTestBehavior.translucent,
-              child: Scaffold(
-                body: ChatListViewBody(controller),
-                floatingActionButton:
-                    !controller.isSearchMode && controller.activeSpaceId == null
-                    ? FloatingActionButton.extended(
-                        onPressed: () => context.go('/rooms/newprivatechat'),
-                        icon: const Icon(Icons.add_outlined),
-                        label: Text(
-                          L10n.of(context).chat,
-                          overflow: TextOverflow.fade,
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+              child: ChatListViewBody(controller),
             ),
           ),
         ],
       ),
+    );
+
+    final fab = !controller.isSearchMode && controller.activeSpaceId == null
+        ? FloatingActionButton.extended(
+            onPressed: () => context.go('/rooms/newprivatechat'),
+            icon: const Icon(FontAwesomeIcons.plus),
+            label: Text(
+              L10n.of(context).chat,
+              overflow: TextOverflow.fade,
+            ),
+          )
+        : null;
+
+    // Wrap with AppNavigationShell if using custom navigation
+    if (useCustomNavigation) {
+      return AppNavigationShell(
+        body: scaffoldBody,
+        floatingActionButton: fab,
+      );
+    }
+
+    // When not using custom navigation, still need a Scaffold for FAB
+    return Scaffold(
+      body: scaffoldBody,
+      floatingActionButton: fab,
     );
   }
 }

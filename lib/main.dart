@@ -9,10 +9,10 @@ import 'package:flutter_vodozemac/flutter_vodozemac.dart' as vod;
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/client_manager.dart';
-import 'package:fluffychat/utils/notification_background_handler.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/utils/client_manager.dart';
+import 'package:afterdamage/utils/notification_background_handler.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
 import 'config/setting_keys.dart';
 import 'utils/background_push.dart';
 import 'widgets/fluffy_chat_app.dart';
@@ -38,7 +38,15 @@ void main() async {
   final store = await AppSettings.init();
   Logs().i('Welcome to ${AppSettings.applicationName.value} <3');
 
-  await vod.init(wasmPath: './assets/assets/vodozemac/');
+  if (!PlatformInfos.isWeb) {
+    try {
+      await vod.init(wasmPath: './assets/assets/vodozemac/');
+    } catch (e) {
+      Logs().w('Failed to initialize vodozemac (encryption will not work): $e');
+    }
+  } else {
+    Logs().w('Skipping vodozemac initialization on web (encryption disabled)');
+  }
 
   Logs().nativeColors = !PlatformInfos.isIOS;
   final clients = await ClientManager.getClients(store: store);

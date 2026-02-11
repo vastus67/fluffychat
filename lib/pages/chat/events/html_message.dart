@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:collection/collection.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -8,11 +9,11 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/utils/code_highlight_theme.dart';
-import 'package:fluffychat/utils/event_checkbox_extension.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:afterdamage/utils/code_highlight_theme.dart';
+import 'package:afterdamage/utils/event_checkbox_extension.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/mxc_image.dart';
 import '../../../utils/url_launcher.dart';
 
 class HtmlMessage extends StatelessWidget {
@@ -265,7 +266,7 @@ class HtmlMessage extends StatelessWidget {
                 children: [
                   if (!isCheckbox) ...[
                     if (node.parent?.localName == 'ul')
-                      const TextSpan(text: '• '),
+                      const TextSpan(text: 'â€¢ '),
                     if (node.parent?.localName == 'ol')
                       TextSpan(
                         text:
@@ -415,7 +416,7 @@ class HtmlMessage extends StatelessWidget {
                   children: [
                     WidgetSpan(
                       child: Icon(
-                        obscure ? Icons.arrow_right : Icons.arrow_drop_down,
+                        obscure ? FontAwesomeIcons.arrowRight : FontAwesomeIcons.caretDown,
                         size: fontSize * 1.2,
                         color: textColor,
                       ),

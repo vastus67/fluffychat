@@ -1,19 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat_list/chat_list.dart';
-import 'package:fluffychat/pages/chat_list/chat_list_item.dart';
-import 'package:fluffychat/pages/chat_list/dummy_chat_list_item.dart';
-import 'package:fluffychat/pages/chat_list/search_title.dart';
-import 'package:fluffychat/pages/chat_list/space_view.dart';
-import 'package:fluffychat/pages/chat_list/status_msg_list.dart';
-import 'package:fluffychat/utils/stream_extension.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/public_room_dialog.dart';
-import 'package:fluffychat/widgets/avatar.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat_list/chat_list.dart';
+import 'package:afterdamage/pages/chat_list/chat_list_item.dart';
+import 'package:afterdamage/pages/chat_list/dummy_chat_list_item.dart';
+import 'package:afterdamage/pages/chat_list/search_title.dart';
+import 'package:afterdamage/pages/chat_list/space_view.dart';
+import 'package:afterdamage/pages/chat_list/status_msg_list.dart';
+import 'package:afterdamage/utils/stream_extension.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/public_room_dialog.dart';
+import 'package:afterdamage/widgets/avatar.dart';
 import '../../config/themes.dart';
 import '../../widgets/adaptive_dialogs/user_dialog.dart';
 import '../../widgets/matrix.dart';
@@ -76,17 +77,17 @@ class ChatListViewBody extends StatelessWidget {
                   if (controller.isSearchMode) ...[
                     SearchTitle(
                       title: L10n.of(context).publicRooms,
-                      icon: const Icon(Icons.explore_outlined),
+                      icon: const Icon(FontAwesomeIcons.compass),
                     ),
                     PublicRoomsHorizontalList(publicRooms: publicRooms),
                     SearchTitle(
                       title: L10n.of(context).publicSpaces,
-                      icon: const Icon(Icons.workspaces_outlined),
+                      icon: const Icon(FontAwesomeIcons.cubes),
                     ),
                     PublicRoomsHorizontalList(publicRooms: publicSpaces),
                     SearchTitle(
                       title: L10n.of(context).users,
-                      icon: const Icon(Icons.group_outlined),
+                      icon: const Icon(FontAwesomeIcons.users),
                     ),
                     AnimatedContainer(
                       clipBehavior: Clip.hardEdge,
@@ -174,7 +175,7 @@ class ChatListViewBody extends StatelessWidget {
                   if (controller.isSearchMode)
                     SearchTitle(
                       title: L10n.of(context).chats,
-                      icon: const Icon(Icons.forum_outlined),
+                      icon: const Icon(FontAwesomeIcons.comments),
                     ),
                   if (client.prevBatch != null &&
                       rooms.isEmpty &&
@@ -193,7 +194,7 @@ class ChatListViewBody extends StatelessWidget {
                               ],
                             ),
                             Icon(
-                              CupertinoIcons.chat_bubble_text_fill,
+                              FontAwesomeIcons.solidComment,
                               size: 128,
                               color: theme.colorScheme.secondary,
                             ),

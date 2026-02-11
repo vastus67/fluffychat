@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:afterdamage/config/app_config.dart';
+import 'package:afterdamage/theme/dracula_theme.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/mxc_image.dart';
 
 class MessageReactions extends StatelessWidget {
   final Event event;
@@ -153,7 +154,7 @@ class _Reaction extends StatelessWidget {
     return InkWell(
       onTap: () => onTap != null ? onTap!() : null,
       onLongPress: () => onLongPress != null ? onLongPress!() : null,
-      borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
+      borderRadius: BorderRadius.circular(DraculaTheme.radiusMedium),
       child: Container(
         decoration: BoxDecoration(
           color: reacted == true
@@ -163,11 +164,23 @@ class _Reaction extends StatelessWidget {
             color: reacted == true
                 ? theme.colorScheme.primary
                 : theme.colorScheme.surfaceContainerHigh,
-            width: 1,
+            width: 1.5,
           ),
-          borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
+          borderRadius: BorderRadius.circular(DraculaTheme.radiusMedium),
+          boxShadow: reacted == true
+              ? [
+                  BoxShadow(
+                    color: theme.colorScheme.primary.withOpacity(0.3),
+                    blurRadius: 8,
+                    spreadRadius: 0,
+                  ),
+                ]
+              : null,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        padding: const EdgeInsets.symmetric(
+          horizontal: DraculaTheme.spacingSm,
+          vertical: DraculaTheme.spacingXs,
+        ),
         child: content,
       ),
     );

@@ -1,20 +1,22 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/pages/chat/events/state_message.dart';
-import 'package:fluffychat/utils/account_config.dart';
-import 'package:fluffychat/utils/color_value.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/chat/events/state_message.dart';
+import 'package:afterdamage/theme/dracula_accents.dart';
+import 'package:afterdamage/utils/account_config.dart';
+import 'package:afterdamage/utils/color_value.dart';
+import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/mxc_image.dart';
 import '../../config/app_config.dart';
 import '../../widgets/settings_switch_list_tile.dart';
 import 'settings_style.dart';
@@ -51,17 +53,17 @@ class SettingsStyleView extends StatelessWidget {
                   ButtonSegment(
                     value: ThemeMode.light,
                     label: Text(L10n.of(context).lightTheme),
-                    icon: const Icon(Icons.light_mode_outlined),
+                    icon: const Icon(FontAwesomeIcons.sun),
                   ),
                   ButtonSegment(
                     value: ThemeMode.dark,
                     label: Text(L10n.of(context).darkTheme),
-                    icon: const Icon(Icons.dark_mode_outlined),
+                    icon: const Icon(FontAwesomeIcons.moon),
                   ),
                   ButtonSegment(
                     value: ThemeMode.system,
                     label: Text(L10n.of(context).systemTheme),
-                    icon: const Icon(Icons.auto_mode_outlined),
+                    icon: const Icon(FontAwesomeIcons.circleHalfStroke),
                   ),
                 ],
               ),
@@ -117,7 +119,7 @@ class SettingsStyleView extends StatelessWidget {
                               child: controller.currentColor == color
                                   ? Center(
                                       child: Icon(
-                                        Icons.check,
+                                        FontAwesomeIcons.check,
                                         size: 16,
                                         color: Theme.of(
                                           context,
@@ -133,6 +135,75 @@ class SettingsStyleView extends StatelessWidget {
                   },
                 );
               },
+            ),
+            Divider(color: theme.dividerColor),
+            ListTile(
+              title: Text(
+                'Dracula Accent Theme',
+                style: TextStyle(
+                  color: theme.colorScheme.secondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              child: Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                alignment: WrapAlignment.center,
+                children: DraculaAccent.values.map((accent) {
+                  final isSelected = controller.currentDraculaAccent == accent;
+                  return GestureDetector(
+                    onTap: () => controller.setDraculaAccent(accent),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        color: accent.previewColor,
+                        borderRadius: BorderRadius.circular(16),
+                        border: isSelected
+                            ? Border.all(
+                                color: theme.colorScheme.onSurface,
+                                width: 3,
+                              )
+                            : null,
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: accent.previewColor.withOpacity(0.4),
+                                  blurRadius: 12,
+                                  spreadRadius: 2,
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            accent.displayName,
+                            style: TextStyle(
+                              color: theme.colorScheme.surface,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          if (isSelected) ...[
+                            const SizedBox(height: 4),
+                            Icon(
+                              FontAwesomeIcons.solidCircleCheck,
+                              color: theme.colorScheme.surface,
+                              size: 20,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
             Divider(color: theme.dividerColor),
             ListTile(
@@ -286,13 +357,13 @@ class SettingsStyleView extends StatelessWidget {
                               theme.colorScheme.onSecondaryContainer,
                         ),
                         onPressed: controller.setWallpaper,
-                        icon: const Icon(Icons.edit_outlined),
+                        icon: const Icon(FontAwesomeIcons.penToSquare),
                         label: Text(L10n.of(context).setWallpaper),
                       ),
                       trailing: accountConfig.wallpaperUrl == null
                           ? null
                           : IconButton(
-                              icon: const Icon(Icons.delete_outlined),
+                              icon: const Icon(FontAwesomeIcons.trash),
                               color: theme.colorScheme.error,
                               onPressed: controller.deleteChatWallpaper,
                             ),
@@ -325,7 +396,7 @@ class SettingsStyleView extends StatelessWidget {
             ),
             ListTile(
               title: Text(L10n.of(context).fontSize),
-              trailing: Text('× ${AppSettings.fontSizeFactor.value}'),
+              trailing: Text('Ã— ${AppSettings.fontSizeFactor.value}'),
             ),
             Slider.adaptive(
               min: 0.5,

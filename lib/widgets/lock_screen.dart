@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/l10n/l10n.dart';
-import 'package:fluffychat/widgets/app_lock.dart';
+import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/widgets/app_lock.dart';
 
 class LockScreen extends StatefulWidget {
   const LockScreen({super.key});
@@ -78,9 +79,7 @@ class _LockScreenState extends State<LockScreen> {
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  Center(
-                    child: Image.asset('assets/info-logo.png', width: 256),
-                  ),
+                  const SizedBox(height: 64),  // Space instead of logo
                   TextField(
                     controller: _textEditingController,
                     textInputAction: TextInputAction.done,
@@ -97,7 +96,7 @@ class _LockScreenState extends State<LockScreen> {
                       errorText: _errorText,
                       hintText: '****',
                       suffix: IconButton(
-                        icon: const Icon(Icons.lock_open_outlined),
+                        icon: const FaIcon(FontAwesomeIcons.lockOpen),
                         onPressed: () => tryUnlock(_textEditingController.text),
                       ),
                     ),

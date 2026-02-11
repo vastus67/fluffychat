@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/utils/string_color.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
-import 'package:fluffychat/widgets/presence_builder.dart';
+import 'package:afterdamage/utils/string_color.dart';
+import 'package:afterdamage/widgets/mxc_image.dart';
+import 'package:afterdamage/widgets/presence_builder.dart';
+import 'package:afterdamage/widgets/hover_builder.dart';
+import 'package:afterdamage/config/themes.dart';
 
 class Avatar extends StatelessWidget {
   final Uri? mxContent;
@@ -94,7 +98,7 @@ class Avatar extends StatelessWidget {
                     )
                   : Center(
                       child: Icon(
-                        Icons.person_2,
+                        FontAwesomeIcons.user,
                         color: theme.colorScheme.tertiary,
                         size: size / 1.5,
                       ),
@@ -147,9 +151,19 @@ class Avatar extends StatelessWidget {
       ],
     );
     if (onTap == null) return container;
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(onTap: onTap, child: container),
+    return HoverBuilder(
+      builder: (context, hovered) => MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: AnimatedScale(
+            duration: FluffyThemes.animationDuration,
+            curve: FluffyThemes.animationCurve,
+            scale: hovered ? 1.05 : 1.0,
+            child: container,
+          ),
+        ),
+      ),
     );
   }
 }
