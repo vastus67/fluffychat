@@ -1348,10 +1348,11 @@ class ChatController extends State<ChatPageWithRoom>
     final voipPlugin = Matrix.of(context).voipPlugin;
     try {
       await voipPlugin!.voip.inviteToCall(room, callType);
-    } catch (e) {
+    } catch (e, s) {
+      Logs().e('Failed to start call', e, s);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(e.toLocalizedString(context))));
+      ).showSnackBar(SnackBar(content: Text('Call error: $e')));
     }
   }
 
