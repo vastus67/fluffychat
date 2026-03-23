@@ -17,6 +17,19 @@ import 'package:afterdamage/utils/voip/callkit_service.dart';
 import '../../utils/voip/user_media_manager.dart';
 import '../widgets/matrix.dart';
 
+/// Holds the state of an active 1:1 call for the banner UI.
+class ActiveCallState {
+  final String callId;
+  final CallSession call;
+  final Client client;
+
+  const ActiveCallState({
+    required this.callId,
+    required this.call,
+    required this.client,
+  });
+}
+
 class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   final MatrixState matrix;
   Client get client => matrix.client;
@@ -34,6 +47,10 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   OverlayEntry? overlayEntry;
   BuildContext get context => matrix.context;
 
+  /// Notifier for the active 1:1 call. Used by the inline CallBanner on web.
+  final ValueNotifier<ActiveCallState?> activeCallNotifier =
+      ValueNotifier<ActiveCallState?>(null);
+
   void dispose() {
     if (!kIsWeb) {
       WidgetsBinding.instance.removeObserver(this);
@@ -48,42 +65,35 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   }
 
   void addCallingOverlay(String callId, CallSession call) {
-    final context = kIsWeb
-        ? ChatList.contextForVoip!
-        : this.context; // web is weird
+    // On web, use the inline CallBanner instead of a fullscreen overlay/dialog
+    if (kIsWeb) {
+      activeCallNotifier.value = ActiveCallState(
+        callId: callId,
+        call: call,
+        client: client,
+      );
+      return;
+    }
+
+    final context = this.context;
 
     if (overlayEntry != null) {
       Logs().e('[VOIP] addCallingOverlay: The call session already exists?');
       overlayEntry!.remove();
     }
-    // Overlay.of(context) is broken on web
-    // falling back on a dialog
-    if (kIsWeb) {
-      showDialog(
+    overlayEntry = OverlayEntry(
+      builder: (_) => Calling(
         context: context,
-        builder: (context) => Calling(
-          context: context,
-          client: client,
-          callId: callId,
-          call: call,
-          onClear: () => Navigator.of(context).pop(),
-        ),
-      );
-    } else {
-      overlayEntry = OverlayEntry(
-        builder: (_) => Calling(
-          context: context,
-          client: client,
-          callId: callId,
-          call: call,
-          onClear: () {
-            overlayEntry?.remove();
-            overlayEntry = null;
-          },
-        ),
-      );
-      Overlay.of(context).insert(overlayEntry!);
-    }
+        client: client,
+        callId: callId,
+        call: call,
+        onClear: () {
+          overlayEntry?.remove();
+          overlayEntry = null;
+        },
+      ),
+    );
+    Overlay.of(context).insert(overlayEntry!);
   }
 
   @override
@@ -178,6 +188,16 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
       await CallkitService.instance.endCall(session.callId);
     } catch (e) {
       Logs().w('[VOIP] CallKit endCall failed: $e');
+    }
+
+    // Clear the inline call banner on web
+    if (kIsWeb) {
+      // Small delay so the "Call ended" state is visible briefly
+      Future.delayed(const Duration(seconds: 2), () {
+        if (activeCallNotifier.value?.callId == session.callId) {
+          activeCallNotifier.value = null;
+        }
+      });
     }
 
     if (overlayEntry != null) {

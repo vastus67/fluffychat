@@ -33,6 +33,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/voip/remote_audio_player.dart';
 import 'package:afterdamage/utils/voip/video_renderer.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'pip/pip_view.dart';
@@ -591,6 +592,8 @@ class MyCallingPage extends State<Calling> {
                 decoration: const BoxDecoration(color: Colors.black87),
                 child: Stack(
                   children: [
+                    // Hidden audio player to ensure remote audio works on web
+                    RemoteAudioPlayer(call: call),
                     ..._buildContent(orientation, isFloating),
                     if (!isFloating)
                       Positioned(

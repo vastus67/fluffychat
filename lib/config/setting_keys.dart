@@ -89,6 +89,16 @@ enum AppSettings<T> {
     if (store.getBool(AppSettings.sendOnEnter.key) == null) {
       await store.setBool(AppSettings.sendOnEnter.key, !PlatformInfos.isMobile);
     }
+
+    // Migration: clear stale experimentalVoip=false so config.json can apply.
+    // Remove this migration after a few releases.
+    if (kIsWeb &&
+        store.getBool(AppSettings.experimentalVoip.key) == false &&
+        store.getBool('chat.fluffy.voip_migrated_v1') != true) {
+      await store.remove(AppSettings.experimentalVoip.key);
+      await store.setBool('chat.fluffy.voip_migrated_v1', true);
+    }
+
     if (kIsWeb && loadWebConfigFile) {
       try {
         final configJsonString = utf8.decode(
