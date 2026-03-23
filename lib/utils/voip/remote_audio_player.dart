@@ -40,16 +40,19 @@ class _RemoteAudioPlayerState extends State<RemoteAudioPlayer> {
   }
 
   Future<void> _attachRemoteAudio() async {
-    if (!kIsWeb || _attached) return;
+    if (!kIsWeb) return;
 
     final remoteStream = widget.call.remoteUserMediaStream?.stream;
     if (remoteStream == null) return;
 
     try {
-      _audioRenderer ??= RTCVideoRenderer();
-      await _audioRenderer!.initialize();
+      if (_audioRenderer == null) {
+        _audioRenderer = RTCVideoRenderer();
+        await _audioRenderer!.initialize();
+      }
       _audioRenderer!.srcObject = remoteStream;
       _attached = true;
+      if (mounted) setState(() {});
       Logs().i('[RemoteAudioPlayer] Attached remote audio stream');
     } catch (e) {
       Logs().w('[RemoteAudioPlayer] Failed to attach remote audio: $e');
@@ -83,7 +86,19 @@ class _RemoteAudioPlayerState extends State<RemoteAudioPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    // Invisible — audio is played by the underlying HTML <video> element
-    return const SizedBox.shrink();
+    // On web, we MUST render an RTCVideoView so the underlying HTML <video>
+    // element is actually inserted into the DOM — otherwise audio won't play.
+    // We wrap it in a 0x0 box so it's invisible.
+    if (!kIsWeb || _audioRenderer == null || !_attached) {
+      return const SizedBox.shrink();
+    }
+    return SizedBox(
+      width: 0,
+      height: 0,
+      child: RTCVideoView(
+        _audioRenderer!,
+        objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+      ),
+    );
   }
 }
