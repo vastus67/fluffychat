@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-FLUTTER_VERSION="${FLUTTER_VERSION:-3.27.4}"
+FLUTTER_VERSION="${FLUTTER_VERSION:-3.41.3}"
 FLUTTER_DIR="$HOME/flutter"
 
 echo "==> Installing Flutter $FLUTTER_VERSION"
