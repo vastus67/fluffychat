@@ -20,7 +20,7 @@
   "sendOnEnter": false,
   "showPresences": true,
   "displayNavigationRail": false,
-  "experimentalVoip": false,
+  "experimentalVoip": true,
   "shareKeysWith": "all",
   "noEncryptionWarningShown": false,
   "displayChatDetailsColumn": false,
