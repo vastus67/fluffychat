@@ -271,7 +271,28 @@ class ChatInputRow extends StatelessWidget {
                     height: height,
                     width: height,
                     alignment: Alignment.center,
-                    child: IconButton(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        PopupMenuButton<int>(
+                          useRootNavigator: true,
+                          tooltip: 'Burn on Read',
+                          initialValue: controller.burnTime,
+                          icon: Icon(
+                            FontAwesomeIcons.fire, 
+                            color: controller.burnTime > 0 ? Colors.orange : theme.colorScheme.onPrimaryContainer,
+                            size: 16,
+                          ),
+                          onSelected: controller.setBurnTime,
+                          itemBuilder: (context) => [
+                            const PopupMenuItem<int>(value: 0, child: Text('Off')),
+                            const PopupMenuItem<int>(value: 3, child: Text('3 seconds')),
+                            const PopupMenuItem<int>(value: 5, child: Text('5 seconds')),
+                            const PopupMenuItem<int>(value: 10, child: Text('10 seconds')),
+                            const PopupMenuItem<int>(value: 30, child: Text('30 seconds')),
+                          ],
+                        ),
+                        IconButton(
                       tooltip: L10n.of(context).emojis,
                       color: theme.colorScheme.onPrimaryContainer,
                       icon: PageTransitionSwitcher(
@@ -298,7 +319,9 @@ class ChatInputRow extends StatelessWidget {
                       ),
                       onPressed: controller.emojiPickerAction,
                     ),
-                  ),
+                  ],
+                ),
+              ),
                   if (Matrix.of(context).isMultiAccount &&
                       Matrix.of(context).hasComplexBundles &&
                       Matrix.of(context).currentBundle!.length > 1)

@@ -1,7 +1,7 @@
 {
     "repeatPassword": "Salasana uudelleen",
     "@repeatPassword": {},
-    "about": "Tietoa FluffyChatista",
+    "about": "Tietoa Afterdamage Chatista",
     "@about": {
         "type": "String",
         "placeholders": {}
@@ -800,7 +800,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "inviteText": "{username} kutsui sinut FluffyChattiin.\n1. Viereaile sivulla: https://fluffychat.im ja asenna sovellus\n2. Rekisteröidy tai kirjaudu sisään\n3. Avaa kutsulinkki:\n{link}",
+    "inviteText": "{username} kutsui sinut Afterdamage Chattiin.\n1. Viereaile sivulla: https://fluffychat.im ja asenna sovellus\n2. Rekisteröidy tai kirjaudu sisään\n3. Avaa kutsulinkki:\n{link}",
     "@inviteText": {
         "type": "String",
         "placeholders": {
@@ -1239,7 +1239,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "fluffychat": "FluffyChat",
+    "fluffychat": "Afterdamage Chat",
     "@fluffychat": {
         "type": "String",
         "placeholders": {}
@@ -1645,7 +1645,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "title": "FluffyChat",
+    "title": "Afterdamage Chat",
     "@title": {
         "description": "Title for the application",
         "type": "String",
@@ -2332,7 +2332,7 @@
     "@pleaseEnterRecoveryKeyDescription": {},
     "unlockOldMessages": "Pura vanhojen viestien salaus",
     "@unlockOldMessages": {},
-    "indexedDbErrorLong": "Viestivarasto ei ole käytössä yksityisselauksessa oletuksena.\nKäythän osoitteessa\n - about:config\n - Aseta dom.indexedDB.privateBrowsing.enabled arvoon true\nMuuten FluffyChatin käyttäminen ei ole mahdollista.",
+    "indexedDbErrorLong": "Viestivarasto ei ole käytössä yksityisselauksessa oletuksena.\nKäythän osoitteessa\n - about:config\n - Aseta dom.indexedDB.privateBrowsing.enabled arvoon true\nMuuten Afterdamage Chatin käyttäminen ei ole mahdollista.",
     "@indexedDbErrorLong": {},
     "saveKeyManuallyDescription": "Tallenna tämä avain manuaalisesti käyttäen järjestelmän jakodialogia tai leikepöytää.",
     "@saveKeyManuallyDescription": {},
@@ -2381,11 +2381,11 @@
     "@callingPermissions": {},
     "callingAccount": "Soittamistunnus",
     "@callingAccount": {},
-    "callingAccountDetails": "Sallii FluffyChatin käyttää Androidin omaa Puhelut-sovellusta.",
+    "callingAccountDetails": "Sallii Afterdamage Chatin käyttää Androidin omaa Puhelut-sovellusta.",
     "@callingAccountDetails": {},
     "appearOnTop": "Näy päällä",
     "@appearOnTop": {},
-    "appearOnTopDetails": "Sallii sovelluksen näkyä muiden sovellusten päällä (tätä ei tarvita, mikäli olet jo määrittänyt FluffyChatin puhelin-tunnukseksi)",
+    "appearOnTopDetails": "Sallii sovelluksen näkyä muiden sovellusten päällä (tätä ei tarvita, mikäli olet jo määrittänyt Afterdamage Chatin puhelin-tunnukseksi)",
     "@appearOnTopDetails": {},
     "newSpace": "Uusi tila",
     "@newSpace": {},
@@ -2397,11 +2397,11 @@
     "@allSpaces": {},
     "screenSharingTitle": "ruudunjako",
     "@screenSharingTitle": {},
-    "otherCallingPermissions": "Mikrofoni, kamera ja muut FluffyChatin oikeudet",
+    "otherCallingPermissions": "Mikrofoni, kamera ja muut Afterdamage Chatin oikeudet",
     "@otherCallingPermissions": {},
     "newGroup": "Uusi ryhmä",
     "@newGroup": {},
-    "screenSharingDetail": "Jaat ruutuasi FluffyChatissä",
+    "screenSharingDetail": "Jaat ruutuasi Afterdamage Chatissä",
     "@screenSharingDetail": {},
     "hugContent": "{senderName} halaa sinua",
     "@hugContent": {
@@ -2660,7 +2660,7 @@
     "@changelog": {},
     "continueText": "Jatka",
     "@continueText": {},
-    "welcomeText": "Hei 👋, Tämä on FluffyChat. Voit kirjautua sisään mihin tahansa kotipalvelimeen, joka on yhteensopiva https:/matrix.org:in kanssa. Sitten jutellaan kenen kanssa tahansa. Se on hajautettu viestiverkosto!",
+    "welcomeText": "Hei 👋, Tämä on Afterdamage Chat. Voit kirjautua sisään mihin tahansa kotipalvelimeen, joka on yhteensopiva https:/matrix.org:in kanssa. Sitten jutellaan kenen kanssa tahansa. Se on hajautettu viestiverkosto!",
     "@welcomeText": {},
     "serverInformation": "Palvelimen tiedot:",
     "@serverInformation": {},
@@ -3239,7 +3239,7 @@
     "@appWantsToUseForLoginDescription": {},
     "waitingForServer": "Odotetaan palvelinta...",
     "@waitingForServer": {},
-    "appIntroduction": "FluffyChatin avulla voit keskustella ystäviesi kanssa eri pikaviestimien kautta. Lue lisää osoitteesta https://matrix.org tai napauta *Jatka*.",
+    "appIntroduction": "Afterdamage Chatin avulla voit keskustella ystäviesi kanssa eri pikaviestimien kautta. Lue lisää osoitteesta https://matrix.org tai napauta *Jatka*.",
     "@appIntroduction": {},
     "newChatRequest": "📩 Uusi pikakeskustelupyyntö",
     "@newChatRequest": {},

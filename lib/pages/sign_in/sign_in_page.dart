@@ -63,7 +63,7 @@ class SignInPage extends StatelessWidget {
                         fillColor: theme.colorScheme.secondaryContainer,
                         border: OutlineInputBorder(
                           borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(99),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         errorText: state.publicHomeservers.error
                             ?.toLocalizedString(context),

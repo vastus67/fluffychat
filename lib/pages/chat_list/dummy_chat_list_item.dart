@@ -44,7 +44,7 @@ class DummyChatListItem extends StatelessWidget {
               width: 14,
               decoration: BoxDecoration(
                 color: subtitleColor,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(6),
               ),
             ),
             const SizedBox(width: 12),
@@ -53,7 +53,7 @@ class DummyChatListItem extends StatelessWidget {
               width: 14,
               decoration: BoxDecoration(
                 color: subtitleColor,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(6),
               ),
             ),
           ],

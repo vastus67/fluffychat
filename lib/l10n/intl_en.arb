@@ -2471,8 +2471,10 @@
   "@unsupportedAndroidVersionLong": {},
   "videoCallsBetaWarning": "Please note that video calls are currently in beta. They might not work as expected or work at all on all platforms.",
   "@videoCallsBetaWarning": {},
-  "experimentalVideoCalls": "Experimental video calls",
+  "experimentalVideoCalls": "Enable voice & video calls",
   "@experimentalVideoCalls": {},
+  "enableCallsDescription": "Allow making and receiving 1:1 voice and video calls in direct chats",
+  "@enableCallsDescription": {},
   "emailOrUsername": "Email or username",
   "@emailOrUsername": {},
   "indexedDbErrorTitle": "Private mode issues",
@@ -2748,8 +2750,12 @@
   "@profileNotFound": {},
   "setTheme": "Set theme:",
   "@setTheme": {},
-  "setColorTheme": "Set color theme:",
+  "setColorTheme": "Set color scheme:",
   "@setColorTheme": {},
+  "backgroundColor": "Background color",
+  "@backgroundColor": {},
+  "homeserverSearchError": "Could not connect to homeserver. Check the address and try again.",
+  "@homeserverSearchError": {},
   "invite": "Invite",
   "@invite": {},
   "inviteGroupChat": "📨 Group chat invite",
@@ -3501,5 +3507,19 @@
   "signUpGreeting": "Afterdamage Chat is decentralized! Select a server where you want to create your account and let's go!",
   "signInGreeting": "You already have an account in Matrix? Welcome back! Select your homeserver and sign in.",
   "appIntro": "With Afterdamage Chat you can chat with your friends. It's a secure decentralized [matrix] messenger! Learn more on https://matrix.org if you like or just sign up.",
-  "theProcessWasCanceled": "The process was canceled."
+  "theProcessWasCanceled": "The process was canceled.",
+  "noSpacesFound": "No spaces found",
+  "@noSpacesFound": {
+    "type": "String",
+    "placeholders": {}
+  },
+  "numberRooms": "{count} rooms",
+  "@numberRooms": {
+    "type": "String",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
@@ -58,6 +59,21 @@ class SettingsSecurityView extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                  ),
+                  SettingsSwitchListTile.adaptive(
+                    title: 'Block Screenshots',
+                    subtitle: 'Prevent capturing screenshots and screen recording',
+                    setting: AppSettings.blockScreenshots,
+                    onChanged: (val) async {
+                      try {
+                        // ignore: avoid_dynamic_calls
+                        if (val) {
+                          await (const MethodChannel('screen_protector')).invokeMethod('preventScreenshotOn');
+                        } else {
+                          await (const MethodChannel('screen_protector')).invokeMethod('preventScreenshotOff');
+                        }
+                      } catch(e) {}
+                    },
                   ),
                   SettingsSwitchListTile.adaptive(
                     title: L10n.of(context).sendTypingNotifications,

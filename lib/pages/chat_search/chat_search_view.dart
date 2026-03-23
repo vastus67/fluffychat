@@ -62,7 +62,7 @@ class ChatSearchView extends StatelessWidget {
                   fillColor: theme.colorScheme.secondaryContainer,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(99),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   hintStyle: TextStyle(
                     color: theme.colorScheme.onPrimaryContainer,

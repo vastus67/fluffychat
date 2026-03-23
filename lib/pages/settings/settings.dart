@@ -61,6 +61,32 @@ class SettingsController extends State<Settings> {
     }
   }
 
+  void panicAction() async {
+    if (await showOkCancelAlertDialog(
+          useRootNavigator: false,
+          context: context,
+          title: 'Panic',
+          message: 'This will wipe all local data and log you out. Are you absolutely sure?',
+          okLabel: 'Burn it',
+          cancelLabel: L10n.of(context).cancel,
+        ) ==
+        OkCancelResult.cancel) {
+      return;
+    }
+    final matrix = Matrix.of(context);
+    await showFutureLoadingDialog(
+      context: context,
+      future: () async {
+        await matrix.client.clearCache();
+        try {
+          await matrix.client.logout();
+        } catch (_) {}
+      },
+    );
+    if (!context.mounted) return;
+    context.go('/');
+  }
+
   void logoutAction() async {
     final noBackup = showChatBackupBanner == true;
     if (await showOkCancelAlertDialog(

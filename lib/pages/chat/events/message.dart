@@ -20,12 +20,14 @@ import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 import 'package:afterdamage/widgets/member_actions_popup_menu_button.dart';
 import 'package:afterdamage/theme/dracula_theme.dart';
-import 'package:afterdamage/theme/dracula_colors.dart';
 import '../../../config/app_config.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
 import 'reply_content.dart';
 import 'state_message.dart';
+
+final Set<String> _burnTimers = {};
+final Set<String> _burnedEvents = {};
 
 class Message extends StatelessWidget {
   final Event event;
@@ -101,6 +103,22 @@ class Message extends StatelessWidget {
       return StateMessage(event);
     }
 
+    // Goth Matrix: Burn on read logic
+    final burnTime = event.content.tryGet<int>('org.goth.burn_time');
+    final isBurnMessage = burnTime != null && burnTime > 0;
+    
+    if (isBurnMessage && !event.redacted && !_burnTimers.contains(event.eventId)) {
+      _burnTimers.add(event.eventId);
+      Future.delayed(Duration(seconds: burnTime), () {
+        if (!event.redacted) {
+          _burnedEvents.add(event.eventId);
+          event.room.redactEvent(event.eventId);
+        }
+      });
+    }
+
+    final isBurning = event.redacted && (_burnedEvents.contains(event.eventId) || event.content.tryGet<bool>('org.matrix.ephemeral') == true);
+
     final client = Matrix.of(context).client;
     final ownMessage = event.senderId == client.userID;
     final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
@@ -145,17 +163,26 @@ class Message extends StatelessWidget {
         : MainAxisAlignment.start;
 
     final displayEvent = event.getDisplayEvent(timeline);
-    const hardCorner = Radius.circular(DraculaTheme.radiusSmall);
-    const roundedCorner = Radius.circular(DraculaTheme.radiusLarge);
+    // Asymmetric bubble geometry:
+    // - Main (away from sender) corners: 8px
+    // - Sender-side corners: 4px
+    // - Grouped same-sender corners: 2px
+    const mainCorner = Radius.circular(8);
+    const senderCorner = Radius.circular(4);
+    const groupedCorner = Radius.circular(2);
     final borderRadius = BorderRadius.only(
-      topLeft: !ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
-      topRight: ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
-      bottomLeft: !ownMessage && previousEventSameSender
-          ? hardCorner
-          : roundedCorner,
-      bottomRight: ownMessage && previousEventSameSender
-          ? hardCorner
-          : roundedCorner,
+      topLeft: ownMessage
+          ? mainCorner
+          : (nextEventSameSender ? groupedCorner : senderCorner),
+      topRight: ownMessage
+          ? (nextEventSameSender ? groupedCorner : senderCorner)
+          : mainCorner,
+      bottomLeft: ownMessage
+          ? mainCorner
+          : (previousEventSameSender ? groupedCorner : senderCorner),
+      bottomRight: ownMessage
+          ? (previousEventSameSender ? groupedCorner : senderCorner)
+          : mainCorner,
     );
     final noBubble =
         ({
@@ -214,7 +241,9 @@ class Message extends StatelessWidget {
 
     final enterThread = this.enterThread;
 
-    return Center(
+    return FireBurnWrapper(
+      isBurning: isBurning,
+      child: Center(
       child: Swipeable(
         key: ValueKey(event.eventId),
         background: const Padding(
@@ -248,8 +277,8 @@ class Message extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                         child: Material(
-                        borderRadius: DraculaTheme.radiusLgAll,
-                        color: theme.colorScheme.surface.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(6),
+                        color: theme.colorScheme.surface.withValues(alpha: 0.7),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8.0,
@@ -304,11 +333,11 @@ class Message extends StatelessWidget {
                                       ? null
                                       : () => onSelect(event),
                                   borderRadius: BorderRadius.circular(
-                                    AppConfig.borderRadius / 2,
+                                    4,
                                   ),
                                   child: Material(
                                     borderRadius: BorderRadius.circular(
-                                      AppConfig.borderRadius / 2,
+                                      4,
                                     ),
                                     color: selected || highlightMarker
                                         ? theme.colorScheme.secondaryContainer
@@ -480,27 +509,27 @@ class Message extends StatelessWidget {
                                                   boxShadow: noBubble
                                                       ? null
                                                       : [
-                                                          // Soft shadow for depth
+                                                          // Subtle shadow for depth
                                                           BoxShadow(
                                                             color: theme
                                                                 .colorScheme
                                                                 .shadow
-                                                                .withOpacity(
-                                                                  0.25,
+                                                                .withValues(
+                                                                  alpha: 0.20,
                                                                 ),
-                                                            blurRadius: 16,
+                                                            blurRadius: 8,
                                                             offset:
                                                                 const Offset(
                                                               0,
-                                                              6,
+                                                              3,
                                                             ),
                                                           ),
-                                                          // Subtle glow for own messages using accent color
+                                                          // Subtle accent outline for own messages
                                                           if (ownMessage && theme.brightness == Brightness.dark)
                                                             BoxShadow(
                                                               color: theme.colorScheme.primary
-                                                                  .withOpacity(0.15),
-                                                              blurRadius: 20,
+                                                                  .withValues(alpha: 0.10),
+                                                              blurRadius: 10,
                                                               spreadRadius: -4,
                                                             ),
                                                         ],
@@ -520,8 +549,7 @@ class Message extends StatelessWidget {
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                            AppConfig
-                                                                .borderRadius,
+                                                            6,
                                                           ),
                                                     ),
                                                     constraints:
@@ -583,9 +611,9 @@ class Message extends StatelessWidget {
                                                                     padding:
                                                                         const EdgeInsets.only(
                                                                           left:
-                                                                              16,
+                                                                              12,
                                                                           right:
-                                                                              16,
+                                                                              12,
                                                                           top:
                                                                               8,
                                                                         ),
@@ -636,8 +664,8 @@ class Message extends StatelessWidget {
                                                             padding:
                                                                 const EdgeInsets.only(
                                                                   bottom: 8.0,
-                                                                  left: 16.0,
-                                                                  right: 16.0,
+                                                                  left: 12.0,
+                                                                  right: 12.0,
                                                                 ),
                                                             child: Row(
                                                               mainAxisSize:
@@ -964,7 +992,8 @@ class Message extends StatelessWidget {
                     ),
                   ],
                 ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -1040,5 +1069,74 @@ class BubblePainter extends CustomPainter {
     final oldScrollable = _scrollable;
     _scrollable = scrollable;
     return scrollable.position != oldScrollable?.position;
+  }
+}
+
+class FireBurnWrapper extends StatefulWidget {
+  final Widget child;
+  final bool isBurning;
+
+  const FireBurnWrapper({super.key, required this.child, required this.isBurning});
+
+  @override
+  State<FireBurnWrapper> createState() => _FireBurnWrapperState();
+}
+
+class _FireBurnWrapperState extends State<FireBurnWrapper> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
+    if (widget.isBurning) _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(FireBurnWrapper oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isBurning && !oldWidget.isBurning) {
+      _controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final progress = _controller.value;
+        if (progress == 1.0) return const SizedBox.shrink(); // Fully burned
+
+        if (progress == 0.0) return child!;
+
+        return Transform.translate(
+          offset: Offset(0, progress * -20),
+          child: Transform.scale(
+            scale: 1.0 - (progress * 0.1),
+            child: Opacity(
+              opacity: 1.0 - progress,
+              child: ShaderMask(
+                shaderCallback: (bounds) => ui.Gradient.linear(
+                  Offset(0, bounds.height),
+                  Offset(0, 0),
+                  const [Colors.transparent, Colors.red, Colors.orange, Colors.yellow],
+                  [0.0, progress, progress + 0.2, 1.0],
+                ),
+                blendMode: BlendMode.srcATop,
+                child: child,
+              ),
+            ),
+          ),
+        );
+      },
+      child: widget.child,
+    );
   }
 }

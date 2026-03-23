@@ -13,6 +13,14 @@ abstract class FluffyThemes {
 
   static const double navRailWidth = 80.0;
 
+  /// Get custom background color for the given brightness, or null for default.
+  static Color? getCustomBackgroundColor(Brightness brightness) {
+    final colorInt = brightness == Brightness.dark
+        ? AppSettings.backgroundColorDark.value
+        : AppSettings.backgroundColorLight.value;
+    return colorInt == 0 ? null : Color(colorInt);
+  }
+
   static bool isColumnModeByWidth(double width) =>
       width > columnWidth * 2 + navRailWidth;
 
@@ -49,11 +57,21 @@ abstract class FluffyThemes {
     DraculaAccent accent,
   ) {
     final isColumnMode = FluffyThemes.isColumnMode(context);
-    return DraculaThemeResolver.getTheme(
+    var theme = DraculaThemeResolver.getTheme(
       accent,
       context,
       isColumnMode: isColumnMode,
     );
+    // Apply custom background color if set
+    final customBg = getCustomBackgroundColor(Brightness.dark);
+    if (customBg != null) {
+      theme = theme.copyWith(
+        scaffoldBackgroundColor: customBg,
+        canvasColor: customBg,
+        colorScheme: theme.colorScheme.copyWith(surface: customBg),
+      );
+    }
+    return theme;
   }
 
   static ThemeData buildTheme(
@@ -192,7 +210,18 @@ abstract class FluffyThemes {
     );
 
     // Apply Dracula-specific typography and surfaces for dark mode only.
-    return isDark ? DraculaTheme.applyDraculaTheme(baseTheme) : baseTheme;
+    var finalTheme = isDark ? DraculaTheme.applyDraculaTheme(baseTheme) : baseTheme;
+
+    // Apply custom background color if set
+    final customBg = getCustomBackgroundColor(brightness);
+    if (customBg != null) {
+      finalTheme = finalTheme.copyWith(
+        scaffoldBackgroundColor: customBg,
+        canvasColor: customBg,
+        colorScheme: finalTheme.colorScheme.copyWith(surface: customBg),
+      );
+    }
+    return finalTheme;
   }
 }
 
@@ -206,9 +235,14 @@ extension BubbleColorTheme on ThemeData {
       ? colorScheme.primary
       : colorScheme.primaryContainer;
 
-  Color get onBubbleColor => brightness == Brightness.light
-      ? colorScheme.onPrimary
-      : colorScheme.onPrimaryContainer;
+  /// Bubble text color: always high-contrast, never accent-tinted.
+  /// Uses the actual bubble color luminance to determine black or white text.
+  Color get onBubbleColor {
+    final bg = bubbleColor;
+    return ThemeData.estimateBrightnessForColor(bg) == Brightness.dark
+        ? Colors.white
+        : Colors.black;
+  }
 
   Color get secondaryBubbleColor => HSLColor.fromColor(
     brightness == Brightness.light

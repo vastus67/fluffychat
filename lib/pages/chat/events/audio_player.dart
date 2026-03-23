@@ -338,13 +338,13 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                                   value: _downloadProgress,
                                 )
                               : InkWell(
-                                  borderRadius: BorderRadius.circular(64),
+                                  borderRadius: BorderRadius.circular(6),
                                   onLongPress: () =>
                                       widget.event.saveFile(context),
                                   onTap: _onButtonTap,
                                   child: Material(
                                     color: widget.color.withAlpha(64),
-                                    borderRadius: BorderRadius.circular(64),
+                                    borderRadius: BorderRadius.circular(6),
                                     child: Icon(
                                       audioPlayer?.playing == true &&
                                               audioPlayer?.isAtEndPosition ==
@@ -388,7 +388,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                                                         128,
                                                       ),
                                                 borderRadius:
-                                                    BorderRadius.circular(64),
+                                                    BorderRadius.circular(2),
                                               ),
                                               height: 32 * (waveform[i] / 1024),
                                             ),

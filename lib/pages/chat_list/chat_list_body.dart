@@ -329,3 +329,4 @@ class _SearchItem extends StatelessWidget {
     ),
   );
 }
+

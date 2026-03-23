@@ -167,7 +167,7 @@ class ChatListItem extends StatelessWidget {
                               scale: listTileHovered ? 1.0 : 0.0,
                               child: Material(
                                 color: backgroundColor,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(8),
                                 child: const Icon(
                                   FontAwesomeIcons.circleChevronDown,
                                   size: 18,

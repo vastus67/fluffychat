@@ -1,11 +1,11 @@
-name: fluffychat
-title: FluffyChat
+name: afterdamage-chat
+title: Afterdamage Chat
 base: core24
 version: 2.4.0
 license: AGPL-3.0
-summary: The cutest messenger in the Matrix network
+summary: Secure messenger on the Matrix network
 description: |
-  FluffyChat is an open source, nonprofit and cute matrix messenger app. The app is easy to use but secure and decentralized.
+  Afterdamage Chat is an open source, secure and decentralized Matrix messenger app. Easy to use with end-to-end encryption.
 
 
   ## Features

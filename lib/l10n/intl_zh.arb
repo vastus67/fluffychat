@@ -792,7 +792,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "fluffychat": "FluffyChat",
+    "fluffychat": "Afterdamage Chat",
     "@fluffychat": {
         "type": "String",
         "placeholders": {}
@@ -964,7 +964,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "inviteText": "{username} 邀请你使用 FluffyChat。 \n1. 安装 FluffyChat：https://fluffychat.im \n2. 注册或登录 \n3. 打开邀请链接：\n {link}",
+    "inviteText": "{username} 邀请你使用 Afterdamage Chat。 \n1. 安装 Afterdamage Chat：https://fluffychat.im \n2. 注册或登录 \n3. 打开邀请链接：\n {link}",
     "@inviteText": {
         "type": "String",
         "placeholders": {
@@ -1126,7 +1126,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "newMessageInFluffyChat": "💬 FluffyChat 新消息",
+    "newMessageInFluffyChat": "💬 Afterdamage Chat 新消息",
     "@newMessageInFluffyChat": {
         "type": "String",
         "placeholders": {}
@@ -1161,7 +1161,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "noGoogleServicesWarning": "看起来你手机上没有 Firebase Cloud Messaging。如果仍希望接收 FluffyChat 的推送通知，推荐安装 ntfy。借助 ntfy 或另一个 Unified Push 程序，你可以以一种数据安全的方式接收推送通知。你可以从 PlayStore 或 F-Droid 商店下载 ntfy。",
+    "noGoogleServicesWarning": "看起来你手机上没有 Firebase Cloud Messaging。如果仍希望接收 Afterdamage Chat 的推送通知，推荐安装 ntfy。借助 ntfy 或另一个 Unified Push 程序，你可以以一种数据安全的方式接收推送通知。你可以从 PlayStore 或 F-Droid 商店下载 ntfy。",
     "@noGoogleServicesWarning": {
         "type": "String",
         "placeholders": {}
@@ -1711,7 +1711,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "title": "FluffyChat",
+    "title": "Afterdamage Chat",
     "@title": {
         "description": "Title for the application",
         "type": "String",
@@ -2277,7 +2277,7 @@
     "dehydrate": "导出会话并擦除设备",
     "dehydrateWarning": "此操作无法撤消。 确保你安全地存储备份文件。",
     "indexedDbErrorTitle": "私有模式问题",
-    "indexedDbErrorLong": "遗憾的是，默认情况下未在私有模式下启用消息存储。\n请访问\n - about:config\n - 将 dom.indexedDB.privateBrowsing.enabled 设置为 true\n否则，无法运行 FluffyChat。",
+    "indexedDbErrorLong": "遗憾的是，默认情况下未在私有模式下启用消息存储。\n请访问\n - about:config\n - 将 dom.indexedDB.privateBrowsing.enabled 设置为 true\n否则，无法运行 Afterdamage Chat。",
     "hydrateTorLong": "你上次是否导出 TOR 会话？ 快速导入它并继续聊天。",
     "user": "用户",
     "custom": "自定义",
@@ -2301,14 +2301,14 @@
     "enterRoom": "进入聊天室",
     "allSpaces": "所有空间",
     "appearOnTop": "显示在其它应用上方",
-    "appearOnTopDetails": "允许应用显示在顶部（如果你已经将 Fluffychat 设置为呼叫账户，则不需要授予此权限）",
-    "otherCallingPermissions": "麦克风、摄像头和其它 FluffyChat 权限",
+    "appearOnTopDetails": "允许应用显示在顶部（如果你已经将 Afterdamage Chat 设置为呼叫账户，则不需要授予此权限）",
+    "otherCallingPermissions": "麦克风、摄像头和其它 Afterdamage Chat 权限",
     "callingPermissions": "呼叫权限",
-    "callingAccountDetails": "允许 FluffyChat 使用本机 android 拨号器应用。",
+    "callingAccountDetails": "允许 Afterdamage Chat 使用本机 android 拨号器应用。",
     "foregroundServiceRunning": "此通知在前台服务运行时出现。",
     "screenSharingTitle": "屏幕共享",
     "callingAccount": "呼叫账户",
-    "screenSharingDetail": "你正在 FluffyChat 中共享屏幕",
+    "screenSharingDetail": "你正在 Afterdamage Chat 中共享屏幕",
     "numChats": "{number} 个聊天",
     "@numChats": {
         "type": "number",
@@ -2667,7 +2667,7 @@
             }
         }
     },
-    "appLockDescription": "用 pin 码在不用 FluffyChat 时锁定它",
+    "appLockDescription": "用 pin 码在不用 Afterdamage Chat 时锁定它",
     "globalChatId": "全局聊天 ID",
     "accessAndVisibility": "访问和可见性",
     "accessAndVisibilityDescription": "谁可以加入此聊天以及怎样发现该聊天。",
@@ -2852,7 +2852,7 @@
     },
     "oneOfYourDevicesIsNotVerified": "您设备中的一台未验证",
     "noticeChatBackupDeviceVerification": "注意：当你连接所有设备到聊天备份时，这些设备将被自动验证。",
-    "welcomeText": "你好呀 👋 欢迎来到 FluffyChat。你可以登录任意兼容 https://matrix.org 的 homeserver，然后和任何人聊天。这是个巨大的去中心化消息网络！",
+    "welcomeText": "你好呀 👋 欢迎来到 Afterdamage Chat。你可以登录任意兼容 https://matrix.org 的 homeserver，然后和任何人聊天。这是个巨大的去中心化消息网络！",
     "continueText": "继续",
     "blur": "模糊：",
     "opacity": "不透明：",
@@ -2915,7 +2915,7 @@
             }
         }
     },
-    "appIntroduction": "FluffyChat 让使用不同即时通信工具的你和你的好友得以聊天。 访问 https://matrix.org 了解详情或轻按 *继续*。",
+    "appIntroduction": "Afterdamage Chat 让使用不同即时通信工具的你和你的好友得以聊天。 访问 https://matrix.org 了解详情或轻按 *继续*。",
     "newChatRequest": "📩 新的聊天请求",
     "generalNotificationSettings": "常规通知设置",
     "userSpecificNotificationSettings": "使用特定通知设置",

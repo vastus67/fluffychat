@@ -17,7 +17,7 @@ abstract class AppConfig {
   static const String schemePrefix = 'matrix:';
   static const String pushNotificationsChannelId = 'fluffychat_push';
   static const String pushNotificationsAppId = 'chat.fluffy.fluffychat';
-  static const double borderRadius = 18.0;
+  static const double borderRadius = 8.0;
   static const double columnWidth = 360.0;
 
   static const String website = 'https://matrix.org';
@@ -52,6 +52,25 @@ abstract class AppConfig {
     host: 'servers.joinmatrix.org',
     path: 'servers.json',
   );
+
+  /// Curated list of well-known public homeservers shown by default
+  /// in the server picker when the remote list is unavailable or as
+  /// a base set for local filtering.
+  static const List<Map<String, String>> knownHomeservers = [
+    {'name': 'matrix.org', 'description': 'The original Matrix homeserver, run by the Matrix.org Foundation'},
+    {'name': 'envs.net', 'description': 'Community-run server hosted in Germany'},
+    {'name': 'tchncs.de', 'description': 'Privacy-focused server based in Germany'},
+    {'name': 'nitro.chat', 'description': 'Fast and reliable community server'},
+    {'name': 'matrix.im', 'description': 'General-purpose Matrix server'},
+    {'name': 'converser.eu', 'description': 'European-hosted Matrix server'},
+    {'name': 'kde.org', 'description': 'KDE community Matrix server'},
+    {'name': 'mozilla.org', 'description': 'Mozilla community Matrix server'},
+    {'name': 'gitter.im', 'description': 'Developer community Matrix server'},
+    {'name': 'halogen.city', 'description': 'Community-run Matrix server'},
+    {'name': 'catgirl.cloud', 'description': 'Fun community Matrix homeserver'},
+    {'name': 'matrix.what-the-fock.de', 'description': 'German community server'},
+    {'name': 'aguiarvieira.pt', 'description': 'Portuguese community server'},
+  ];
 
   static final Uri privacyUrl = Uri(
     scheme: 'https',

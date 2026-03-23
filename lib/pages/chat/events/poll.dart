@@ -111,7 +111,7 @@ class PollWidget extends StatelessWidget {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 checkboxScaleFactor: 1.5,
                 checkboxShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(4),
                 ),
                 onChanged: !canVote
                     ? null

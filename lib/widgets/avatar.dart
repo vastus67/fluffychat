@@ -48,7 +48,7 @@ class Avatar extends StatelessWidget {
     final name = this.name;
     final fallbackLetters = name == null || name.isEmpty
         ? '@'
-        : name.substring(0, 1);
+        : name.substring(0, 1).toUpperCase();
 
     final noPic =
         mxContent == null ||
@@ -56,6 +56,19 @@ class Avatar extends StatelessWidget {
         mxContent.toString() == 'null';
     final borderRadius = this.borderRadius ?? BorderRadius.circular(size / 2);
     final presenceUserId = this.presenceUserId;
+
+    // Palette-based avatar colors with auto-contrast
+    final avatarBg = backgroundColor ?? name?.avatarBackground;
+    final avatarFg = textColor ?? (name != null ? name.avatarForeground : Colors.white);
+
+    // Subtle neutral border for fallback avatars (theme-aware)
+    final fallbackBorder = noPic
+        ? BorderSide(
+            color: theme.colorScheme.onSurface.withOpacity(0.12),
+            width: 1,
+          )
+        : null;
+
     final container = Stack(
       children: [
         SizedBox(
@@ -67,7 +80,7 @@ class Avatar extends StatelessWidget {
                 : Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: borderRadius,
-              side: border ?? BorderSide.none,
+              side: border ?? fallbackBorder ?? BorderSide.none,
             ),
             clipBehavior: Clip.antiAlias,
             child: MxcImage(
@@ -82,17 +95,17 @@ class Avatar extends StatelessWidget {
               placeholder: (_) => noPic
                   ? Container(
                       decoration: BoxDecoration(
-                        color: backgroundColor ?? name?.lightColorAvatar,
+                        color: avatarBg,
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         fallbackLetters,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'RobotoMono',
-                          color: textColor ?? Colors.white,
+                          fontFamily: 'Veilrune',
+                          color: avatarFg,
                           fontWeight: FontWeight.bold,
-                          fontSize: (size / 2.5).roundToDouble(),
+                          fontSize: (size / 2.0).roundToDouble(),
                         ),
                       ),
                     )

@@ -47,12 +47,13 @@ class DraculaTheme {
     );
   }
 
-  // === Radius tokens (8–16px) ===
+  // === Radius tokens (sharp, editorial geometry) ===
   // Delegated to DraculaBase for consistency
 
   static const double radiusSmall = DraculaBase.radiusSmall;
   static const double radiusMedium = DraculaBase.radiusMedium;
   static const double radiusLarge = DraculaBase.radiusLarge;
+  static const double radiusSheet = DraculaBase.radiusSheet;
 
   static const BorderRadius radiusXsAll = DraculaBase.radiusSmAll;
   static const BorderRadius radiusMdAll = DraculaBase.radiusMdAll;

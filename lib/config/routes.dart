@@ -22,6 +22,7 @@ import 'package:afterdamage/pages/invitation_selection/invitation_selection.dart
 import 'package:afterdamage/pages/login/login.dart';
 import 'package:afterdamage/pages/new_group/new_group.dart';
 import 'package:afterdamage/pages/new_private_chat/new_private_chat.dart';
+import 'package:afterdamage/pages/spaces/spaces_page.dart';
 import 'package:afterdamage/pages/settings/settings.dart';
 import 'package:afterdamage/pages/settings_3pid/settings_3pid.dart';
 import 'package:afterdamage/pages/settings_chat/settings_chat.dart';
@@ -166,6 +167,12 @@ abstract class AppRoutes {
                   redirect: loggedOutRedirect,
                 ),
               ],
+              redirect: loggedOutRedirect,
+            ),
+            GoRoute(
+              path: 'spaces',
+              pageBuilder: (context, state) =>
+                  defaultPageBuilder(context, state, const SpacesPage()),
               redirect: loggedOutRedirect,
             ),
             GoRoute(

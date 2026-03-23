@@ -54,7 +54,7 @@ class SeenByRow extends StatelessWidget {
                 height: 16,
                 child: Material(
                   color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(6),
                   child: Center(
                     child: Text(
                       '+${seenByUsers.length - maxAvatars}',

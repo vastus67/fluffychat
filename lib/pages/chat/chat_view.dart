@@ -7,7 +7,6 @@ import 'package:badges/badges.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat/chat.dart';
@@ -134,13 +133,26 @@ class ChatView extends StatelessWidget {
       ];
     } else if (!controller.room.isArchived) {
       return [
-        if (AppSettings.experimentalVoip.value &&
-            Matrix.of(context).voipPlugin != null &&
+        if (Matrix.of(context).voipPlugin != null &&
             controller.room.isDirectChat)
           IconButton(
-            onPressed: controller.onPhoneButtonTap,
+            onPressed: controller.onVoiceCallTap,
             icon: const Icon(FontAwesomeIcons.phone),
-            tooltip: L10n.of(context).placeCall,
+            tooltip: L10n.of(context).voiceCall,
+          ),
+        if (Matrix.of(context).voipPlugin != null &&
+            controller.room.isDirectChat)
+          IconButton(
+            onPressed: controller.onVideoCallTap,
+            icon: const Icon(FontAwesomeIcons.video),
+            tooltip: L10n.of(context).videoCall,
+          ),
+        if (Matrix.of(context).voipPlugin != null &&
+            !controller.room.isDirectChat)
+          IconButton(
+            onPressed: controller.onGroupCallButtonTap,
+            icon: const Icon(FontAwesomeIcons.video),
+            tooltip: L10n.of(context).videoCall,
           ),
         EncryptionButton(controller.room),
         ChatSettingsPopupMenu(controller.room, true),
@@ -365,14 +377,14 @@ class ChatView extends StatelessWidget {
                                     ? theme.colorScheme.tertiaryContainer
                                     : theme.colorScheme.surfaceContainerHigh,
                                 borderRadius: const BorderRadius.all(
-                                  Radius.circular(28),
+                                  Radius.circular(6),
                                 ),
                                 elevation: 0,
                                 shadowColor: Colors.transparent,
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: const BorderRadius.all(
-                                      Radius.circular(28),
+                                      Radius.circular(6),
                                     ),
                                     boxShadow: [
                                       BoxShadow(

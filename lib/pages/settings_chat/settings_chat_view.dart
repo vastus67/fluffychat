@@ -89,6 +89,7 @@ class SettingsChatView extends StatelessWidget {
               ),
               SettingsSwitchListTile.adaptive(
                 title: L10n.of(context).experimentalVideoCalls,
+                subtitle: L10n.of(context).enableCallsDescription,
                 onChanged: (b) {
                   Matrix.of(context).createVoipPlugin();
                   return;

@@ -826,7 +826,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "fluffychat": "FluffyChat",
+    "fluffychat": "Afterdamage Chat",
     "@fluffychat": {
         "type": "String",
         "placeholders": {}
@@ -998,7 +998,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "inviteText": "{username} vás pozvali na FluffyChat.\n1. Navštivte fluffychat.im a nainstalujte si aplikaci.\n2. Zaregistrujte se anebo se přihlašte.\n3. Otevřete pozvánku: \n {link}",
+    "inviteText": "{username} vás pozvali na Afterdamage Chat.\n1. Navštivte fluffychat.im a nainstalujte si aplikaci.\n2. Zaregistrujte se anebo se přihlašte.\n3. Otevřete pozvánku: \n {link}",
     "@inviteText": {
         "type": "String",
         "placeholders": {
@@ -1170,7 +1170,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "newMessageInFluffyChat": "Nová zpráva ve FluffyChatu",
+    "newMessageInFluffyChat": "Nová zpráva ve Afterdamage Chatu",
     "@newMessageInFluffyChat": {
         "type": "String",
         "placeholders": {}
@@ -1792,7 +1792,7 @@
         "type": "String",
         "placeholders": {}
     },
-    "title": "FluffyChat",
+    "title": "Afterdamage Chat",
     "@title": {
         "description": "Title for the application",
         "type": "String",
@@ -2491,13 +2491,13 @@
     "@unlockOldMessages": {},
     "foregroundServiceRunning": "Toto oznámení se zobrazuje když běží služba na pozadí.",
     "@foregroundServiceRunning": {},
-    "screenSharingDetail": "Sdílíte svou obrazovku přes FluffyChat",
+    "screenSharingDetail": "Sdílíte svou obrazovku přes Afterdamage Chat",
     "@screenSharingDetail": {},
-    "callingAccountDetails": "Opravňuje FluffyChat používat Android systémovou aplikaci pro vytáčení.",
+    "callingAccountDetails": "Opravňuje Afterdamage Chat používat Android systémovou aplikaci pro vytáčení.",
     "@callingAccountDetails": {},
     "appearOnTop": "Zobrazovat nahoře",
     "@appearOnTop": {},
-    "otherCallingPermissions": "Mikrofon, kamera a ostatní oprávnění FluffyChat",
+    "otherCallingPermissions": "Mikrofon, kamera a ostatní oprávnění Afterdamage Chat",
     "@otherCallingPermissions": {},
     "encryptThisChat": "Zašifrovat tuto konverzaci",
     "@encryptThisChat": {},
@@ -2626,7 +2626,7 @@
     },
     "block": "Blokovat",
     "@block": {},
-    "indexedDbErrorLong": "Ukládání zpráv bohužel není ve výchozím nastavení v soukromém režimu povoleno.\nNavštivte prosím\n - about:config\n - nastavte dom.indexedDB.privateBrowsing.enabled na true\nV opačném případě nebude možné FluffyChat spustit.",
+    "indexedDbErrorLong": "Ukládání zpráv bohužel není ve výchozím nastavení v soukromém režimu povoleno.\nNavštivte prosím\n - about:config\n - nastavte dom.indexedDB.privateBrowsing.enabled na true\nV opačném případě nebude možné Afterdamage Chat spustit.",
     "@indexedDbErrorLong": {},
     "youInvitedToBy": "📩 Prostřednictvím odkazu jste byli pozváni na:\n{alias}",
     "@youInvitedToBy": {
@@ -2741,7 +2741,7 @@
     "@inviteGroupChat": {},
     "invitePrivateChat": "📨 Soukromá pozvánka",
     "@invitePrivateChat": {},
-    "appearOnTopDetails": "Umožňuje zobrazit aplikaci nahoře (není nutné, pokud již máte Fluffychat nastaven jako účet volajícího)",
+    "appearOnTopDetails": "Umožňuje zobrazit aplikaci nahoře (není nutné, pokud již máte Afterdamage Chat nastaven jako účet volajícího)",
     "@appearOnTopDetails": {},
     "noKeyForThisMessage": "K tomuto může dojít, pokud byla zpráva odeslána před přihlášením k účtu v tomto zařízení.\n\nJe také možné, že odesílatel zablokoval vaše zařízení nebo se něco pokazilo s internetovým připojením.\n\nJste schopni si zprávu přečíst v jiné relaci? Pak můžete zprávu přenést z něj! Přejděte do Nastavení > Zařízení a zkontrolujte, zda se Vaše zařízení vzájemně ověřila. Při příštím otevření místnosti, kdy budou obě relace v popředí, se klíče přenesou automaticky.\n\nNechcete klíče ztratit při odhlašování nebo přepínání zařízení? Ujistěte se, že jste v nastaveních povolili zálohování konverzací.",
     "@noKeyForThisMessage": {},

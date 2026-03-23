@@ -189,6 +189,12 @@ class SettingsView extends StatelessWidget {
                     ),
                   Divider(color: theme.dividerColor),
                   ListTile(
+                    leading: const Icon(FontAwesomeIcons.radiation),
+                    title: const Text('Panic'),
+                    onTap: controller.panicAction,
+                  ),
+                  Divider(color: theme.dividerColor),
+                  ListTile(
                     leading: const Icon(FontAwesomeIcons.paintbrush),
                     title: Text(L10n.of(context).changeTheme),
                     tileColor: activeRoute.startsWith('/rooms/settings/style')

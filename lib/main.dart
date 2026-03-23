@@ -13,6 +13,7 @@ import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/utils/client_manager.dart';
 import 'package:afterdamage/utils/notification_background_handler.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:screen_protector/screen_protector.dart';
 import 'config/setting_keys.dart';
 import 'utils/background_push.dart';
 import 'widgets/fluffy_chat_app.dart';
@@ -39,6 +40,10 @@ void main() async {
   Logs().i('Welcome to ${AppSettings.applicationName.value} <3');
 
   if (!PlatformInfos.isWeb) {
+    if (AppSettings.blockScreenshots.value) {
+      try { await ScreenProtector.preventScreenshotOn(); } catch(e) {}
+    }
+    
     try {
       await vod.init(wasmPath: './assets/assets/vodozemac/');
     } catch (e) {

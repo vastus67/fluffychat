@@ -524,7 +524,7 @@ class _SpaceViewState extends State<SpaceView> {
                           fillColor: theme.colorScheme.secondaryContainer,
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(99),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           contentPadding: EdgeInsets.zero,
                           hintText: L10n.of(context).search,

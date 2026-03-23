@@ -46,7 +46,7 @@ class _DraculaThemeExampleState extends State<DraculaThemeExample> {
                       height: 100,
                       decoration: BoxDecoration(
                         color: accent.previewColor,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(8),
                         border: isSelected
                             ? Border.all(
                                 color: Colors.white,

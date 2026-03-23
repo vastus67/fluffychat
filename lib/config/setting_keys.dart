@@ -39,7 +39,7 @@ enum AppSettings<T> {
   sendOnEnter<bool>('chat.fluffy.send_on_enter', false),
   showPresences<bool>('chat.fluffy.show_presences', false),
   displayNavigationRail<bool>('chat.fluffy.display_navigation_rail', false),
-  experimentalVoip<bool>('chat.fluffy.experimental_voip', false),
+  experimentalVoip<bool>('chat.fluffy.experimental_voip', true),
   shareKeysWith<String>('chat.fluffy.share_keys_with_2', 'all'),
   noEncryptionWarningShown<bool>(
     'chat.fluffy.no_encryption_warning_shown',
@@ -53,7 +53,11 @@ enum AppSettings<T> {
   colorSchemeSeedInt<int>('chat.fluffy.color_scheme_seed', 0xFF5625BA),
   // Dracula accent theme (purple, cyan, green, orange, pink, red, yellow)
   draculaAccent<String>('chat.fluffy.dracula_accent', 'red'),
+  // Background color stored as ARGB int, 0 = use theme default
+  backgroundColorLight<int>('chat.fluffy.background_color_light', 0),
+  backgroundColorDark<int>('chat.fluffy.background_color_dark', 0),
   emojiSuggestionLocale<String>('emoji_suggestion_locale', ''),
+  blockScreenshots<bool>('chat.goth.block_screenshots', false),
   enableSoftLogout<bool>('chat.fluffy.enable_soft_logout', false);
 
   final String key;

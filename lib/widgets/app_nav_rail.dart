@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/theme/dracula_colors.dart';
-import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:afterdamage/widgets/app_destinations.dart';
+import 'package:afterdamage/ui/icons/afterdamage_icons.dart';
+
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
 
-/// Navigation rail for desktop and web layouts
+/// Navigation rail for desktop and web layouts.
+///
+/// Shows: User header, New Chat button, Chats, Spaces, Settings (bottom).
 class AppNavRail extends StatelessWidget {
   final bool extended;
 
@@ -23,17 +28,16 @@ class AppNavRail extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final client = Matrix.of(context).client;
-    final currentRoute = GoRouter.of(context).routeInformationProvider.value.uri.path;
-    final destinations = AppDestinations.getDestinations(context);
+    final currentRoute =
+        GoRouter.of(context).routeInformationProvider.value.uri.path;
 
-    // Find the selected index based on current route
-    int selectedIndex = 0;
-    for (int i = 0; i < destinations.length; i++) {
-      if (currentRoute.startsWith(destinations[i].route)) {
-        selectedIndex = i;
-        break;
-      }
-    }
+    // Determine which primary item is active
+    final isOnSpaces = currentRoute.startsWith('/rooms/spaces') ||
+        currentRoute.contains('spaceId=');
+    final isOnSettings = currentRoute.startsWith('/rooms/settings');
+
+    // Selected index: 0=Chats, 1=Spaces
+    final selectedIndex = isOnSpaces ? 1 : 0;
 
     return Container(
       decoration: BoxDecoration(
@@ -54,7 +58,45 @@ class AppNavRail extends StatelessWidget {
             height: 1,
           ),
 
-          // Navigation Rail
+          // New Chat action button
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: extended ? 16 : 12,
+              vertical: 12,
+            ),
+            child: extended
+                ? FilledButton.icon(
+                    onPressed: () => context.go('/rooms/newprivatechat'),
+                    icon: AfterdamageIcons.newChat(context, size: 18),
+                    label: Text(L10n.of(context).newChat),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 44),
+                      backgroundColor: theme.colorScheme.primary,
+                    ),
+                  )
+                : IconButton.filled(
+                    onPressed: () => context.go('/rooms/newprivatechat'),
+                    icon: AfterdamageIcons.newChat(context, size: 20),
+                    tooltip: L10n.of(context).newChat,
+                    style: IconButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor:
+                          ThemeData.estimateBrightnessForColor(
+                                    theme.colorScheme.primary,
+                                  ) ==
+                                  Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                    ),
+                  ),
+          ),
+
+          const Divider(
+            color: DraculaColors.currentLine,
+            height: 1,
+          ),
+
+          // Primary navigation: Chats + Spaces
           Expanded(
             child: NavigationRail(
               extended: extended,
@@ -72,25 +114,61 @@ class AppNavRail extends StatelessWidget {
               unselectedLabelTextStyle: const TextStyle(
                 color: DraculaColors.foreground,
               ),
-              indicatorColor: theme.colorScheme.primary.withOpacity(0.15),
-              selectedIndex: selectedIndex,
+              indicatorColor: theme.colorScheme.primary.withValues(alpha: 0.15),
+              selectedIndex: isOnSettings ? null : selectedIndex,
               onDestinationSelected: (index) {
-                if (index >= 0 && index < destinations.length) {
-                  context.go(destinations[index].route);
+                switch (index) {
+                  case 0:
+                    context.go('/rooms');
+                    break;
+                  case 1:
+                    context.go('/rooms/spaces');
+                    break;
                 }
               },
               labelType: extended
                   ? NavigationRailLabelType.none
                   : NavigationRailLabelType.all,
-              destinations: destinations
-                  .map(
-                    (dest) => NavigationRailDestination(
-                      icon: Icon(dest.icon),
-                      label: Text(dest.getLabel(context)),
-                    ),
-                  )
-                  .toList(),
+              destinations: [
+                NavigationRailDestination(
+                  icon: const Icon(FontAwesomeIcons.comments),
+                  label: Text(L10n.of(context).chats),
+                ),
+                NavigationRailDestination(
+                  icon: const Icon(FontAwesomeIcons.globe),
+                  label: Text(L10n.of(context).spaces),
+                ),
+              ],
             ),
+          ),
+
+          // Panic Button
+          const Divider(
+            color: DraculaColors.currentLine,
+            height: 1,
+          ),
+          _NavRailPanicButton(
+            extended: extended,
+          ),
+
+          // Panic action button
+          const Divider(
+            color: DraculaColors.currentLine,
+            height: 1,
+          ),
+          _NavRailPanicButton(
+            extended: extended,
+          ),
+
+          // Settings gear at the bottom
+          const Divider(
+            color: DraculaColors.currentLine,
+            height: 1,
+          ),
+          _NavRailSettingsButton(
+            isSelected: isOnSettings,
+            extended: extended,
+            accentColor: theme.colorScheme.primary,
           ),
 
           // Footer
@@ -159,7 +237,7 @@ class AppNavRail extends StatelessWidget {
             color: DraculaColors.currentLine,
             border: Border(
               bottom: BorderSide(
-                color: theme.colorScheme.primary.withOpacity(0.3),
+                color: theme.colorScheme.primary.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
@@ -203,6 +281,107 @@ class AppNavRail extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Bottom-pinned settings button for the nav rail.
+class _NavRailSettingsButton extends StatelessWidget {
+  final bool isSelected;
+  final bool extended;
+  final Color accentColor;
+
+  const _NavRailSettingsButton({
+    required this.isSelected,
+    required this.extended,
+    required this.accentColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isSelected ? accentColor : DraculaColors.foreground;
+    return InkWell(
+      onTap: () => context.go('/rooms/settings'),
+      child: Container(
+        height: 56,
+        padding: EdgeInsets.symmetric(horizontal: extended ? 16 : 0),
+        child: Row(
+          mainAxisAlignment:
+              extended ? MainAxisAlignment.start : MainAxisAlignment.center,
+          children: [
+            Icon(FontAwesomeIcons.gear, color: color, size: 20),
+            if (extended) ...[
+              const SizedBox(width: 12),
+              Text(
+                L10n.of(context).settings,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Panic button for the nav rail.
+class _NavRailPanicButton extends StatelessWidget {
+  final bool extended;
+
+  const _NavRailPanicButton({
+    required this.extended,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const color = DraculaColors.foreground;
+    return InkWell(
+      onTap: () async {
+        final consent = await showOkCancelAlertDialog(
+          context: context,
+          title: 'Panic',
+          message: 'This will wipe all local data and log you out. Are you absolutely sure?',
+          okLabel: 'Burn it',
+          cancelLabel: L10n.of(context).cancel,
+        );
+        if (consent != OkCancelResult.ok || !context.mounted) return;
+        
+        await showFutureLoadingDialog(
+          context: context,
+          future: () async {
+            await Matrix.of(context).client.clearCache();
+            try {
+              await Matrix.of(context).client.logout();
+            } catch (_) {}
+          },
+        );
+        
+        if (!context.mounted) return;
+        context.go('/');
+      },
+      child: Container(
+        height: 56,
+        padding: EdgeInsets.symmetric(horizontal: extended ? 16 : 0),
+        child: Row(
+          mainAxisAlignment:
+              extended ? MainAxisAlignment.start : MainAxisAlignment.center,
+          children: [
+            const Icon(FontAwesomeIcons.radiation, color: color, size: 20),
+            if (extended) ...[
+              const SizedBox(width: 12),
+              const Text(
+                'Panic',
+                style: TextStyle(
+                  color: color,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

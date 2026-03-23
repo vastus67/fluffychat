@@ -88,6 +88,12 @@ class ThemeController extends State<ThemeBuilder> {
     setState(() {});
   }
 
+  /// Update background color (triggers rebuild)
+  Future<void> setBackgroundColor(Color? color, {required bool isDark}) async {
+    // Color is stored in AppSettings, just trigger rebuild
+    setState(() {});
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(_loadData);

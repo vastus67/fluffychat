@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
-import 'package:afterdamage/theme/dracula_colors.dart';
 import 'package:afterdamage/utils/fluffy_share.dart';
 import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
@@ -23,20 +22,21 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final client = Matrix.of(context).client;
     final matrix = Matrix.of(context);
     final currentRoute = GoRouter.of(context).routeInformationProvider.value.uri.path;
     final destinations = AppDestinations.getDestinations(context);
 
     return Drawer(
-      backgroundColor: DraculaColors.background,
+      backgroundColor: colorScheme.surface,
       child: SafeArea(
         child: Column(
           children: [
             // User Header
             _buildUserHeader(context, client, theme),
-            const Divider(
-              color: DraculaColors.currentLine,
+            Divider(
+              color: colorScheme.outlineVariant,
               height: 1,
             ),
 
@@ -79,37 +79,13 @@ class AppDrawer extends StatelessWidget {
                       FluffyShare.shareInviteLink(context);
                     },
                   ),
-                  const Divider(
-                    color: DraculaColors.currentLine,
+                  Divider(
+                    color: colorScheme.outlineVariant,
                     height: 1,
                   ),
                   
                   // Main navigation destinations
-                  ...destinations.map((dest) {
-                    // Add divider before theme section
-                    if (dest.id == 'theme') {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Divider(
-                            color: DraculaColors.currentLine,
-                            height: 1,
-                          ),
-                          _buildDrawerItem(
-                            context: context,
-                            icon: dest.icon,
-                            title: dest.getLabel(context),
-                            route: dest.route,
-                            currentRoute: currentRoute,
-                            onTap: () {
-                              Navigator.pop(context);
-                              context.go(dest.route);
-                            },
-                          ),
-                        ],
-                      );
-                    }
-                    return _buildDrawerItem(
+                  ...destinations.map((dest) => _buildDrawerItem(
                       context: context,
                       icon: dest.icon,
                       title: dest.getLabel(context),
@@ -119,12 +95,12 @@ class AppDrawer extends StatelessWidget {
                         Navigator.pop(context);
                         context.go(dest.route);
                       },
-                    );
-                  }),
+                    ),
+                  ),
                   
                   // Account Management Section
-                  const Divider(
-                    color: DraculaColors.currentLine,
+                  Divider(
+                    color: colorScheme.outlineVariant,
                     height: 1,
                   ),
                   
@@ -152,27 +128,56 @@ class AppDrawer extends StatelessWidget {
                     },
                   ),
                   
-                  // Donate (conditional)
-                  if (Matrix.of(context).backgroundPush?.firebaseEnabled != true)
-                    _buildDrawerItem(
-                      context: context,
-                      icon: FontAwesomeIcons.solidHeart,
-                      title: L10n.of(context).donate,
-                      route: '',
-                      currentRoute: currentRoute,
-                      iconColor: Colors.red,
-                      onTap: () {
-                        Navigator.pop(context);
-                        launchUrlString(AppConfig.donationUrl);
-                      },
-                    ),
+                  Divider(
+                    color: colorScheme.outlineVariant,
+                    height: 1,
+                  ),
+
+                  // Panic action
+                  _buildDrawerItem(
+                    context: context,
+                    icon: FontAwesomeIcons.radiation,
+                    title: 'Panic',
+                    route: '',
+                    currentRoute: currentRoute,
+                    onTap: () async {
+                      final consent = await showOkCancelAlertDialog(
+                        context: context,
+                        title: 'Panic',
+                        message: 'This will wipe all local data and log you out. Are you absolutely sure?',
+                        okLabel: 'Burn it',
+                        cancelLabel: L10n.of(context).cancel,
+                      );
+                      if (consent != OkCancelResult.ok || !context.mounted) return;
+                      
+                      Navigator.pop(context); // Close the drawer
+                      
+                      // Show loading dialog while clearing cache to prevent user interaction
+                      await showFutureLoadingDialog(
+                        context: context,
+                        future: () async {
+                          await Matrix.of(context).client.clearCache();
+                          // Also try a logout if possible to revoke the token, but clearCache is primary goal.
+                          try {
+                            await Matrix.of(context).client.logout();
+                          } catch (_) {
+                            // Ignore if logout fails because of network, cache is already dead.
+                          }
+                        },
+                      );
+                      
+                      if (!context.mounted) return;
+                      context.go('/');
+                    },
+                  ),
+
                 ],
               ),
             ),
 
             // Footer with app version
-            const Divider(
-              color: DraculaColors.currentLine,
+            Divider(
+              color: colorScheme.outlineVariant,
               height: 1,
             ),
             Padding(
@@ -180,7 +185,7 @@ class AppDrawer extends StatelessWidget {
               child: Text(
                 'Afterdamage Chat',
                 style: TextStyle(
-                  color: DraculaColors.muted,
+                  color: colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
@@ -212,7 +217,7 @@ class AppDrawer extends StatelessWidget {
             child: Text(
               bundle!,
               style: TextStyle(
-                color: DraculaColors.muted,
+                color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -237,7 +242,7 @@ class AppDrawer extends StatelessWidget {
                 title: Text(
                   snapshot.data?.displayName ?? client.userID!.localpart!,
                   style: TextStyle(
-                    color: isActive ? theme.colorScheme.primary : DraculaColors.foreground,
+                    color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                     fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -299,7 +304,7 @@ class AppDrawer extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: DraculaColors.currentLine,
+            color: theme.colorScheme.surfaceContainerHigh,
             border: Border(
               bottom: BorderSide(
                 color: theme.colorScheme.primary.withOpacity(0.3),
@@ -318,8 +323,8 @@ class AppDrawer extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 displayName,
-                style: const TextStyle(
-                  color: DraculaColors.foreground,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -330,7 +335,7 @@ class AppDrawer extends StatelessWidget {
               Text(
                 client.userID ?? '',
                 style: TextStyle(
-                  color: DraculaColors.muted,
+                  color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
                 maxLines: 1,
@@ -358,12 +363,12 @@ class AppDrawer extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: iconColor ?? (isActive ? theme.colorScheme.primary : DraculaColors.foreground),
+        color: iconColor ?? (isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface),
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isActive ? theme.colorScheme.primary : DraculaColors.foreground,
+          color: isActive ? theme.colorScheme.primary : theme.colorScheme.onSurface,
           fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
         ),
       ),
@@ -371,7 +376,7 @@ class AppDrawer extends StatelessWidget {
           ? theme.colorScheme.primary.withOpacity(0.15)
           : Colors.transparent,
       selectedTileColor: theme.colorScheme.primary.withOpacity(0.15),
-      hoverColor: DraculaColors.currentLine,
+      hoverColor: theme.colorScheme.surfaceContainerHighest,
       shape: const RoundedRectangleBorder(),
       onTap: onTap,
     );

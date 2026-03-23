@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:afterdamage/config/setting_keys.dart';
@@ -12,7 +11,6 @@ import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat/events/state_message.dart';
 import 'package:afterdamage/theme/dracula_accents.dart';
 import 'package:afterdamage/utils/account_config.dart';
-import 'package:afterdamage/utils/color_value.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'package:afterdamage/widgets/matrix.dart';
@@ -30,7 +28,6 @@ class SettingsStyleView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    const colorPickerSize = 32.0;
     final client = Matrix.of(context).client;
     return Scaffold(
       appBar: AppBar(
@@ -78,74 +75,6 @@ class SettingsStyleView extends StatelessWidget {
                 ),
               ),
             ),
-            DynamicColorBuilder(
-              builder: (light, dark) {
-                final systemColor =
-                    Theme.of(context).brightness == Brightness.light
-                    ? light?.primary
-                    : dark?.primary;
-                final colors = List<Color?>.from(
-                  SettingsStyleController.customColors,
-                );
-                if (systemColor == null) {
-                  colors.remove(null);
-                }
-                return GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 64,
-                  ),
-                  itemCount: colors.length,
-                  itemBuilder: (context, i) {
-                    final color = colors[i];
-                    return Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Tooltip(
-                        message: color == null
-                            ? L10n.of(context).systemTheme
-                            : '#${color.hexValue.toRadixString(16).toUpperCase()}',
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(colorPickerSize),
-                          onTap: () => controller.setChatColor(color),
-                          child: Material(
-                            color: color ?? systemColor,
-                            elevation: 6,
-                            borderRadius: BorderRadius.circular(
-                              colorPickerSize,
-                            ),
-                            child: SizedBox(
-                              width: colorPickerSize,
-                              height: colorPickerSize,
-                              child: controller.currentColor == color
-                                  ? Center(
-                                      child: Icon(
-                                        FontAwesomeIcons.check,
-                                        size: 16,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimary,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            Divider(color: theme.dividerColor),
-            ListTile(
-              title: Text(
-                'Dracula Accent Theme',
-                style: TextStyle(
-                  color: theme.colorScheme.secondary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
               child: Wrap(
@@ -162,7 +91,7 @@ class SettingsStyleView extends StatelessWidget {
                       height: 90,
                       decoration: BoxDecoration(
                         color: accent.previewColor,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(8),
                         border: isSelected
                             ? Border.all(
                                 color: theme.colorScheme.onSurface,
@@ -203,6 +132,87 @@ class SettingsStyleView extends StatelessWidget {
                     ),
                   );
                 }).toList(),
+              ),
+            ),
+            Divider(color: theme.dividerColor),
+            ListTile(
+              title: Text(
+                L10n.of(context).backgroundColor,
+                style: TextStyle(
+                  color: theme.colorScheme.secondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                theme.brightness == Brightness.dark
+                    ? L10n.of(context).darkTheme
+                    : L10n.of(context).lightTheme,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                alignment: WrapAlignment.center,
+                children: [
+                  // "Default" option (no custom bg)
+                  ...controller.backgroundColorPresets.map((preset) {
+                    final isSelected = controller.currentBackgroundColor == preset['color'];
+                    final color = preset['color'] as Color?;
+                    return GestureDetector(
+                      onTap: () => controller.setBackgroundColor(color),
+                      child: Tooltip(
+                        message: preset['label'] as String,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: color ?? theme.colorScheme.surface,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isSelected
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.outlineVariant,
+                              width: isSelected ? 3 : 1,
+                            ),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: theme.colorScheme.primary.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: isSelected
+                              ? Center(
+                                  child: Icon(
+                                    FontAwesomeIcons.check,
+                                    size: 16,
+                                    color: color != null
+                                        ? (ThemeData.estimateBrightnessForColor(color) == Brightness.dark
+                                            ? Colors.white
+                                            : Colors.black)
+                                        : theme.colorScheme.onSurface,
+                                  ),
+                                )
+                              : color == null
+                                  ? Center(
+                                      child: Icon(
+                                        FontAwesomeIcons.ban,
+                                        size: 14,
+                                        color: theme.colorScheme.onSurface.withOpacity(0.5),
+                                      ),
+                                    )
+                                  : null,
+                        ),
+                      ),
+                    );
+                  }),
+                ],
               ),
             ),
             Divider(color: theme.dividerColor),
@@ -287,13 +297,16 @@ class SettingsStyleView extends StatelessWidget {
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
                                     color: theme.bubbleColor,
-                                    borderRadius: BorderRadius.circular(
-                                      AppConfig.borderRadius,
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(8),
+                                      topRight: Radius.circular(4),
+                                      bottomLeft: Radius.circular(8),
+                                      bottomRight: Radius.circular(4),
                                     ),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
+                                      horizontal: 12,
                                       vertical: 8,
                                     ),
                                     child: Text(
@@ -322,12 +335,15 @@ class SettingsStyleView extends StatelessWidget {
                                   child: Material(
                                     color:
                                         theme.colorScheme.surfaceContainerHigh,
-                                    borderRadius: BorderRadius.circular(
-                                      AppConfig.borderRadius,
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(4),
+                                      topRight: Radius.circular(8),
+                                      bottomLeft: Radius.circular(4),
+                                      bottomRight: Radius.circular(8),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
+                                        horizontal: 12,
                                         vertical: 8,
                                       ),
                                       child: Text(

@@ -54,8 +54,8 @@ class NaviRailItem extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary,
                     borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(90),
-                      bottomRight: Radius.circular(90),
+                      topRight: Radius.circular(6),
+                      bottomRight: Radius.circular(6),
                     ),
                   ),
                 ),

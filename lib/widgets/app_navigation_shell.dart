@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:afterdamage/widgets/app_bottom_bar.dart';
 import 'package:afterdamage/widgets/app_destinations.dart';
 import 'package:afterdamage/widgets/app_drawer.dart';
 import 'package:afterdamage/widgets/app_nav_rail.dart';
@@ -26,12 +27,12 @@ class AppNavigationShell extends StatelessWidget {
         final isExpanded = AppDestinations.isExpanded(context);
 
         if (isCompact) {
-          // Mobile: Use drawer
+          // Mobile: Use drawer + bottom toolbar (replaces FAB)
           return Scaffold(
             key: scaffoldKey,
             drawer: const AppDrawer(),
             body: body,
-            floatingActionButton: floatingActionButton,
+            bottomNavigationBar: const AppBottomBar(),
           );
         } else {
           // Desktop/Web: Use persistent navigation rail

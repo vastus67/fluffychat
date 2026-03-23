@@ -35,16 +35,23 @@ class SignInViewModel extends ValueNotifier<SignInState> {
         value.publicHomeservers.data
             ?.where(
               (homeserver) =>
-                  homeserver.name?.toLowerCase().contains(filterText) ?? false,
+                  (homeserver.name?.toLowerCase().contains(filterText) ?? false) ||
+                  (homeserver.description?.toLowerCase().contains(filterText) ?? false),
             )
             .toList() ??
         [];
+    // If the user typed a domain-like string not in the list, add it as a custom entry
     final splitted = filterText.split('.');
     if (splitted.length >= 2 && !splitted.any((part) => part.isEmpty)) {
       if (!filteredPublicHomeservers.any(
         (homeserver) => homeserver.name == filterText,
       )) {
-        filteredPublicHomeservers.add(PublicHomeserverData(name: filterText));
+        filteredPublicHomeservers.add(
+          PublicHomeserverData(
+            name: filterText,
+            description: 'Custom homeserver',
+          ),
+        );
       }
     }
     value = value.copyWith(
@@ -83,6 +90,18 @@ class SignInViewModel extends ValueNotifier<SignInState> {
 
       publicHomeservers.insert(0, defaultServer);
 
+      // Merge curated servers that aren't already in the remote list
+      for (final hs in AppConfig.knownHomeservers) {
+        final hsName = hs['name'];
+        if (hsName != null &&
+            !publicHomeservers.any((s) => s.name == hsName)) {
+          publicHomeservers.add(PublicHomeserverData(
+            name: hsName,
+            description: hs['description'],
+          ));
+        }
+      }
+
       value = value.copyWith(
         selectedHomeserver: value.selectedHomeserver ?? publicHomeservers.first,
         publicHomeservers: AsyncSnapshot.withData(
@@ -91,12 +110,27 @@ class SignInViewModel extends ValueNotifier<SignInState> {
         ),
       );
     } catch (e, s) {
-      Logs().w('Unable to fetch public homeservers...', e, s);
+      Logs().w('Unable to fetch public homeservers, using curated list...', e, s);
+      // Fall back to curated known homeservers
+      final fallbackServers = AppConfig.knownHomeservers
+          .map((hs) => PublicHomeserverData(
+                name: hs['name'],
+                description: hs['description'],
+              ))
+          .toList();
+      final defaultServer = fallbackServers.firstWhereOrNull(
+            (server) => server.name == AppSettings.defaultHomeserver.value,
+          ) ??
+          defaultHomeserverData;
+      // Ensure default is at the top
+      fallbackServers.removeWhere((s) => s.name == defaultServer.name);
+      fallbackServers.insert(0, defaultServer);
       value = value.copyWith(
-        selectedHomeserver: defaultHomeserverData,
-        publicHomeservers: AsyncSnapshot.withData(ConnectionState.done, [
-          defaultHomeserverData,
-        ]),
+        selectedHomeserver: defaultServer,
+        publicHomeservers: AsyncSnapshot.withData(
+          ConnectionState.done,
+          fallbackServers,
+        ),
       );
     }
     _filterHomeservers();

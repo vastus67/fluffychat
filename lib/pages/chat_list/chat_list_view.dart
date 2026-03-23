@@ -7,6 +7,7 @@ import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat_list/chat_list.dart';
+import 'package:afterdamage/ui/icons/afterdamage_icons.dart';
 import 'package:afterdamage/widgets/app_destinations.dart';
 import 'package:afterdamage/widgets/app_navigation_shell.dart';
 import 'package:afterdamage/widgets/navigation_rail.dart';
@@ -60,10 +61,14 @@ class ChatListView extends StatelessWidget {
       ),
     );
 
-    final fab = !controller.isSearchMode && controller.activeSpaceId == null
+    // Only show FAB on mobile — desktop uses an inline header button instead
+    final isDesktop = FluffyThemes.isColumnMode(context);
+    final fab = !isDesktop &&
+            !controller.isSearchMode &&
+            controller.activeSpaceId == null
         ? FloatingActionButton.extended(
             onPressed: () => context.go('/rooms/newprivatechat'),
-            icon: const Icon(FontAwesomeIcons.plus),
+            icon: AfterdamageIcons.newChat(context, size: 24),
             label: Text(
               L10n.of(context).chat,
               overflow: TextOverflow.fade,

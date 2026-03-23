@@ -19,7 +19,7 @@ class ClientChooserButton extends StatelessWidget {
       future: matrix.client.isLogged() ? matrix.client.fetchOwnProfile() : null,
       builder: (context, snapshot) => Material(
         clipBehavior: Clip.hardEdge,
-        borderRadius: BorderRadius.circular(99),
+        borderRadius: BorderRadius.circular(6),
         color: Colors.transparent,
         child: InkWell(
           onTap: () {

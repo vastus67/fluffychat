@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:screen_protector/screen_protector.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
+import 'package:matrix/src/voip/backend/mesh_backend.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 import 'package:afterdamage/config/setting_keys.dart';
@@ -116,7 +118,10 @@ class ChatController extends State<ChatPageWithRoom>
   Timer? typingCoolDown;
   Timer? typingTimeout;
   bool currentlyTyping = false;
+  int burnTime = 0; // 0 means off
+  void setBurnTime(int time) => setState(() => burnTime = time);
   bool dragging = false;
+  bool _isChatActive = true;
 
   void onDragEntered(dynamic _) => setState(() => dragging = true);
 
@@ -548,6 +553,7 @@ class ChatController extends State<ChatPageWithRoom>
 
   @override
   void dispose() {
+    _isChatActive = false;
     timeline?.cancelSubscriptions();
     timeline = null;
     inputFocus.removeListener(_inputFocusListener);
@@ -604,14 +610,28 @@ class ChatController extends State<ChatPageWithRoom>
       parseCommands = false;
     }
 
-    // ignore: unawaited_futures
-    room.sendTextEvent(
-      sendController.text,
-      inReplyTo: replyEvent,
-      editEventId: editEvent?.eventId,
-      parseCommands: parseCommands,
-      threadRootEventId: activeThreadId,
-    );
+    if (burnTime > 0) {
+      room.sendEvent(
+        {
+          'msgtype': 'm.text',
+          'body': sendController.text,
+          'org.matrix.ephemeral': true,
+          'org.goth.burn_time': burnTime,
+        },
+        type: EventTypes.Message,
+        inReplyTo: replyEvent,
+        threadRootEventId: activeThreadId,
+      );
+    } else {
+      // ignore: unawaited_futures
+      room.sendTextEvent(
+        sendController.text,
+        inReplyTo: replyEvent,
+        editEventId: editEvent?.eventId,
+        parseCommands: parseCommands,
+        threadRootEventId: activeThreadId,
+      );
+    }
     sendController.value = TextEditingValue(
       text: pendingText,
       selection: const TextSelection.collapsed(offset: 0),
@@ -1310,44 +1330,51 @@ class ChatController extends State<ChatPageWithRoom>
   void showEventInfo([Event? event]) =>
       (event ?? selectedEvents.single).showInfoDialog(context);
 
-  void onPhoneButtonTap() async {
+  void _startCall(CallType callType) async {
     // VoIP required Android SDK 21
     if (PlatformInfos.isAndroid) {
-      DeviceInfoPlugin().androidInfo.then((value) {
-        if (value.version.sdkInt < 21) {
-          Navigator.pop(context);
-          showOkAlertDialog(
-            context: context,
-            title: L10n.of(context).unsupportedAndroidVersion,
-            message: L10n.of(context).unsupportedAndroidVersionLong,
-            okLabel: L10n.of(context).close,
-          );
-        }
-      });
+      final info = await DeviceInfoPlugin().androidInfo;
+      if (info.version.sdkInt < 21) {
+        showOkAlertDialog(
+          context: context,
+          title: L10n.of(context).unsupportedAndroidVersion,
+          message: L10n.of(context).unsupportedAndroidVersionLong,
+          okLabel: L10n.of(context).close,
+        );
+        return;
+      }
     }
-    final callType = await showModalActionPopup<CallType>(
-      context: context,
-      title: L10n.of(context).warning,
-      message: L10n.of(context).videoCallsBetaWarning,
-      cancelLabel: L10n.of(context).cancel,
-      actions: [
-        AdaptiveModalAction(
-          label: L10n.of(context).voiceCall,
-          icon: const Icon(FontAwesomeIcons.phone),
-          value: CallType.kVoice,
-        ),
-        AdaptiveModalAction(
-          label: L10n.of(context).videoCall,
-          icon: const Icon(FontAwesomeIcons.video),
-          value: CallType.kVideo,
-        ),
-      ],
-    );
-    if (callType == null) return;
 
     final voipPlugin = Matrix.of(context).voipPlugin;
     try {
       await voipPlugin!.voip.inviteToCall(room, callType);
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toLocalizedString(context))));
+    }
+  }
+
+  void onVoiceCallTap() => _startCall(CallType.kVoice);
+
+  void onVideoCallTap() => _startCall(CallType.kVideo);
+
+  void onPhoneButtonTap() => onVoiceCallTap();
+
+  void onGroupCallButtonTap() async {
+    final voipPlugin = Matrix.of(context).voipPlugin;
+    if (voipPlugin == null) return;
+
+    try {
+      // Check for an existing group call in this room, or create one
+      final groupCall = await voipPlugin.voip.fetchOrCreateGroupCall(
+        room.id,
+        room,
+        MeshBackend(),
+        'm.call',
+        'm.room',
+      );
+      voipPlugin.handleNewGroupCall(groupCall);
     } catch (e) {
       ScaffoldMessenger.of(
         context,

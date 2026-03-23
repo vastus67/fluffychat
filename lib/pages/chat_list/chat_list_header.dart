@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat_list/chat_list.dart';
-import 'package:afterdamage/pages/chat_list/client_chooser_button.dart';
+import 'package:afterdamage/ui/icons/afterdamage_icons.dart';
 import 'package:afterdamage/utils/sync_status_localization.dart';
 import 'package:afterdamage/widgets/app_destinations.dart';
 import '../../widgets/matrix.dart';
@@ -32,13 +33,34 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
         !FluffyThemes.isColumnMode(context) &&
         !AppSettings.displayNavigationRail.value;
 
+    final isDesktop = FluffyThemes.isColumnMode(context);
+
     return SliverAppBar(
       floating: true,
       toolbarHeight: 72,
-      pinned: FluffyThemes.isColumnMode(context),
+      pinned: isDesktop,
       scrolledUnderElevation: 0,
       backgroundColor: Colors.transparent,
       automaticallyImplyLeading: false,
+      actions: isDesktop
+          ? [
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: IconButton(
+                  onPressed: () => context.go('/rooms/newprivatechat'),
+                  icon: AfterdamageIcons.newChat(
+                    context,
+                    size: 22,
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                  tooltip: L10n.of(context).newChat,
+                  style: IconButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                  ),
+                ),
+              ),
+            ]
+          : null,
       leading: showMenuButton
           ? IconButton(
               icon: const Icon(FontAwesomeIcons.bars),
@@ -69,7 +91,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
               fillColor: theme.colorScheme.secondaryContainer,
               border: OutlineInputBorder(
                 borderSide: BorderSide.none,
-                borderRadius: BorderRadius.circular(99),
+                borderRadius: BorderRadius.circular(6),
               ),
               contentPadding: EdgeInsets.zero,
               hintText: hide
@@ -130,7 +152,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                             onPressed: controller.setServer,
                             style: TextButton.styleFrom(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(99),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                               textStyle: const TextStyle(fontSize: 12),
                             ),
@@ -141,7 +163,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                               maxLines: 2,
                             ),
                           )
-                  : SizedBox(width: 0, child: ClientChooserButton(controller)),
+                  : const SizedBox(width: 0),
             ),
           );
         },

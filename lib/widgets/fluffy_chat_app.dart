@@ -54,11 +54,11 @@ class FluffyChatApp extends StatelessWidget {
         return MaterialApp.router(
           title: AppSettings.applicationName.value,
           themeMode: themeMode,
-          // Use light theme for light mode
+          // Use light theme with Dracula accent as seed color
           theme: FluffyThemes.buildTheme(
             context,
             Brightness.light,
-            primaryColor,
+            draculaAccent.previewColor,
           ),
           // Use Dracula accent theme for dark mode
           darkTheme: FluffyThemes.buildAccentTheme(

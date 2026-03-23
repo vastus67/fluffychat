@@ -96,7 +96,7 @@ class _ShareScaffoldDialogState extends State<ShareScaffoldDialog> {
                 fillColor: theme.colorScheme.secondaryContainer,
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(99),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 contentPadding: EdgeInsets.zero,
                 hintText: L10n.of(context).search,
@@ -133,7 +133,7 @@ class _ShareScaffoldDialogState extends State<ShareScaffoldDialog> {
                   opacity: filterOut ? 0.5 : 1,
                   child: CheckboxListTile.adaptive(
                     checkboxShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(90),
+                      borderRadius: BorderRadius.circular(4),
                     ),
                     controlAffinity: ListTileControlAffinity.trailing,
                     shape: RoundedRectangleBorder(

@@ -23,16 +23,6 @@ class AppDestinations {
   static List<AppDestination> getDestinations(BuildContext context) {
     return [
       AppDestination(
-        id: 'home',
-        icon: FontAwesomeIcons.house,
-        labelBuilder: (context) {
-          // Import L10n dynamically to avoid circular dependencies
-          final l10n = Localizations.of(context, dynamic);
-          return l10n?.chats ?? 'Chats';
-        },
-        route: '/rooms',
-      ),
-      AppDestination(
         id: 'settings',
         icon: FontAwesomeIcons.gear,
         labelBuilder: (context) {
@@ -42,24 +32,6 @@ class AppDestinations {
         route: '/rooms/settings',
       ),
       AppDestination(
-        id: 'account',
-        icon: FontAwesomeIcons.circleUser,
-        labelBuilder: (context) {
-          final l10n = Localizations.of(context, dynamic);
-          return l10n?.yourOwnUsername ?? 'Account';
-        },
-        route: '/rooms/settings/account',
-      ),
-      AppDestination(
-        id: 'notifications',
-        icon: FontAwesomeIcons.bell,
-        labelBuilder: (context) {
-          final l10n = Localizations.of(context, dynamic);
-          return l10n?.notifications ?? 'Notifications';
-        },
-        route: '/rooms/settings/notifications',
-      ),
-      AppDestination(
         id: 'archive',
         icon: FontAwesomeIcons.boxArchive,
         labelBuilder: (context) {
@@ -67,15 +39,6 @@ class AppDestinations {
           return l10n?.archive ?? 'Archive';
         },
         route: '/rooms/archive',
-      ),
-      AppDestination(
-        id: 'theme',
-        icon: FontAwesomeIcons.paintbrush,
-        labelBuilder: (context) {
-          final l10n = Localizations.of(context, dynamic);
-          return l10n?.changeTheme ?? 'Theme';
-        },
-        route: '/rooms/settings/style',
       ),
       AppDestination(
         id: 'about',

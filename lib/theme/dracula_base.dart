@@ -17,10 +17,15 @@ import 'dracula_text.dart';
 class DraculaBase {
   DraculaBase._();
 
-  // === Radius tokens (8–16px) ===
-  static const double radiusSmall = 8;
-  static const double radiusMedium = 12;
-  static const double radiusLarge = 16;
+  // === Radius tokens (sharp, editorial geometry) ===
+  /// Buttons, inputs, chips – soft-rect default.
+  static const double radiusSmall = 6;
+  /// Buttons, inputs – same as small for consistency.
+  static const double radiusMedium = 6;
+  /// Cards, dialogs – max curvature for contained surfaces.
+  static const double radiusLarge = 8;
+  /// Full-screen sheets – absolute ceiling.
+  static const double radiusSheet = 12;
 
   static const BorderRadius radiusSmAll =
       BorderRadius.all(Radius.circular(radiusSmall));
@@ -201,7 +206,7 @@ class DraculaBase {
         foregroundColor: colorScheme.onPrimary,
         elevation: 6,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusLarge),
+          borderRadius: BorderRadius.circular(radiusSmall),
         ),
       ),
       
@@ -301,7 +306,7 @@ class DraculaBase {
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            top: Radius.circular(radiusLarge),
+            top: Radius.circular(radiusSheet),
           ),
         ),
       ),

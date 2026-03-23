@@ -334,13 +334,17 @@ class MyCallingPage extends State<Calling> {
     setState(() {});
   }
 
-  /*
-  void _switchSpeaker() {
-    setState(() {
-      session.setSpeakerOn();
-    });
+  bool _speakerOn = false;
+
+  void _switchSpeaker() async {
+    _speakerOn = !_speakerOn;
+    try {
+      await Helper.setSpeakerphoneOn(_speakerOn);
+    } catch (e) {
+      Logs().w('Failed to toggle speaker: $e');
+    }
+    setState(() {});
   }
-  */
 
   List<Widget> _buildActionButtons(bool isFloating) {
     if (isFloating) {
@@ -353,15 +357,13 @@ class MyCallingPage extends State<Calling> {
       backgroundColor: Colors.black45,
       child: const Icon(FontAwesomeIcons.cameraRotate),
     );
-    /*
-    var switchSpeakerButton = FloatingActionButton(
+    final switchSpeakerButton = FloatingActionButton(
       heroTag: 'switchSpeaker',
-      child: Icon(_speakerOn ? FontAwesomeIcons.volumeHigh : FontAwesomeIcons.volumeXmark),
       onPressed: _switchSpeaker,
-      foregroundColor: Colors.black54,
-      backgroundColor: Theme.of(widget.context).backgroundColor,
+      foregroundColor: _speakerOn ? Colors.black26 : Colors.white,
+      backgroundColor: _speakerOn ? Colors.white : Colors.black45,
+      child: Icon(_speakerOn ? FontAwesomeIcons.volumeHigh : FontAwesomeIcons.volumeXmark),
     );
-    */
     final hangupButton = FloatingActionButton(
       heroTag: 'hangup',
       onPressed: _hangUp,
@@ -421,7 +423,7 @@ class MyCallingPage extends State<Calling> {
       case CallState.kConnected:
         return <Widget>[
           muteMicButton,
-          //switchSpeakerButton,
+          if (voiceonly || PlatformInfos.isMobile) switchSpeakerButton,
           if (!voiceonly && !kIsWeb) switchCameraButton,
           if (!voiceonly) muteCameraButton,
           if (PlatformInfos.isMobile || PlatformInfos.isWeb)
