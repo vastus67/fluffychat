@@ -14,6 +14,7 @@ import 'package:afterdamage/pages/dialer/dialer.dart';
 import 'package:afterdamage/pages/dialer/group_call.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/voip/callkit_service.dart';
+import 'package:afterdamage/utils/voip/web_media_fixer.dart';
 import '../../utils/voip/user_media_manager.dart';
 import '../widgets/matrix.dart';
 
@@ -46,6 +47,15 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   late VoIP voip;
   OverlayEntry? overlayEntry;
   BuildContext get context => matrix.context;
+
+  /// Wrapper that catches getUserMedia permission errors on web so incoming
+  /// calls can reach the "Ringing" state without being killed.
+  late final WebMediaDevicesWrapper _webMediaDevices =
+      WebMediaDevicesWrapper(webrtc_impl.navigator.mediaDevices);
+
+  /// Expose the wrapper so call UI can check if a placeholder was used.
+  WebMediaDevicesWrapper? get mediaDevicesWrapper =>
+      kIsWeb ? _webMediaDevices : null;
 
   /// Notifier for the active 1:1 call. Used by the inline CallBanner on web.
   final ValueNotifier<ActiveCallState?> activeCallNotifier =
@@ -97,7 +107,8 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   }
 
   @override
-  MediaDevices get mediaDevices => webrtc_impl.navigator.mediaDevices;
+  MediaDevices get mediaDevices =>
+      kIsWeb ? _webMediaDevices : webrtc_impl.navigator.mediaDevices;
 
   @override
   bool get isWeb => kIsWeb;

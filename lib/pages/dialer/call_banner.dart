@@ -13,6 +13,7 @@ import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/voip/remote_audio_player.dart';
 import 'package:afterdamage/utils/voip/video_renderer.dart';
 import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 
 /// A compact Discord-style call panel that shows inline instead of fullscreen.
 /// Used on web and optionally on desktop. Shows call status, participant info,
@@ -97,7 +98,35 @@ class _CallBannerState extends State<CallBanner> {
     super.dispose();
   }
 
-  void _answerCall() {
+  void _answerCall() async {
+    // On web, the initial getUserMedia during initWithInvite may have been
+    // blocked (no user gesture). Now the user is clicking "Answer" which IS
+    // a valid gesture, so request real media and inject it into the call.
+    if (kIsWeb) {
+      final voipPlugin = Matrix.of(widget.callContext).voipPlugin;
+      final wrapper = voipPlugin?.mediaDevicesWrapper;
+      if (wrapper != null && wrapper.usedPlaceholder) {
+        Logs().i('[CallBanner] Re-requesting media on user gesture (Answer tap)');
+        try {
+          final constraints = <String, dynamic>{
+            'audio': true,
+            'video': call.type == CallType.kVideo,
+          };
+          final realStream =
+              await voipPlugin!.mediaDevices.getUserMedia(constraints);
+          // Replace the placeholder stream in the call session
+          await call.addLocalStream(
+            realStream,
+            SDPStreamMetadataPurpose.Usermedia,
+          );
+          wrapper.usedPlaceholder = false;
+        } catch (e) {
+          Logs().e('[CallBanner] Failed to get real media on answer: $e');
+          // Still try to answer — remote side will hear nothing but call
+          // won't crash.
+        }
+      }
+    }
     setState(() => call.answer());
   }
 
