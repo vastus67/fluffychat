@@ -102,11 +102,48 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   @override
   bool get isWeb => kIsWeb;
 
+  /// Fallback public STUN servers used when the homeserver does not provide
+  /// any TURN/STUN credentials via the `/voip/turnServer` API.
+  /// Without at least STUN, WebRTC cannot perform NAT traversal and calls
+  /// between users on different networks will silently fail to connect.
+  static const List<Map<String, dynamic>> _fallbackIceServers = [
+    {'urls': 'stun:stun.l.google.com:19302'},
+    {'urls': 'stun:stun1.l.google.com:19302'},
+    {'urls': 'stun:stun2.l.google.com:19302'},
+    {'urls': 'stun:stun.nextcloud.com:443'},
+  ];
+
   @override
   Future<RTCPeerConnection> createPeerConnection(
     Map<String, dynamic> configuration, [
     Map<String, dynamic> constraints = const {},
-  ]) => webrtc_impl.createPeerConnection(configuration, constraints);
+  ]) {
+    // Ensure there are always ICE servers available for NAT traversal.
+    final iceServers = configuration['iceServers'];
+    if (iceServers == null || (iceServers is List && iceServers.isEmpty)) {
+      Logs().w(
+        '[VOIP] Homeserver provided no TURN/STUN servers — '
+        'injecting fallback STUN servers for NAT traversal',
+      );
+      configuration = Map<String, dynamic>.from(configuration)
+        ..['iceServers'] = _fallbackIceServers;
+    } else if (iceServers is List) {
+      // Homeserver provided TURN servers — add STUN as a fallback alongside
+      // them so direct connections are attempted first.
+      final hasStun = iceServers.any((s) {
+        final urls = s is Map ? (s['urls'] ?? s['url']) : null;
+        if (urls is String) return urls.startsWith('stun:');
+        if (urls is List) return urls.any((u) => u.toString().startsWith('stun:'));
+        return false;
+      });
+      if (!hasStun) {
+        configuration = Map<String, dynamic>.from(configuration)
+          ..['iceServers'] = [...iceServers, ..._fallbackIceServers];
+      }
+    }
+
+    return webrtc_impl.createPeerConnection(configuration, constraints);
+  }
 
   Future<bool> get hasCallingAccount async => false;
 
