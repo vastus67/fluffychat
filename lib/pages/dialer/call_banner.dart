@@ -12,6 +12,7 @@ import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/voip/remote_audio_player.dart';
 import 'package:afterdamage/utils/voip/video_renderer.dart';
+import 'package:afterdamage/utils/voip_plugin.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 
@@ -427,4 +428,37 @@ class _ControlButton extends StatelessWidget {
 
 extension _StringLet on String {
   T let<T>(T Function(String) fn) => fn(this);
+}
+
+/// Convenience widget that listens to the VoIP plugin's [activeCallNotifier]
+/// and renders a [CallBanner] when a call is active.
+///
+/// Returns [SizedBox.shrink] on non-web platforms or when there is no call.
+/// Drop this into any [Column] to show the call bar inline.
+class GlobalCallBanner extends StatelessWidget {
+  const GlobalCallBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    if (!kIsWeb) return const SizedBox.shrink();
+
+    final voipPlugin = Matrix.of(context).voipPlugin;
+    if (voipPlugin == null) return const SizedBox.shrink();
+
+    return ValueListenableBuilder<ActiveCallState?>(
+      valueListenable: voipPlugin.activeCallNotifier,
+      builder: (ctx, activeCall, _) {
+        if (activeCall == null) return const SizedBox.shrink();
+        return CallBanner(
+          callContext: ctx,
+          callId: activeCall.callId,
+          call: activeCall.call,
+          client: activeCall.client,
+          onClear: () {
+            voipPlugin.activeCallNotifier.value = null;
+          },
+        );
+      },
+    );
+  }
 }

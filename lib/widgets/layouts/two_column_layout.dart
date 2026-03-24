@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:afterdamage/config/themes.dart';
+import 'package:afterdamage/pages/dialer/call_banner.dart';
 
 class TwoColumnLayout extends StatelessWidget {
   final Widget mainView;
@@ -17,16 +18,23 @@ class TwoColumnLayout extends StatelessWidget {
 
     return ScaffoldMessenger(
       child: Scaffold(
-        body: Row(
+        body: Column(
           children: [
-            Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: const BoxDecoration(),
-              width: FluffyThemes.columnWidth + FluffyThemes.navRailWidth,
-              child: mainView,
+            const GlobalCallBanner(),
+            Expanded(
+              child: Row(
+                children: [
+                  Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: const BoxDecoration(),
+                    width: FluffyThemes.columnWidth + FluffyThemes.navRailWidth,
+                    child: mainView,
+                  ),
+                  Container(width: 1.0, color: theme.dividerColor),
+                  Expanded(child: ClipRRect(child: sideView)),
+                ],
+              ),
             ),
-            Container(width: 1.0, color: theme.dividerColor),
-            Expanded(child: ClipRRect(child: sideView)),
           ],
         ),
       ),

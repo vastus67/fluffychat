@@ -34,6 +34,7 @@ import 'package:afterdamage/pages/settings_password/settings_password.dart';
 import 'package:afterdamage/pages/settings_security/settings_security.dart';
 import 'package:afterdamage/pages/settings_style/settings_style.dart';
 import 'package:afterdamage/pages/sign_in/sign_in_page.dart';
+import 'package:afterdamage/pages/dialer/call_banner.dart';
 import 'package:afterdamage/widgets/config_viewer.dart';
 import 'package:afterdamage/widgets/layouts/empty_page.dart';
 import 'package:afterdamage/widgets/layouts/two_column_layout.dart';
@@ -132,7 +133,14 @@ abstract class AppRoutes {
                 ),
                 sideView: child,
               )
-            : child,
+            // Single-column mode: wrap with call banner so incoming
+            // calls are visible even on narrow browser windows.
+            : Column(
+                children: [
+                  const GlobalCallBanner(),
+                  Expanded(child: child),
+                ],
+              ),
       ),
       routes: [
         GoRoute(
@@ -205,7 +213,12 @@ abstract class AppRoutes {
                         mainView: Settings(key: state.pageKey),
                         sideView: child,
                       )
-                    : child,
+                    : Column(
+                        children: [
+                          const GlobalCallBanner(),
+                          Expanded(child: child),
+                        ],
+                      ),
               ),
               routes: [
                 GoRoute(
