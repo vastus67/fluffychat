@@ -23,6 +23,7 @@ class RemoteAudioPlayer extends StatefulWidget {
 class _RemoteAudioPlayerState extends State<RemoteAudioPlayer> {
   RTCVideoRenderer? _audioRenderer;
   StreamSubscription? _callEventSubscription;
+  StreamSubscription? _callStateSubscription;
   bool _attached = false;
 
   @override
@@ -32,6 +33,14 @@ class _RemoteAudioPlayerState extends State<RemoteAudioPlayer> {
       _callEventSubscription =
           widget.call.onCallEventChanged.stream.listen((event) {
         if (event == CallStateChange.kFeedsChanged) {
+          _attachRemoteAudio();
+        }
+      });
+      // Also listen for state changes — the remote stream may arrive at
+      // kConnected before a kFeedsChanged event is emitted.
+      _callStateSubscription =
+          widget.call.onCallStateChanged.stream.listen((state) {
+        if (state == CallState.kConnected) {
           _attachRemoteAudio();
         }
       });
@@ -80,6 +89,7 @@ class _RemoteAudioPlayerState extends State<RemoteAudioPlayer> {
   @override
   void dispose() {
     _callEventSubscription?.cancel();
+    _callStateSubscription?.cancel();
     _detach();
     super.dispose();
   }
@@ -88,16 +98,21 @@ class _RemoteAudioPlayerState extends State<RemoteAudioPlayer> {
   Widget build(BuildContext context) {
     // On web, we MUST render an RTCVideoView so the underlying HTML <video>
     // element is actually inserted into the DOM — otherwise audio won't play.
-    // We wrap it in a 0x0 box so it's invisible.
+    // We use a 1x1 Opacity(0) box instead of 0x0 because Flutter web can
+    // optimise away zero-sized elements, preventing the <video> tag from
+    // reaching the DOM and silencing remote audio.
     if (!kIsWeb || _audioRenderer == null || !_attached) {
       return const SizedBox.shrink();
     }
-    return SizedBox(
-      width: 0,
-      height: 0,
-      child: RTCVideoView(
-        _audioRenderer!,
-        objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+    return Opacity(
+      opacity: 0,
+      child: SizedBox(
+        width: 1,
+        height: 1,
+        child: RTCVideoView(
+          _audioRenderer!,
+          objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+        ),
       ),
     );
   }
