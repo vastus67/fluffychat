@@ -1,6 +1,5 @@
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -17,7 +16,6 @@ import 'package:afterdamage/pages/chat/chat_event_list.dart';
 import 'package:afterdamage/pages/chat/encryption_button.dart';
 import 'package:afterdamage/pages/chat/pinned_events.dart';
 import 'package:afterdamage/pages/chat/reply_display.dart';
-import 'package:afterdamage/pages/dialer/call_banner.dart';
 import 'package:afterdamage/utils/account_config.dart';
 import 'package:afterdamage/utils/localized_exception_extension.dart';
 import 'package:afterdamage/utils/voip_plugin.dart';
@@ -348,24 +346,6 @@ class ChatView extends StatelessWidget {
                     SafeArea(
                       child: Column(
                         children: <Widget>[
-                          // Discord-style inline call banner (web only)
-                          if (kIsWeb)
-                            ValueListenableBuilder<ActiveCallState?>(
-                              valueListenable: Matrix.of(context).voipPlugin?.activeCallNotifier ??
-                                  ValueNotifier<ActiveCallState?>(null),
-                              builder: (context, activeCall, _) {
-                                if (activeCall == null) return const SizedBox.shrink();
-                                return CallBanner(
-                                  callContext: context,
-                                  callId: activeCall.callId,
-                                  call: activeCall.call,
-                                  client: activeCall.client,
-                                  onClear: () {
-                                    Matrix.of(context).voipPlugin?.activeCallNotifier.value = null;
-                                  },
-                                );
-                              },
-                            ),
                           Expanded(
                             child: GestureDetector(
                               onTap: controller.clearSingleSelectedEvent,

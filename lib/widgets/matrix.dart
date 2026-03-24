@@ -27,6 +27,7 @@ import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog
 import 'package:afterdamage/widgets/fluffy_chat_app.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import '../config/setting_keys.dart';
+import '../pages/dialer/call_banner.dart';
 import '../pages/key_verification/key_verification_dialog.dart';
 import '../utils/account_bundles.dart';
 import '../utils/background_push.dart';
@@ -387,7 +388,52 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(create: (_) => this, child: widget.child);
+    return Provider(
+      create: (_) => this,
+      child: _wrapWithGlobalCallBanner(widget.child),
+    );
+  }
+
+  /// On web, wraps [child] in a [Stack] with a global [CallBanner] overlay
+  /// so incoming calls are visible regardless of which page the user is on.
+  /// On non-web platforms the native overlay / CallKit handles this.
+  Widget _wrapWithGlobalCallBanner(Widget? child) {
+    if (!kIsWeb || voipPlugin == null) {
+      return child ?? const SizedBox.shrink();
+    }
+
+    return Stack(
+      fit: StackFit.passthrough,
+      children: [
+        if (child != null) child,
+        ValueListenableBuilder<ActiveCallState?>(
+          valueListenable: voipPlugin!.activeCallNotifier,
+          builder: (ctx, activeCall, _) {
+            if (activeCall == null) return const SizedBox.shrink();
+            return Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                bottom: false,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: CallBanner(
+                    callContext: ctx,
+                    callId: activeCall.callId,
+                    call: activeCall.call,
+                    client: activeCall.client,
+                    onClear: () {
+                      voipPlugin?.activeCallNotifier.value = null;
+                    },
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
   }
 
   Future<void> dehydrateAction(BuildContext context) async {
