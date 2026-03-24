@@ -87,7 +87,9 @@ class IntroPage extends StatelessWidget {
                         tag: 'info-logo',
                         child: Image.asset(
                           './assets/afterdamage-logo.png',
-                          fit: BoxFit.fitWidth,
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
