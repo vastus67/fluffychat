@@ -172,6 +172,7 @@ class MyCallingPage extends State<Calling> {
   double? _localVideoWidth;
   EdgeInsetsGeometry? _localVideoMargin;
   CallState? _state;
+  AudioPlayer? _dialupPlayer;
 
   void _playCallSound() async {
     const path = 'assets/sounds/call.ogg';
@@ -184,11 +185,33 @@ class MyCallingPage extends State<Calling> {
     }
   }
 
+  void _playDialupTone() async {
+    if (kIsWeb || PlatformInfos.isMobile || PlatformInfos.isMacOS) {
+      try {
+        final player = AudioPlayer();
+        _dialupPlayer = player;
+        await player.setAsset('assets/sounds/dialup.ogg');
+        await player.play();
+      } catch (e) {
+        Logs().w('Failed to play dial-up tone', e);
+      }
+    }
+  }
+
+  void _stopDialupTone() {
+    _dialupPlayer?.stop();
+    _dialupPlayer?.dispose();
+    _dialupPlayer = null;
+  }
+
   @override
   void initState() {
     super.initState();
     initialize();
     _playCallSound();
+    if (call.isOutgoing) {
+      _playDialupTone();
+    }
   }
 
   void initialize() async {
@@ -228,6 +251,7 @@ class MyCallingPage extends State<Calling> {
 
   @override
   void dispose() {
+    _stopDialupTone();
     super.dispose();
     call.cleanUp.call();
   }
@@ -251,6 +275,7 @@ class MyCallingPage extends State<Calling> {
   void _handleCallState(CallState state) {
     Logs().v('CallingPage::handleCallState: ${state.toString()}');
     if ({CallState.kConnected, CallState.kEnded}.contains(state)) {
+      _stopDialupTone();
       HapticFeedback.heavyImpact();
     }
 
