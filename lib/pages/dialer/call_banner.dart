@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart' hide VideoRenderer;
+import 'package:just_audio/just_audio.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:afterdamage/l10n/l10n.dart';
@@ -64,6 +65,7 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
   Duration _callDuration = Duration.zero;
   DateTime? _connectedAt;
   late AnimationController _pulseController;
+  AudioPlayer? _dialupPlayer;
 
   @override
   void initState() {
@@ -80,10 +82,38 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
         setState(() => call.tryRemoveStopedStreams());
       }
     });
+
+    // Play dial-up tone for outgoing calls
+    if (call.isOutgoing) {
+      _playDialupTone();
+    }
+  }
+
+  void _playDialupTone() async {
+    if (kIsWeb || PlatformInfos.isMobile || PlatformInfos.isMacOS) {
+      try {
+        final player = AudioPlayer();
+        _dialupPlayer = player;
+        await player.setAsset('assets/sounds/dialup.ogg');
+        await player.play();
+      } catch (e) {
+        Logs().w('Failed to play dial-up tone', e);
+      }
+    }
+  }
+
+  void _stopDialupTone() {
+    _dialupPlayer?.stop();
+    _dialupPlayer?.dispose();
+    _dialupPlayer = null;
   }
 
   void _handleCallState(CallState state) {
     if (!mounted) return;
+    // Stop dial-up tone when call connects or ends
+    if ({CallState.kConnected, CallState.kEnded}.contains(state)) {
+      _stopDialupTone();
+    }
     setState(() {
       _state = state;
       if (state == CallState.kConnected && _connectedAt == null) {
@@ -109,6 +139,7 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
 
   @override
   void dispose() {
+    _stopDialupTone();
     _durationTimer?.cancel();
     _pulseController.dispose();
     super.dispose();

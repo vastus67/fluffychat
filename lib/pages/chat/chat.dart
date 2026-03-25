@@ -1333,6 +1333,17 @@ class ChatController extends State<ChatPageWithRoom>
       (event ?? selectedEvents.single).showInfoDialog(context);
 
   void _startCall(CallType callType) async {
+    final voipPlugin = Matrix.of(context).voipPlugin;
+    if (voipPlugin == null) return;
+
+    // Block starting a new call if one is already active
+    if (voipPlugin.activeCallNotifier.value != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('There is already an active call')),
+      );
+      return;
+    }
+
     // VoIP required Android SDK 21
     if (PlatformInfos.isAndroid) {
       final info = await DeviceInfoPlugin().androidInfo;
@@ -1347,11 +1358,38 @@ class ChatController extends State<ChatPageWithRoom>
       }
     }
 
-    final voipPlugin = Matrix.of(context).voipPlugin;
+    // On web, pre-request media permissions while we still have the user
+    // gesture context. Browsers require a user gesture to grant getUserMedia,
+    // but the SDK calls it after several async hops where the gesture context
+    // is lost. Pre-requesting here ensures the permission grant persists.
+    if (kIsWeb) {
+      try {
+        final stream = await voipPlugin.mediaDevices.getUserMedia({
+          'audio': true,
+          'video': callType == CallType.kVideo,
+        });
+        // Release immediately — the browser remembers the permission grant
+        for (final track in stream.getTracks()) {
+          await track.stop();
+        }
+        await stream.dispose();
+      } catch (e) {
+        Logs().e('Failed to get media permissions for call', e);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Microphone permission is required for calls'),
+          ),
+        );
+        return;
+      }
+    }
+
     try {
-      await voipPlugin!.voip.inviteToCall(room, callType);
+      await voipPlugin.voip.inviteToCall(room, callType);
     } catch (e, s) {
       Logs().e('Failed to start call', e, s);
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Call error: $e')));
