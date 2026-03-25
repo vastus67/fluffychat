@@ -326,8 +326,20 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
                       const SizedBox(width: 4),
                     ],
 
+                    // Hang up / Decline — always left-aligned,
+                    // right next to Answer when ringing
+                    _SidebarControlButton(
+                      icon: FontAwesomeIcons.phoneSlash,
+                      color: DraculaColors.foreground,
+                      bgColor: DraculaColors.red,
+                      onTap: _hangUp,
+                      tooltip: isRinging ? 'Decline' : 'Disconnect',
+                      wide: true,
+                    ),
+
                     // Mic toggle
-                    if (isConnected)
+                    if (isConnected) ...[
+                      const SizedBox(width: 8),
                       _SidebarControlButton(
                         icon: isMicrophoneMuted
                             ? FontAwesomeIcons.microphoneSlash
@@ -341,6 +353,7 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
                         onTap: _muteMic,
                         tooltip: isMicrophoneMuted ? 'Unmute' : 'Mute',
                       ),
+                    ],
 
                     // Camera toggle (video calls only)
                     if (isConnected && !voiceonly) ...[
@@ -374,18 +387,7 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
                         onTap: widget.onExpand,
                         tooltip: 'Expand call',
                       ),
-                      const SizedBox(width: 4),
                     ],
-
-                    // Hang up
-                    _SidebarControlButton(
-                      icon: FontAwesomeIcons.phoneSlash,
-                      color: DraculaColors.foreground,
-                      bgColor: DraculaColors.red,
-                      onTap: _hangUp,
-                      tooltip: isRinging ? 'Decline' : 'Disconnect',
-                      wide: true,
-                    ),
                   ],
                 ),
               ),
