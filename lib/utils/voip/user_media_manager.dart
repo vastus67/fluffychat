@@ -14,10 +14,8 @@ class UserMediaManager {
   Future<void> startRingingTone() async {
     const path = 'assets/sounds/phone.ogg';
     final player = _assetsAudioPlayer = AudioPlayer();
-    player.setAsset(path);
-    player.play();
-
-    return;
+    await player.setAsset(path);
+    await player.play();
   }
 
   Future<void> stopRingingTone() async {

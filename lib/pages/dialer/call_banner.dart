@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart' hide VideoRenderer;
+import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc_impl
+    show navigator;
 import 'package:just_audio/just_audio.dart';
 import 'package:matrix/matrix.dart';
 
@@ -147,24 +149,31 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
 
   void _answerCall() async {
     if (kIsWeb) {
-      final voipPlugin = Matrix.of(widget.callContext).voipPlugin;
-      final wrapper = voipPlugin?.mediaDevicesWrapper;
-      if (wrapper != null && wrapper.usedPlaceholder) {
-        Logs().i(
-          '[CallSidebarPanel] Replacing placeholder media on answer gesture',
-        );
-        try {
-          final constraints = <String, dynamic>{
-            'audio': true,
-            'video': call.type == CallType.kVideo,
-          };
-          // Get real media — this works because we're in a user gesture context
-          final realStream =
-              await voipPlugin!.mediaDevices.getUserMedia(constraints);
+      // Always try to get real media on answer gesture (user click context).
+      // Bypass the wrapper — go straight to native navigator.mediaDevices
+      // to avoid the wrapper returning another silent placeholder.
+      try {
+        final constraints = <String, dynamic>{
+          'audio': true,
+          'video': call.type == CallType.kVideo,
+        };
+        Logs().i('[CallSidebarPanel] Requesting real media on answer gesture');
+        final realStream = await webrtc_impl.navigator.mediaDevices
+            .getUserMedia(constraints);
 
+        // Verify we actually got audio tracks
+        final audioTracks = realStream.getAudioTracks();
+        Logs().i(
+          '[CallSidebarPanel] Got real stream: '
+          '${audioTracks.length} audio, '
+          '${realStream.getVideoTracks().length} video tracks',
+        );
+
+        if (audioTracks.isNotEmpty) {
           // Remove the placeholder stream so answer() uses real tracks in SDP
           final placeholder = call.localUserMediaStream;
           if (placeholder != null) {
+            Logs().i('[CallSidebarPanel] Removing placeholder stream');
             await call.removeLocalStream(placeholder);
           }
 
@@ -173,10 +182,17 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
             realStream,
             SDPStreamMetadataPurpose.Usermedia,
           );
-          wrapper.usedPlaceholder = false;
-        } catch (e) {
-          Logs().e('[CallSidebarPanel] Failed to get real media: $e');
+
+          // Mark wrapper as having real media now
+          final voipPlugin = Matrix.of(widget.callContext).voipPlugin;
+          voipPlugin?.mediaDevicesWrapper?.usedPlaceholder = false;
+
+          Logs().i('[CallSidebarPanel] Real media attached to call');
+        } else {
+          Logs().w('[CallSidebarPanel] getUserMedia returned no audio tracks!');
         }
+      } catch (e) {
+        Logs().e('[CallSidebarPanel] Failed to get real media: $e');
       }
     }
     try {
@@ -198,6 +214,36 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
   }
 
   void _muteMic() async {
+    if (kIsWeb) {
+      // If the local stream has no real audio tracks (placeholder was used),
+      // request real media now — we're in a user gesture from the button click.
+      final localStream = call.localUserMediaStream;
+      final audioTracks = localStream?.stream?.getAudioTracks() ?? [];
+      if (audioTracks.isEmpty) {
+        Logs().i('[CallSidebarPanel] No audio tracks — requesting real media for unmute');
+        try {
+          final realStream = await webrtc_impl.navigator.mediaDevices
+              .getUserMedia(<String, dynamic>{
+            'audio': true,
+            'video': call.type == CallType.kVideo,
+          });
+          if (localStream != null) {
+            await call.removeLocalStream(localStream);
+          }
+          await call.addLocalStream(
+            realStream,
+            SDPStreamMetadataPurpose.Usermedia,
+          );
+          final voipPlugin = Matrix.of(widget.callContext).voipPlugin;
+          voipPlugin?.mediaDevicesWrapper?.usedPlaceholder = false;
+          Logs().i('[CallSidebarPanel] Replaced placeholder with real media on unmute');
+        } catch (e) {
+          Logs().e('[CallSidebarPanel] Failed to get real media on unmute: $e');
+        }
+        if (mounted) setState(() {});
+        return;
+      }
+    }
     try {
       await call.setMicrophoneMuted(!call.isMicrophoneMuted);
     } catch (e) {
@@ -770,6 +816,41 @@ class _CallFloatingPanelState extends State<CallFloatingPanel> {
                 ? DraculaColors.red.withValues(alpha: 0.2)
                 : DraculaColors.background.withValues(alpha: 0.5),
             onTap: () async {
+              if (kIsWeb) {
+                final localStream = call.localUserMediaStream;
+                final audioTracks =
+                    localStream?.stream?.getAudioTracks() ?? [];
+                if (audioTracks.isEmpty) {
+                  Logs().i(
+                    '[CallFloatingPanel] No audio tracks — requesting real media',
+                  );
+                  try {
+                    final realStream = await webrtc_impl
+                        .navigator.mediaDevices
+                        .getUserMedia(<String, dynamic>{
+                      'audio': true,
+                      'video': call.type == CallType.kVideo,
+                    });
+                    if (localStream != null) {
+                      await call.removeLocalStream(localStream);
+                    }
+                    await call.addLocalStream(
+                      realStream,
+                      SDPStreamMetadataPurpose.Usermedia,
+                    );
+                    Matrix.of(widget.callContext)
+                        .voipPlugin
+                        ?.mediaDevicesWrapper
+                        ?.usedPlaceholder = false;
+                  } catch (e) {
+                    Logs().e(
+                      '[CallFloatingPanel] Failed to get real media: $e',
+                    );
+                  }
+                  if (mounted) setState(() {});
+                  return;
+                }
+              }
               try {
                 await call.setMicrophoneMuted(!call.isMicrophoneMuted);
               } catch (e) {

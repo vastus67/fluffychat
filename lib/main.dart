@@ -116,6 +116,10 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
         Logs().w('Rate-limited by server (429), ignoring: $msg');
         return;
       }
+      if (msg.contains('NotAllowedError') || msg.contains('play()')) {
+        Logs().w('Autoplay blocked by browser, ignoring: $msg');
+        return;
+      }
       Logs().e('Uncaught error', error, stack);
     },
   );
