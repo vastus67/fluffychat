@@ -151,15 +151,24 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
       final wrapper = voipPlugin?.mediaDevicesWrapper;
       if (wrapper != null && wrapper.usedPlaceholder) {
         Logs().i(
-          '[CallSidebarPanel] Re-requesting media on user gesture (Answer)',
+          '[CallSidebarPanel] Replacing placeholder media on answer gesture',
         );
         try {
           final constraints = <String, dynamic>{
             'audio': true,
             'video': call.type == CallType.kVideo,
           };
+          // Get real media — this works because we're in a user gesture context
           final realStream =
               await voipPlugin!.mediaDevices.getUserMedia(constraints);
+
+          // Remove the placeholder stream so answer() uses real tracks in SDP
+          final placeholder = call.localUserMediaStream;
+          if (placeholder != null) {
+            await call.removeLocalStream(placeholder);
+          }
+
+          // Add the real stream
           await call.addLocalStream(
             realStream,
             SDPStreamMetadataPurpose.Usermedia,
@@ -170,7 +179,12 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
         }
       }
     }
-    setState(() => call.answer());
+    try {
+      await call.answer();
+    } catch (e) {
+      Logs().w('[CallSidebarPanel] Error answering call (likely 429): $e');
+    }
+    if (mounted) setState(() {});
   }
 
   void _hangUp() {
@@ -183,12 +197,22 @@ class _CallSidebarPanelState extends State<CallSidebarPanel>
     });
   }
 
-  void _muteMic() {
-    setState(() => call.setMicrophoneMuted(!call.isMicrophoneMuted));
+  void _muteMic() async {
+    try {
+      await call.setMicrophoneMuted(!call.isMicrophoneMuted);
+    } catch (e) {
+      Logs().w('[CallSidebarPanel] setMicrophoneMuted error (likely 429): $e');
+    }
+    if (mounted) setState(() {});
   }
 
-  void _muteCamera() {
-    setState(() => call.setLocalVideoMuted(!call.isLocalVideoMuted));
+  void _muteCamera() async {
+    try {
+      await call.setLocalVideoMuted(!call.isLocalVideoMuted);
+    } catch (e) {
+      Logs().w('[CallSidebarPanel] setLocalVideoMuted error (likely 429): $e');
+    }
+    if (mounted) setState(() {});
   }
 
   String get _statusText {
@@ -745,9 +769,14 @@ class _CallFloatingPanelState extends State<CallFloatingPanel> {
             bgColor: isMicrophoneMuted
                 ? DraculaColors.red.withValues(alpha: 0.2)
                 : DraculaColors.background.withValues(alpha: 0.5),
-            onTap: () => setState(
-              () => call.setMicrophoneMuted(!call.isMicrophoneMuted),
-            ),
+            onTap: () async {
+              try {
+                await call.setMicrophoneMuted(!call.isMicrophoneMuted);
+              } catch (e) {
+                Logs().w('[CallFloatingPanel] setMicrophoneMuted error: $e');
+              }
+              if (mounted) setState(() {});
+            },
             tooltip: isMicrophoneMuted ? 'Unmute' : 'Mute',
           ),
           if (!voiceonly) ...[
@@ -762,9 +791,14 @@ class _CallFloatingPanelState extends State<CallFloatingPanel> {
               bgColor: isLocalVideoMuted
                   ? DraculaColors.red.withValues(alpha: 0.2)
                   : DraculaColors.background.withValues(alpha: 0.5),
-              onTap: () => setState(
-                () => call.setLocalVideoMuted(!call.isLocalVideoMuted),
-              ),
+              onTap: () async {
+                try {
+                  await call.setLocalVideoMuted(!call.isLocalVideoMuted);
+                } catch (e) {
+                  Logs().w('[CallFloatingPanel] setLocalVideoMuted error: $e');
+                }
+                if (mounted) setState(() {});
+              },
               tooltip:
                   isLocalVideoMuted ? 'Turn on camera' : 'Turn off camera',
             ),

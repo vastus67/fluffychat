@@ -287,10 +287,13 @@ class MyCallingPage extends State<Calling> {
     }
   }
 
-  void _answerCall() {
-    setState(() {
-      call.answer();
-    });
+  void _answerCall() async {
+    try {
+      await call.answer();
+    } catch (e) {
+      Logs().w('[Calling] Error answering call: $e');
+    }
+    if (mounted) setState(() {});
   }
 
   void _hangUp() {
@@ -303,10 +306,13 @@ class MyCallingPage extends State<Calling> {
     });
   }
 
-  void _muteMic() {
-    setState(() {
-      call.setMicrophoneMuted(!call.isMicrophoneMuted);
-    });
+  void _muteMic() async {
+    try {
+      await call.setMicrophoneMuted(!call.isMicrophoneMuted);
+    } catch (e) {
+      Logs().w('[Calling] setMicrophoneMuted error: $e');
+    }
+    if (mounted) setState(() {});
   }
 
   void _screenSharing() async {
@@ -339,16 +345,22 @@ class MyCallingPage extends State<Calling> {
     });
   }
 
-  void _remoteOnHold() {
-    setState(() {
-      call.setRemoteOnHold(!call.remoteOnHold);
-    });
+  void _remoteOnHold() async {
+    try {
+      await call.setRemoteOnHold(!call.remoteOnHold);
+    } catch (e) {
+      Logs().w('[Calling] setRemoteOnHold error: $e');
+    }
+    if (mounted) setState(() {});
   }
 
-  void _muteCamera() {
-    setState(() {
-      call.setLocalVideoMuted(!call.isLocalVideoMuted);
-    });
+  void _muteCamera() async {
+    try {
+      await call.setLocalVideoMuted(!call.isLocalVideoMuted);
+    } catch (e) {
+      Logs().w('[Calling] setLocalVideoMuted error: $e');
+    }
+    if (mounted) setState(() {});
   }
 
   void _switchCamera() async {

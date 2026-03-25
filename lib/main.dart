@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -104,7 +105,20 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
   await firstClient?.roomsLoading;
   await firstClient?.accountDataLoading;
 
-  runApp(FluffyChatApp(clients: clients, pincode: pin, store: store));
+  runZonedGuarded(
+    () => runApp(FluffyChatApp(clients: clients, pincode: pin, store: store)),
+    (error, stack) {
+      // Swallow 429 rate-limit errors from the Matrix SDK (e.g.
+      // m.call.sdp_stream_metadata_changed). These are harmless
+      // but the SDK doesn't catch them, causing Uncaught Error crashes.
+      final msg = error.toString();
+      if (msg.contains('429') || msg.contains('Too Many Requests')) {
+        Logs().w('Rate-limited by server (429), ignoring: $msg');
+        return;
+      }
+      Logs().e('Uncaught error', error, stack);
+    },
+  );
 }
 
 /// Watches the lifecycle changes to start the application when it
