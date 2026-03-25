@@ -16,6 +16,9 @@ flutter doctor -v
 echo "==> Getting dependencies"
 flutter pub get
 
+echo "==> Compiling native_executor.js web worker"
+dart compile js ./web/native_executor.dart -o ./web/native_executor.js -m
+
 echo "==> Building web"
 flutter build web --release
 
