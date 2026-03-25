@@ -18,19 +18,31 @@ class TwoColumnLayout extends StatelessWidget {
 
     return ScaffoldMessenger(
       child: Scaffold(
-        body: Column(
+        body: Row(
           children: [
-            const GlobalCallBanner(),
-            Expanded(
-              child: Row(
+            // Left sidebar: chat list + call panel at bottom
+            SizedBox(
+              width: FluffyThemes.columnWidth + FluffyThemes.navRailWidth,
+              child: Column(
                 children: [
-                  Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: const BoxDecoration(),
-                    width: FluffyThemes.columnWidth + FluffyThemes.navRailWidth,
-                    child: mainView,
+                  Expanded(
+                    child: Container(
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(),
+                      child: mainView,
+                    ),
                   ),
-                  Container(width: 1.0, color: theme.dividerColor),
+                  // Discord-style call sidebar panel
+                  const GlobalCallSidebar(),
+                ],
+              ),
+            ),
+            Container(width: 1.0, color: theme.dividerColor),
+            // Right side: call panel on top + chat content below
+            Expanded(
+              child: Column(
+                children: [
+                  const GlobalCallFloatingPanel(),
                   Expanded(child: ClipRRect(child: sideView)),
                 ],
               ),

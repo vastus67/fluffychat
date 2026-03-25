@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/dialer/call_banner.dart';
 import 'package:afterdamage/theme/dracula_colors.dart';
 import 'package:afterdamage/ui/icons/afterdamage_icons.dart';
 
@@ -159,6 +160,9 @@ class AppNavRail extends StatelessWidget {
           _NavRailPanicButton(
             extended: extended,
           ),
+
+          // Discord-style call panel (sits above settings, below nav)
+          const GlobalCallSidebar(),
 
           // Settings gear at the bottom
           const Divider(

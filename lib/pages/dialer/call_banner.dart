@@ -8,6 +8,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart' hide VideoRenderer;
 import 'package:matrix/matrix.dart';
 
 import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/theme/dracula_colors.dart';
 import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/voip/remote_audio_player.dart';
@@ -16,10 +17,14 @@ import 'package:afterdamage/utils/voip_plugin.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 
-/// A compact Discord-style call panel that shows inline instead of fullscreen.
-/// Used on web and optionally on desktop. Shows call status, participant info,
-/// and controls in a small bar/panel.
-class CallBanner extends StatefulWidget {
+// ─────────────────────────────────────────────────────────────────────────────
+// CallSidebarPanel — compact Discord-style call bar for the navigation sidebar
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// A compact call status panel that sits at the bottom of the sidebar,
+/// exactly like Discord's "Voice Connected" bar. Shows connection status,
+/// room name, duration, and minimal controls. Does NOT obstruct navigation.
+class CallSidebarPanel extends StatefulWidget {
   final BuildContext callContext;
   final String callId;
   final CallSession call;
@@ -27,7 +32,7 @@ class CallBanner extends StatefulWidget {
   final VoidCallback? onClear;
   final VoidCallback? onExpand;
 
-  const CallBanner({
+  const CallSidebarPanel({
     required this.callContext,
     required this.callId,
     required this.call,
@@ -38,10 +43,11 @@ class CallBanner extends StatefulWidget {
   });
 
   @override
-  State<CallBanner> createState() => _CallBannerState();
+  State<CallSidebarPanel> createState() => _CallSidebarPanelState();
 }
 
-class _CallBannerState extends State<CallBanner> {
+class _CallSidebarPanelState extends State<CallSidebarPanel>
+    with SingleTickerProviderStateMixin {
   CallSession get call => widget.call;
 
   String get displayName => call.room.getLocalizedDisplayname(
@@ -57,18 +63,21 @@ class _CallBannerState extends State<CallBanner> {
   Timer? _durationTimer;
   Duration _callDuration = Duration.zero;
   DateTime? _connectedAt;
-  bool _expanded = false;
+  late AnimationController _pulseController;
 
   @override
   void initState() {
     super.initState();
     _state = call.state;
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
     call.onCallStateChanged.stream.listen(_handleCallState);
     call.onCallEventChanged.stream.listen((event) {
       if (event == CallStateChange.kFeedsChanged) {
-        setState(() {
-          call.tryRemoveStopedStreams();
-        });
+        setState(() => call.tryRemoveStopedStreams());
       }
     });
   }
@@ -79,15 +88,20 @@ class _CallBannerState extends State<CallBanner> {
       _state = state;
       if (state == CallState.kConnected && _connectedAt == null) {
         _connectedAt = DateTime.now();
+        _pulseController.stop();
+        _pulseController.value = 1.0;
         _durationTimer = Timer.periodic(const Duration(seconds: 1), (_) {
           if (!mounted) return;
           setState(() {
             _callDuration = DateTime.now().difference(_connectedAt!);
           });
         });
+        // Auto-expand the floating call window on connect
+        widget.onExpand?.call();
       }
       if (state == CallState.kEnded) {
         _durationTimer?.cancel();
+        _pulseController.stop();
         Timer(const Duration(seconds: 2), () => widget.onClear?.call());
       }
     });
@@ -96,18 +110,18 @@ class _CallBannerState extends State<CallBanner> {
   @override
   void dispose() {
     _durationTimer?.cancel();
+    _pulseController.dispose();
     super.dispose();
   }
 
   void _answerCall() async {
-    // On web, the initial getUserMedia during initWithInvite may have been
-    // blocked (no user gesture). Now the user is clicking "Answer" which IS
-    // a valid gesture, so request real media and inject it into the call.
     if (kIsWeb) {
       final voipPlugin = Matrix.of(widget.callContext).voipPlugin;
       final wrapper = voipPlugin?.mediaDevicesWrapper;
       if (wrapper != null && wrapper.usedPlaceholder) {
-        Logs().i('[CallBanner] Re-requesting media on user gesture (Answer tap)');
+        Logs().i(
+          '[CallSidebarPanel] Re-requesting media on user gesture (Answer)',
+        );
         try {
           final constraints = <String, dynamic>{
             'audio': true,
@@ -115,16 +129,13 @@ class _CallBannerState extends State<CallBanner> {
           };
           final realStream =
               await voipPlugin!.mediaDevices.getUserMedia(constraints);
-          // Replace the placeholder stream in the call session
           await call.addLocalStream(
             realStream,
             SDPStreamMetadataPurpose.Usermedia,
           );
           wrapper.usedPlaceholder = false;
         } catch (e) {
-          Logs().e('[CallBanner] Failed to get real media on answer: $e');
-          // Still try to answer — remote side will hear nothing but call
-          // won't crash.
+          Logs().e('[CallSidebarPanel] Failed to get real media: $e');
         }
       }
     }
@@ -152,16 +163,16 @@ class _CallBannerState extends State<CallBanner> {
   String get _statusText {
     switch (_state) {
       case CallState.kRinging:
-        return call.isOutgoing ? 'Ringing...' : 'Incoming call';
+        return call.isOutgoing ? 'Ringing...' : 'Incoming Call';
       case CallState.kInviteSent:
         return 'Calling...';
       case CallState.kCreateAnswer:
       case CallState.kConnecting:
         return 'Connecting...';
       case CallState.kConnected:
-        return _formatDuration(_callDuration);
+        return voiceonly ? 'Voice Connected' : 'Video Connected';
       case CallState.kEnded:
-        return 'Call ended';
+        return 'Call Ended';
       default:
         return 'Setting up...';
     }
@@ -175,273 +186,759 @@ class _CallBannerState extends State<CallBanner> {
     return '$minutes:$seconds';
   }
 
-  Uri? get _avatarUrl {
-    if (call.room.isDirectChat) {
-      final other = call.room.unsafeGetUserFromMemoryOrFallback(
-        call.room.directChatMatrixID ?? '',
-      );
-      return other.avatarUrl;
+  Color get _statusColor {
+    switch (_state) {
+      case CallState.kConnected:
+        return DraculaColors.green;
+      case CallState.kEnded:
+        return DraculaColors.red;
+      case CallState.kRinging:
+        return DraculaColors.yellow;
+      default:
+        return DraculaColors.orange;
     }
-    return call.room
-        .getState(EventTypes.RoomAvatar)
-        ?.content
-        .tryGet<String>('url')
-        ?.let((url) => Uri.tryParse(url));
   }
 
   @override
   Widget build(BuildContext context) {
     final isRinging = _state == CallState.kRinging && !call.isOutgoing;
-    final hasVideo = !voiceonly && connected;
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Hidden audio player to ensure remote audio works on web
-          RemoteAudioPlayer(call: call),
-          // Expanded video area
-          if (_expanded && hasVideo) _buildVideoPanel(),
-          // Compact control bar
-          _buildControlBar(context, isRinging),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildVideoPanel() {
-    final remoteStream = call.remoteUserMediaStream ??
-        call.remoteScreenSharingStream;
-    final localStream = call.localUserMediaStream;
-
-    return Container(
-      height: 280,
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.black,
-        border: Border(
-          bottom: BorderSide(color: Colors.white10, width: 1),
-        ),
-      ),
-      child: Stack(
-        children: [
-          // Remote video (main view)
-          if (remoteStream != null)
-            Positioned.fill(
-              child: VideoRenderer(
-                remoteStream,
-                mirror: false,
-                fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
-              ),
-            )
-          else
-            const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(FontAwesomeIcons.video, color: Colors.white30, size: 32),
-                  SizedBox(height: 8),
-                  Text(
-                    'Waiting for video...',
-                    style: TextStyle(color: Colors.white30, fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-          // Local video (picture-in-picture)
-          if (localStream != null && !isLocalVideoMuted)
-            Positioned(
-              right: 8,
-              bottom: 8,
-              child: Container(
-                width: 120,
-                height: 90,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.white24, width: 1),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: VideoRenderer(
-                  localStream,
-                  mirror: true,
-                  fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildControlBar(BuildContext context, bool isRinging) {
-    final isEnded = _state == CallState.kEnded;
     final isConnected = _state == CallState.kConnected;
+    final isEnded = _state == CallState.kEnded;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isEnded
-            ? const Color(0xFF2D2D2D)
-            : isConnected
-                ? const Color(0xFF1A3A1A) // Dark green like Discord
-                : const Color(0xFF2D2D2D),
-        border: Border(
-          bottom: BorderSide(
-            color: isConnected
-                ? const Color(0xFF2D7D2D)
-                : Colors.white10,
-            width: 1,
-          ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Hidden audio player for remote audio on web
+        RemoteAudioPlayer(call: call),
+
+        // Separator
+        Container(
+          height: 1,
+          color: DraculaColors.currentLine,
         ),
-      ),
-      child: Row(
-        children: [
-          // Status indicator dot
-          Container(
-            width: 8,
-            height: 8,
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isConnected
-                  ? const Color(0xFF43B581) // Discord green
-                  : isEnded
-                      ? Colors.red
-                      : const Color(0xFFFAA61A), // Discord yellow
-            ),
+
+        // Main call panel
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: isEnded
+                ? DraculaColors.background
+                : isConnected
+                    ? const Color(0xFF1A2E1A)
+                    : DraculaColors.background,
           ),
-          // Call info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  voiceonly ? 'Voice Connected' : 'Video Call',
-                  style: TextStyle(
-                    color: isConnected
-                        ? const Color(0xFF43B581)
-                        : Colors.white70,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Status row
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+                child: Row(
+                  children: [
+                    // Animated status dot
+                    AnimatedBuilder(
+                      animation: _pulseController,
+                      builder: (context, child) {
+                        return Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _statusColor.withValues(
+                              alpha: isConnected
+                                  ? 1.0
+                                  : 0.5 + (_pulseController.value * 0.5),
+                            ),
+                            boxShadow: isConnected
+                                ? [
+                                    BoxShadow(
+                                      color:
+                                          _statusColor.withValues(alpha: 0.4),
+                                      blurRadius: 6,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    // Status text
+                    Expanded(
+                      child: Text(
+                        _statusText,
+                        style: TextStyle(
+                          color: _statusColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                    // Duration
+                    if (isConnected)
+                      Text(
+                        _formatDuration(_callDuration),
+                        style: TextStyle(
+                          color: DraculaColors.muted,
+                          fontSize: 11,
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                  ],
                 ),
-                Text(
-                  '$_statusText — $displayName',
-                  style: const TextStyle(
-                    color: Colors.white38,
-                    fontSize: 11,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          // Control buttons
-          if (isRinging) ...[
-            _ControlButton(
-              icon: FontAwesomeIcons.phone,
-              color: const Color(0xFF43B581),
-              onTap: _answerCall,
-              tooltip: 'Answer',
-            ),
-            const SizedBox(width: 4),
-          ],
-          if (isConnected) ...[
-            _ControlButton(
-              icon: isMicrophoneMuted
-                  ? FontAwesomeIcons.microphoneSlash
-                  : FontAwesomeIcons.microphone,
-              color: isMicrophoneMuted ? Colors.red : Colors.white54,
-              onTap: _muteMic,
-              tooltip: isMicrophoneMuted ? 'Unmute' : 'Mute',
-            ),
-            if (!voiceonly) ...[
-              const SizedBox(width: 4),
-              _ControlButton(
-                icon: isLocalVideoMuted
-                    ? FontAwesomeIcons.videoSlash
-                    : FontAwesomeIcons.video,
-                color: isLocalVideoMuted ? Colors.red : Colors.white54,
-                onTap: _muteCamera,
-                tooltip: isLocalVideoMuted ? 'Turn on camera' : 'Turn off camera',
               ),
-              const SizedBox(width: 4),
-              _ControlButton(
-                icon: _expanded
-                    ? FontAwesomeIcons.chevronUp
-                    : FontAwesomeIcons.chevronDown,
-                color: Colors.white54,
-                onTap: () => setState(() => _expanded = !_expanded),
-                tooltip: _expanded ? 'Collapse' : 'Expand video',
+
+              // Room name
+              Padding(
+                padding: const EdgeInsets.fromLTRB(28, 2, 12, 0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    displayName,
+                    style: const TextStyle(
+                      color: DraculaColors.muted,
+                      fontSize: 11,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // Control buttons row
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
+                child: Row(
+                  children: [
+                    // Answer button (incoming ringing)
+                    if (isRinging) ...[
+                      _SidebarControlButton(
+                        icon: FontAwesomeIcons.phone,
+                        color: DraculaColors.green,
+                        bgColor: DraculaColors.green.withValues(alpha: 0.15),
+                        onTap: _answerCall,
+                        tooltip: 'Answer',
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+
+                    // Mic toggle
+                    if (isConnected)
+                      _SidebarControlButton(
+                        icon: isMicrophoneMuted
+                            ? FontAwesomeIcons.microphoneSlash
+                            : FontAwesomeIcons.microphone,
+                        color: isMicrophoneMuted
+                            ? DraculaColors.red
+                            : DraculaColors.foreground.withValues(alpha: 0.7),
+                        bgColor: isMicrophoneMuted
+                            ? DraculaColors.red.withValues(alpha: 0.15)
+                            : DraculaColors.currentLine.withValues(alpha: 0.6),
+                        onTap: _muteMic,
+                        tooltip: isMicrophoneMuted ? 'Unmute' : 'Mute',
+                      ),
+
+                    // Camera toggle (video calls only)
+                    if (isConnected && !voiceonly) ...[
+                      const SizedBox(width: 4),
+                      _SidebarControlButton(
+                        icon: isLocalVideoMuted
+                            ? FontAwesomeIcons.videoSlash
+                            : FontAwesomeIcons.video,
+                        color: isLocalVideoMuted
+                            ? DraculaColors.red
+                            : DraculaColors.foreground.withValues(alpha: 0.7),
+                        bgColor: isLocalVideoMuted
+                            ? DraculaColors.red.withValues(alpha: 0.15)
+                            : DraculaColors.currentLine.withValues(alpha: 0.6),
+                        onTap: _muteCamera,
+                        tooltip: isLocalVideoMuted
+                            ? 'Turn on camera'
+                            : 'Turn off camera',
+                      ),
+                    ],
+
+                    const Spacer(),
+
+                    // Expand / pop-out button
+                    if (isConnected) ...[
+                      _SidebarControlButton(
+                        icon: FontAwesomeIcons.upRightAndDownLeftFromCenter,
+                        color: DraculaColors.foreground.withValues(alpha: 0.7),
+                        bgColor:
+                            DraculaColors.currentLine.withValues(alpha: 0.6),
+                        onTap: widget.onExpand,
+                        tooltip: 'Expand call',
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+
+                    // Hang up
+                    _SidebarControlButton(
+                      icon: FontAwesomeIcons.phoneSlash,
+                      color: DraculaColors.foreground,
+                      bgColor: DraculaColors.red,
+                      onTap: _hangUp,
+                      tooltip: isRinging ? 'Decline' : 'Disconnect',
+                      wide: true,
+                    ),
+                  ],
+                ),
               ),
             ],
-            const SizedBox(width: 4),
-          ],
-          _ControlButton(
-            icon: FontAwesomeIcons.phoneSlash,
-            color: Colors.red,
-            onTap: _hangUp,
-            tooltip: 'Hang up',
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class _ControlButton extends StatelessWidget {
+/// A small control button used in the sidebar call panel.
+class _SidebarControlButton extends StatelessWidget {
   final IconData icon;
   final Color color;
-  final VoidCallback onTap;
+  final Color bgColor;
+  final VoidCallback? onTap;
   final String tooltip;
+  final bool wide;
 
-  const _ControlButton({
+  const _SidebarControlButton({
     required this.icon,
     required this.color,
+    required this.bgColor,
     required this.onTap,
     required this.tooltip,
+    this.wide = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(4),
-        child: Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: Colors.white.withOpacity(0.08),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(6),
+          child: Container(
+            width: wide ? 40 : 34,
+            height: 34,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: bgColor,
+            ),
+            child: Icon(icon, color: color, size: 13),
           ),
-          child: Icon(icon, color: color, size: 14),
         ),
       ),
     );
   }
 }
 
-extension _StringLet on String {
-  T let<T>(T Function(String) fn) => fn(this);
+// ─────────────────────────────────────────────────────────────────────────────
+// CallTopPanel — fixed call panel that sits on top of the chat area
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// A fixed panel that shows the call view (video feeds + avatars + controls)
+/// at the top of the chat content area, like Discord. Does NOT float or drag;
+/// it sits above the chat messages and can be collapsed back to sidebar-only.
+class CallFloatingPanel extends StatefulWidget {
+  final BuildContext callContext;
+  final CallSession call;
+  final Client client;
+  final VoidCallback? onMinimize;
+
+  const CallFloatingPanel({
+    required this.callContext,
+    required this.call,
+    required this.client,
+    this.onMinimize,
+    super.key,
+  });
+
+  @override
+  State<CallFloatingPanel> createState() => _CallFloatingPanelState();
 }
 
-/// Convenience widget that listens to the VoIP plugin's [activeCallNotifier]
-/// and renders a [CallBanner] when a call is active.
-///
-/// Returns [SizedBox.shrink] on non-web platforms or when there is no call.
-/// Drop this into any [Column] to show the call bar inline.
-class GlobalCallBanner extends StatelessWidget {
-  const GlobalCallBanner({super.key});
+class _CallFloatingPanelState extends State<CallFloatingPanel> {
+  CallSession get call => widget.call;
+
+  bool get isMicrophoneMuted => call.isMicrophoneMuted;
+  bool get isLocalVideoMuted => call.isLocalVideoMuted;
+  bool get voiceonly => call.type == CallType.kVoice;
+
+  String get displayName => call.room.getLocalizedDisplayname(
+        MatrixLocals(L10n.of(widget.callContext)),
+      );
+
+  @override
+  void initState() {
+    super.initState();
+    call.onCallEventChanged.stream.listen((event) {
+      if (event == CallStateChange.kFeedsChanged) {
+        setState(() => call.tryRemoveStopedStreams());
+      }
+    });
+    call.onCallStateChanged.stream.listen((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  String get _remoteDisplayName {
+    if (call.room.isDirectChat) {
+      final other = call.room.unsafeGetUserFromMemoryOrFallback(
+        call.room.directChatMatrixID ?? '',
+      );
+      return other.displayName ?? other.id;
+    }
+    return displayName;
+  }
+
+  Uri? get _remoteAvatarUrl {
+    if (call.room.isDirectChat) {
+      final other = call.room.unsafeGetUserFromMemoryOrFallback(
+        call.room.directChatMatrixID ?? '',
+      );
+      return other.avatarUrl;
+    }
+    return null;
+  }
+
+  Uri? get _localAvatarUrl {
+    try {
+      return widget.client.fetchOwnProfile().then((p) => p.avatarUrl)
+          as Uri?;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String get _localDisplayName =>
+      widget.client.userID?.localpart ?? 'You';
 
   @override
   Widget build(BuildContext context) {
-    if (!kIsWeb) return const SizedBox.shrink();
+    final remoteStream =
+        call.remoteUserMediaStream ?? call.remoteScreenSharingStream;
+    final localStream = call.localUserMediaStream;
+    final isConnected = call.state == CallState.kConnected;
+    final hasRemoteVideo = remoteStream != null && !remoteStream.videoMuted;
+    final hasLocalVideo = localStream != null && !isLocalVideoMuted;
 
+    // Fixed height panel that sits at the top of the chat area
+    const panelHeight = 320.0;
+
+    return Container(
+      width: double.infinity,
+      height: panelHeight,
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E1F2E),
+        border: Border(
+          bottom: BorderSide(
+            color: DraculaColors.currentLine,
+            width: 1,
+          ),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          // Title bar
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: DraculaColors.currentLine.withValues(alpha: 0.8),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  voiceonly
+                      ? FontAwesomeIcons.phone
+                      : FontAwesomeIcons.video,
+                  color: DraculaColors.green,
+                  size: 12,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    displayName,
+                    style: const TextStyle(
+                      color: DraculaColors.foreground,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                // Minimize button
+                _FloatingControlButton(
+                  icon: FontAwesomeIcons.chevronUp,
+                  color: DraculaColors.foreground.withValues(alpha: 0.7),
+                  onTap: widget.onMinimize,
+                  tooltip: 'Collapse',
+                  size: 24,
+                ),
+              ],
+            ),
+          ),
+
+          // Main content area — avatar grid or video
+          Expanded(
+            child: Container(
+              color: const Color(0xFF1A1B2E),
+              child: _buildMainContent(
+                isConnected: isConnected,
+                hasRemoteVideo: hasRemoteVideo,
+                hasLocalVideo: hasLocalVideo,
+                remoteStream: remoteStream,
+                localStream: localStream,
+              ),
+            ),
+          ),
+
+          // Bottom control bar
+          _buildControlBar(),
+        ],
+      ),
+    );
+  }
+
+  /// Discord/Slack-style main content area.
+  /// Voice calls: shows participant avatars in a centered grid.
+  /// Video calls: shows video feeds with PiP.
+  Widget _buildMainContent({
+    required bool isConnected,
+    required bool hasRemoteVideo,
+    required bool hasLocalVideo,
+    WrappedMediaStream? remoteStream,
+    WrappedMediaStream? localStream,
+  }) {
+    // If it's a video call and we have remote video, show video feeds
+    if (!voiceonly && hasRemoteVideo) {
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: VideoRenderer(
+              remoteStream!,
+              mirror: false,
+              fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+            ),
+          ),
+          // Local video PiP
+          if (hasLocalVideo)
+            Positioned(
+              right: 10,
+              bottom: 10,
+              child: Container(
+                width: 120,
+                height: 90,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: DraculaColors.currentLine,
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: VideoRenderer(
+                  localStream!,
+                  mirror: true,
+                  fit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                ),
+              ),
+            ),
+        ],
+      );
+    }
+
+    // Voice call or video call with no video yet —
+    // show Discord-style avatar circles for participants
+    return Center(
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 32,
+        runSpacing: 16,
+        children: [
+          // Remote participant
+          _ParticipantAvatar(
+            avatarUrl: _remoteAvatarUrl,
+            name: _remoteDisplayName,
+            isMuted: call.remoteUserMediaStream?.audioMuted ?? false,
+            isSpeaking: isConnected,
+            client: widget.client,
+          ),
+          // Local participant (you)
+          _ParticipantAvatar(
+            avatarUrl: null, // local avatar fetched via client
+            name: _localDisplayName,
+            isMuted: isMicrophoneMuted,
+            isSpeaking: false,
+            isLocal: true,
+            client: widget.client,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildControlBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: DraculaColors.currentLine.withValues(alpha: 0.8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _FloatingControlButton(
+            icon: isMicrophoneMuted
+                ? FontAwesomeIcons.microphoneSlash
+                : FontAwesomeIcons.microphone,
+            color: isMicrophoneMuted
+                ? DraculaColors.red
+                : DraculaColors.foreground,
+            bgColor: isMicrophoneMuted
+                ? DraculaColors.red.withValues(alpha: 0.2)
+                : DraculaColors.background.withValues(alpha: 0.5),
+            onTap: () => setState(
+              () => call.setMicrophoneMuted(!call.isMicrophoneMuted),
+            ),
+            tooltip: isMicrophoneMuted ? 'Unmute' : 'Mute',
+          ),
+          if (!voiceonly) ...[
+            const SizedBox(width: 8),
+            _FloatingControlButton(
+              icon: isLocalVideoMuted
+                  ? FontAwesomeIcons.videoSlash
+                  : FontAwesomeIcons.video,
+              color: isLocalVideoMuted
+                  ? DraculaColors.red
+                  : DraculaColors.foreground,
+              bgColor: isLocalVideoMuted
+                  ? DraculaColors.red.withValues(alpha: 0.2)
+                  : DraculaColors.background.withValues(alpha: 0.5),
+              onTap: () => setState(
+                () => call.setLocalVideoMuted(!call.isLocalVideoMuted),
+              ),
+              tooltip:
+                  isLocalVideoMuted ? 'Turn on camera' : 'Turn off camera',
+            ),
+          ],
+          const SizedBox(width: 20),
+          // Hang up (pill shaped, red)
+          Tooltip(
+            message: 'Disconnect',
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  call.hangup(reason: CallErrorCode.userHangup);
+                  widget.onMinimize?.call();
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  width: 52,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: DraculaColors.red,
+                  ),
+                  child: const Icon(
+                    FontAwesomeIcons.phoneSlash,
+                    color: DraculaColors.foreground,
+                    size: 14,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FloatingControlButton extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final Color? bgColor;
+  final VoidCallback? onTap;
+  final String tooltip;
+  final double size;
+
+  const _FloatingControlButton({
+    required this.icon,
+    required this.color,
+    this.bgColor,
+    required this.onTap,
+    required this.tooltip,
+    this.size = 36,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(size / 2),
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: bgColor ??
+                  DraculaColors.background.withValues(alpha: 0.5),
+            ),
+            child: Icon(icon, color: color, size: size * 0.38),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Discord-style participant avatar circle with name label and mute indicator.
+class _ParticipantAvatar extends StatelessWidget {
+  final Uri? avatarUrl;
+  final String name;
+  final bool isMuted;
+  final bool isSpeaking;
+  final bool isLocal;
+  final Client client;
+
+  const _ParticipantAvatar({
+    required this.avatarUrl,
+    required this.name,
+    required this.isMuted,
+    required this.client,
+    this.isSpeaking = false,
+    this.isLocal = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Avatar with speaking ring
+        Container(
+          width: 88,
+          height: 88,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isSpeaking
+                  ? DraculaColors.green
+                  : Colors.transparent,
+              width: 3,
+            ),
+            boxShadow: isSpeaking
+                ? [
+                    BoxShadow(
+                      color: DraculaColors.green.withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ]
+                : null,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(3),
+            child: isLocal
+                ? FutureBuilder(
+                    future: client.fetchOwnProfile(),
+                    builder: (context, snapshot) {
+                      return Avatar(
+                        mxContent: snapshot.data?.avatarUrl,
+                        name: snapshot.data?.displayName ??
+                            client.userID?.localpart ??
+                            'You',
+                        size: 76,
+                        client: client,
+                      );
+                    },
+                  )
+                : Avatar(
+                    mxContent: avatarUrl,
+                    name: name,
+                    size: 76,
+                    client: client,
+                  ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Name
+        SizedBox(
+          width: 100,
+          child: Text(
+            isLocal ? 'You' : name,
+            style: const TextStyle(
+              color: DraculaColors.foreground,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(height: 4),
+        // Mute indicator
+        if (isMuted)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                FontAwesomeIcons.microphoneSlash,
+                color: DraculaColors.red,
+                size: 10,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Muted',
+                style: TextStyle(
+                  color: DraculaColors.red,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Global convenience widgets
+// ─────────────────────────────────────────────────────────────────────────────
+
+/// Convenience widget that listens to VoIP plugin's [activeCallNotifier]
+/// and renders a [CallSidebarPanel] when a call is active.
+///
+/// Drop this into any sidebar [Column] to show the call bar inline.
+class GlobalCallSidebar extends StatelessWidget {
+  const GlobalCallSidebar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final voipPlugin = Matrix.of(context).voipPlugin;
     if (voipPlugin == null) return const SizedBox.shrink();
 
@@ -449,7 +946,7 @@ class GlobalCallBanner extends StatelessWidget {
       valueListenable: voipPlugin.activeCallNotifier,
       builder: (ctx, activeCall, _) {
         if (activeCall == null) return const SizedBox.shrink();
-        return CallBanner(
+        return CallSidebarPanel(
           callContext: ctx,
           callId: activeCall.callId,
           call: activeCall.call,
@@ -457,8 +954,59 @@ class GlobalCallBanner extends StatelessWidget {
           onClear: () {
             voipPlugin.activeCallNotifier.value = null;
           },
+          onExpand: () {
+            voipPlugin.callExpandedNotifier.value = true;
+          },
         );
       },
     );
+  }
+}
+
+/// Convenience widget that shows the expanded call panel above the chat content.
+///
+/// Place this inside a [Column] above the chat/content area so it appears
+/// at the top of the chat section without blocking navigation.
+class GlobalCallFloatingPanel extends StatelessWidget {
+  const GlobalCallFloatingPanel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final voipPlugin = Matrix.of(context).voipPlugin;
+    if (voipPlugin == null) return const SizedBox.shrink();
+
+    return ValueListenableBuilder<ActiveCallState?>(
+      valueListenable: voipPlugin.activeCallNotifier,
+      builder: (ctx, activeCall, _) {
+        if (activeCall == null) return const SizedBox.shrink();
+
+        return ValueListenableBuilder<bool>(
+          valueListenable: voipPlugin.callExpandedNotifier,
+          builder: (ctx2, isExpanded, _) {
+            if (!isExpanded) return const SizedBox.shrink();
+
+            return CallFloatingPanel(
+              callContext: ctx2,
+              call: activeCall.call,
+              client: activeCall.client,
+              onMinimize: () {
+                voipPlugin.callExpandedNotifier.value = false;
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+/// Legacy alias — renders the sidebar panel for backward compatibility
+/// with route definitions that use GlobalCallBanner.
+class GlobalCallBanner extends StatelessWidget {
+  const GlobalCallBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const GlobalCallSidebar();
   }
 }

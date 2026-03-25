@@ -57,9 +57,12 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   WebMediaDevicesWrapper? get mediaDevicesWrapper =>
       kIsWeb ? _webMediaDevices : null;
 
-  /// Notifier for the active 1:1 call. Used by the inline CallBanner on web.
+  /// Notifier for the active 1:1 call. Used by the inline CallSidebarPanel.
   final ValueNotifier<ActiveCallState?> activeCallNotifier =
       ValueNotifier<ActiveCallState?>(null);
+
+  /// Whether the floating call panel (video pop-out) is expanded.
+  final ValueNotifier<bool> callExpandedNotifier = ValueNotifier<bool>(false);
 
   void dispose() {
     if (!kIsWeb) {
@@ -75,35 +78,36 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   }
 
   void addCallingOverlay(String callId, CallSession call) {
-    // On web, use the inline CallBanner instead of a fullscreen overlay/dialog
-    if (kIsWeb) {
-      activeCallNotifier.value = ActiveCallState(
-        callId: callId,
-        call: call,
-        client: client,
-      );
-      return;
-    }
-
-    final context = this.context;
-
-    if (overlayEntry != null) {
-      Logs().e('[VOIP] addCallingOverlay: The call session already exists?');
-      overlayEntry!.remove();
-    }
-    overlayEntry = OverlayEntry(
-      builder: (_) => Calling(
-        context: context,
-        client: client,
-        callId: callId,
-        call: call,
-        onClear: () {
-          overlayEntry?.remove();
-          overlayEntry = null;
-        },
-      ),
+    // Use the inline Discord-style call sidebar panel on all platforms.
+    // On mobile, also keep the fullscreen overlay as a fallback for PIP.
+    activeCallNotifier.value = ActiveCallState(
+      callId: callId,
+      call: call,
+      client: client,
     );
-    Overlay.of(context).insert(overlayEntry!);
+
+    // On mobile (non-web), still show the fullscreen overlay for native PIP
+    if (!kIsWeb && PlatformInfos.isMobile) {
+      final context = this.context;
+
+      if (overlayEntry != null) {
+        Logs().e('[VOIP] addCallingOverlay: The call session already exists?');
+        overlayEntry!.remove();
+      }
+      overlayEntry = OverlayEntry(
+        builder: (_) => Calling(
+          context: context,
+          client: client,
+          callId: callId,
+          call: call,
+          onClear: () {
+            overlayEntry?.remove();
+            overlayEntry = null;
+          },
+        ),
+      );
+      Overlay.of(context).insert(overlayEntry!);
+    }
   }
 
   @override
@@ -238,15 +242,14 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
       Logs().w('[VOIP] CallKit endCall failed: $e');
     }
 
-    // Clear the inline call banner on web
-    if (kIsWeb) {
-      // Small delay so the "Call ended" state is visible briefly
-      Future.delayed(const Duration(seconds: 2), () {
-        if (activeCallNotifier.value?.callId == session.callId) {
-          activeCallNotifier.value = null;
-        }
-      });
-    }
+    // Clear the inline call sidebar panel (all platforms)
+    callExpandedNotifier.value = false;
+    // Small delay so the "Call ended" state is visible briefly
+    Future.delayed(const Duration(seconds: 2), () {
+      if (activeCallNotifier.value?.callId == session.callId) {
+        activeCallNotifier.value = null;
+      }
+    });
 
     if (overlayEntry != null) {
       overlayEntry!.remove();

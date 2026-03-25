@@ -133,10 +133,10 @@ abstract class AppRoutes {
                 ),
                 sideView: child,
               )
-            // Single-column mode: wrap with call banner so incoming
-            // calls are visible even on narrow browser windows.
+            // Single-column mode: call panel at top of content.
             : Column(
                 children: [
+                  const GlobalCallFloatingPanel(),
                   const GlobalCallBanner(),
                   Expanded(child: child),
                 ],
@@ -215,6 +215,7 @@ abstract class AppRoutes {
                       )
                     : Column(
                         children: [
+                          const GlobalCallFloatingPanel(),
                           const GlobalCallBanner(),
                           Expanded(child: child),
                         ],
