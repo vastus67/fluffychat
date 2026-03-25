@@ -568,7 +568,7 @@ class ChatController extends State<ChatPageWithRoom>
       // no need to have the setting typing to false be blocking
       typingCoolDown?.cancel();
       typingCoolDown = null;
-      room.setTyping(false);
+      room.setTyping(false).catchError((_) {});
       currentlyTyping = false;
     }
     // then cancel the old timeline
@@ -1306,7 +1306,7 @@ class ChatController extends State<ChatPageWithRoom>
       typingCoolDown = Timer(const Duration(seconds: 2), () {
         typingCoolDown = null;
         currentlyTyping = false;
-        room.setTyping(false);
+        room.setTyping(false).catchError((_) {});
       });
       typingTimeout ??= Timer(const Duration(seconds: 30), () {
         typingTimeout = null;
@@ -1314,10 +1314,12 @@ class ChatController extends State<ChatPageWithRoom>
       });
       if (!currentlyTyping) {
         currentlyTyping = true;
-        room.setTyping(
-          true,
-          timeout: const Duration(seconds: 30).inMilliseconds,
-        );
+        room
+            .setTyping(
+              true,
+              timeout: const Duration(seconds: 30).inMilliseconds,
+            )
+            .catchError((_) {});
       }
     }
   }
