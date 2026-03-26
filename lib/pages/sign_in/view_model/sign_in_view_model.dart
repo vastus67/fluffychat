@@ -88,11 +88,24 @@ class SignInViewModel extends ValueNotifier<SignInState> {
       );
     } catch (e, s) {
       Logs().w('Unable to fetch public homeservers...', e, s);
+      final fallbackList = AppConfig.knownHomeservers
+          .map(
+            (s) => PublicHomeserverData(
+              name: s['name'],
+              description: s['description'],
+            ),
+          )
+          .toList();
+      final defaultServer = fallbackList.singleWhereOrNull(
+        (server) => server.name == AppSettings.defaultHomeserver.value,
+      );
+      if (defaultServer == null) fallbackList.insert(0, defaultHomeserverData);
       value = value.copyWith(
         selectedHomeserver: defaultHomeserverData,
-        publicHomeservers: AsyncSnapshot.withData(ConnectionState.done, [
-          defaultHomeserverData,
-        ]),
+        publicHomeservers: AsyncSnapshot.withData(
+          ConnectionState.done,
+          fallbackList,
+        ),
       );
     }
     _filterHomeservers();

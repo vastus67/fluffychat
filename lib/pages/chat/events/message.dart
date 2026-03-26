@@ -490,7 +490,7 @@ class Message extends StatelessWidget {
                                                     onSelect(event);
                                                   },
                                             child: AnimatedOpacity(
-                                              opacity: animateIn
+                                              opacity: (animateIn && !event.status.isSending)
                                                   ? 0
                                                   : event.messageType ==
                                                             MessageTypes

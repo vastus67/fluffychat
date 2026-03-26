@@ -16,8 +16,10 @@ import 'package:afterdamage/pages/chat/chat_event_list.dart';
 import 'package:afterdamage/pages/chat/encryption_button.dart';
 import 'package:afterdamage/pages/chat/pinned_events.dart';
 import 'package:afterdamage/pages/chat/reply_display.dart';
+import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/utils/account_config.dart';
 import 'package:afterdamage/utils/localized_exception_extension.dart';
+import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/voip_plugin.dart';
 import 'package:afterdamage/widgets/chat_settings_popup_menu.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
@@ -134,22 +136,19 @@ class ChatView extends StatelessWidget {
       ];
     } else if (!controller.room.isArchived) {
       return [
-        if (Matrix.of(context).voipPlugin != null &&
-            controller.room.isDirectChat)
+        if (controller.room.isDirectChat)
           IconButton(
             onPressed: controller.onVoiceCallTap,
             icon: const Icon(FontAwesomeIcons.phone),
             tooltip: L10n.of(context).voiceCall,
           ),
-        if (Matrix.of(context).voipPlugin != null &&
-            controller.room.isDirectChat)
+        if (controller.room.isDirectChat)
           IconButton(
             onPressed: controller.onVideoCallTap,
             icon: const Icon(FontAwesomeIcons.video),
             tooltip: L10n.of(context).videoCall,
           ),
-        if (Matrix.of(context).voipPlugin != null &&
-            !controller.room.isDirectChat)
+        if (!controller.room.isDirectChat)
           IconButton(
             onPressed: controller.onGroupCallButtonTap,
             icon: const Icon(FontAwesomeIcons.video),
@@ -429,9 +428,11 @@ class ChatView extends StatelessWidget {
                                     : Column(
                                         mainAxisSize: .min,
                                         children: [
+                                          if (!PlatformInfos.isWeb &&
+                                              !PlatformInfos.isDesktop)
+                                            ChatEmojiPicker(controller),
                                           ReplyDisplay(controller),
                                           ChatInputRow(controller),
-                                          ChatEmojiPicker(controller),
                                         ],
                                       ),
                                 ),
@@ -440,6 +441,12 @@ class ChatView extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (PlatformInfos.isWeb || PlatformInfos.isDesktop)
+                      Positioned(
+                        bottom: 72,
+                        right: 8,
+                        child: ChatEmojiPicker(controller),
+                      ),
                     if (controller.dragging)
                       Container(
                         color: theme.scaffoldBackgroundColor.withAlpha(230),
