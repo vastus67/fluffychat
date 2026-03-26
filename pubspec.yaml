@@ -118,6 +118,7 @@ flutter:
     - assets/sounds/
     - assets/vodozemac/
     - assets/fonts/
+    - assets/icons/
     - assets/icons/afterdamage/
   fonts:
     - family: FreeSerif

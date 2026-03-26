@@ -1087,11 +1087,16 @@ class FireBurnWrapper extends StatefulWidget {
 
 class _FireBurnWrapperState extends State<FireBurnWrapper> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late Animation<double> _progress;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1500));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    );
+    _progress = CurvedAnimation(parent: _controller, curve: Curves.easeInCubic);
     if (widget.isBurning) _controller.forward();
   }
 
@@ -1112,31 +1117,68 @@ class _FireBurnWrapperState extends State<FireBurnWrapper> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _progress,
       builder: (context, child) {
-        final progress = _controller.value;
-        if (progress == 1.0) return const SizedBox.shrink(); // Fully burned
-
+        final progress = _progress.value;
+        if (progress >= 1.0) return const SizedBox.shrink();
         if (progress == 0.0) return child!;
 
-        return Transform.translate(
-          offset: Offset(0, progress * -20),
-          child: Transform.scale(
-            scale: 1.0 - (progress * 0.1),
-            child: Opacity(
-              opacity: 1.0 - progress,
-              child: ShaderMask(
-                shaderCallback: (bounds) => ui.Gradient.linear(
-                  Offset(0, bounds.height),
-                  Offset(0, 0),
-                  const [Colors.transparent, Colors.red, Colors.orange, Colors.yellow],
-                  [0.0, progress, progress + 0.2, 1.0],
+        // burnFraction = how much of the message is still visible (top portion).
+        // At progress=0 → 1.0 (fully visible). At progress=1 → 0.0 (fully gone).
+        final burnFraction = 1.0 - progress;
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Message: erased from bottom to top via gradient alpha mask.
+            ShaderMask(
+              shaderCallback: (Rect bounds) {
+                const softEdge = 0.12; // feathered burn edge
+                final edgeTop = (burnFraction - softEdge).clamp(0.0, 1.0);
+                final edgeBot = burnFraction.clamp(0.01, 1.0);
+                return LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: const [Colors.white, Colors.white, Colors.transparent],
+                  stops: [0.0, edgeTop, edgeBot],
+                ).createShader(bounds);
+              },
+              blendMode: BlendMode.dstIn,
+              child: child!,
+            ),
+            // Fire GIF: visible only at the burn line, rising with it.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: ShaderMask(
+                  shaderCallback: (Rect bounds) {
+                    // Fire band is centred on the burn line and spans ±fireZone.
+                    const fireZone = 0.32;
+                    final fireTop = (burnFraction - fireZone * 0.35).clamp(0.0, 1.0);
+                    final fireMid = burnFraction.clamp(0.0, 1.0);
+                    final fireBot = (burnFraction + fireZone * 0.65).clamp(0.0, 1.0);
+                    return LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: const [
+                        Colors.transparent,
+                        Colors.white,
+                        Colors.transparent,
+                      ],
+                      stops: [fireTop, fireMid, fireBot],
+                    ).createShader(bounds);
+                  },
+                  blendMode: BlendMode.dstIn,
+                  child: Opacity(
+                    opacity: (progress * 2.5).clamp(0.0, 1.0),
+                    child: Image.asset(
+                      'assets/icons/burning_message.gif',
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
-                blendMode: BlendMode.srcATop,
-                child: child,
               ),
             ),
-          ),
+          ],
         );
       },
       child: widget.child,
