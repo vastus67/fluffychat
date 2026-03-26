@@ -67,7 +67,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
-              tooltip: L10n.of(context).openAppDrawer,
+              tooltip: 'Open menu',
             )
           : null,
       title: StreamBuilder(

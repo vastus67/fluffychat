@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:afterdamage/theme/dracula_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../config/themes.dart';
 import 'chat.dart';
 import 'events/reply_content.dart';
@@ -25,24 +22,19 @@ class ReplyDisplay extends StatelessWidget {
           ? 56
           : 0,
       clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.onInverseSurface,
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: DraculaTheme.spacingSm,
-      ),
+      decoration: BoxDecoration(color: theme.colorScheme.onInverseSurface),
       child: Row(
         children: <Widget>[
           IconButton(
             tooltip: L10n.of(context).close,
-            icon: const Icon(FontAwesomeIcons.xmark),
+            icon: const Icon(Icons.close),
             onPressed: controller.cancelReplyEventAction,
           ),
           Expanded(
             child: controller.replyEvent != null
                 ? ReplyContent(
                     controller.replyEvent!,
-                    timeline: controller.timeline!,
+                    timeline: controller.timeline,
                   )
                 : _EditContent(
                     controller.editEvent?.getDisplayEvent(controller.timeline!),
@@ -68,8 +60,8 @@ class _EditContent extends StatelessWidget {
     }
     return Row(
       children: <Widget>[
-        Icon(FontAwesomeIcons.penToSquare, color: theme.colorScheme.primary),
-        const SizedBox(width: DraculaTheme.spacingMd),
+        Icon(Icons.edit, color: theme.colorScheme.primary),
+        Container(width: 15.0),
         Text(
           event.calcLocalizedBodyFallback(
             MatrixLocals(L10n.of(context)),

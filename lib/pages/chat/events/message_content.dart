@@ -1,11 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat/events/poll.dart';
@@ -16,6 +10,11 @@ import 'package:afterdamage/utils/date_time_extension.dart';
 import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/encryption.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../../config/app_config.dart';
 import '../../../utils/event_checkbox_extension.dart';
 import '../../../utils/platform_infos.dart';
@@ -35,6 +34,7 @@ class MessageContent extends StatelessWidget {
   final BorderRadius borderRadius;
   final Timeline timeline;
   final bool selected;
+  final Set<String> bigEmojis;
 
   const MessageContent(
     this.event, {
@@ -45,9 +45,10 @@ class MessageContent extends StatelessWidget {
     required this.linkColor,
     required this.borderRadius,
     required this.selected,
+    required this.bigEmojis,
   });
 
-  void _verifyOrRequestKey(BuildContext context) async {
+  Future<void> _verifyOrRequestKey(BuildContext context) async {
     final l10n = L10n.of(context);
     if (event.content['can_request_session'] != true) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,7 +59,8 @@ class MessageContent extends StatelessWidget {
       return;
     }
     final client = Matrix.of(context).client;
-    if (client.isUnknownSession && client.encryption!.crossSigning.enabled) {
+    final state = await client.getCryptoIdentityState();
+    if (!state.connected) {
       final success = await context.push('/backup');
       if (success != true) return;
     }
@@ -88,7 +90,7 @@ class MessageContent extends StatelessWidget {
                 ),
                 title: Text(sender.calcDisplayname()),
                 subtitle: Text(event.originServerTs.localizedTime(context)),
-                trailing: const Icon(FontAwesomeIcons.lock),
+                trailing: const Icon(Icons.lock_outlined),
               ),
               const Divider(),
               Text(event.calcLocalizedBodyFallback(MatrixLocals(l10n))),
@@ -193,7 +195,7 @@ class MessageContent extends StatelessWidget {
             return _ButtonContent(
               textColor: buttonTextColor,
               onPressed: () => _verifyOrRequestKey(context),
-              icon: 'ðŸ”’',
+              icon: '🔒',
               label: L10n.of(context).encrypted,
               fontSize: fontSize,
             );
@@ -206,7 +208,7 @@ class MessageContent extends StatelessWidget {
                   .split(';')
                   .first
                   .split(',')
-                  .map((s) => double.tryParse(s))
+                  .map(double.tryParse)
                   .toList();
               if (latlong.length == 2 &&
                   latlong.first != null &&
@@ -220,7 +222,7 @@ class MessageContent extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     OutlinedButton.icon(
-                      icon: Icon(FontAwesomeIcons.locationDot, color: textColor),
+                      icon: Icon(Icons.location_on_outlined, color: textColor),
                       onPressed: UrlLauncher(
                         context,
                         geoUri.toString(),
@@ -257,11 +259,10 @@ class MessageContent extends StatelessWidget {
             }
 
             final bigEmotes =
-                event.onlyEmotes &&
-                event.numberEmotes > 0 &&
-                event.numberEmotes <= 3;
+                !event.isRichMessage && bigEmojis.contains(event.body);
+
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: HtmlMessage(
                 html: html,
                 textColor: textColor,
@@ -312,7 +313,7 @@ class MessageContent extends StatelessWidget {
                 snapshot.data?.calcDisplayname() ??
                     event.senderFromMemoryOrFallback.calcDisplayname(),
               ),
-              icon: 'ðŸ“ž',
+              icon: '📞',
               textColor: buttonTextColor,
               onPressed: () => onInfoTab!(event),
               fontSize: fontSize,
@@ -329,7 +330,7 @@ class MessageContent extends StatelessWidget {
                     event.senderFromMemoryOrFallback.calcDisplayname(),
                 event.type,
               ),
-              icon: 'â„¹ï¸',
+              icon: 'ℹ️',
               textColor: buttonTextColor,
               onPressed: () => onInfoTab!(event),
               fontSize: fontSize,
@@ -368,7 +369,7 @@ class RedactionWidget extends StatelessWidget {
           label: reason == null
               ? L10n.of(context).redactedBy(redactedBy)
               : L10n.of(context).redactedByBecause(redactedBy, reason),
-          icon: 'ðŸ—‘ï¸',
+          icon: '🗑️',
           textColor: buttonTextColor.withAlpha(128),
           onPressed: () => onInfoTab!(event),
           fontSize: fontSize,
@@ -396,7 +397,7 @@ class _ButtonContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
         onTap: onPressed,
         child: Text(

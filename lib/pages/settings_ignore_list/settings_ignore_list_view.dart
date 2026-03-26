@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:flutter/material.dart';
+
 import '../../widgets/matrix.dart';
 import 'settings_ignore_list.dart';
 
@@ -56,7 +55,7 @@ class SettingsIgnoreListView extends StatelessWidget {
                           labelText: L10n.of(context).blockUsername,
                           suffixIcon: IconButton(
                             tooltip: L10n.of(context).block,
-                            icon: const Icon(FontAwesomeIcons.plus),
+                            icon: const Icon(Icons.add),
                             onPressed: () => controller.ignoreUser(context),
                           ),
                         ),
@@ -77,7 +76,7 @@ class SettingsIgnoreListView extends StatelessWidget {
                       title: Text(client.ignoredUsers[i]),
                       trailing: IconButton(
                         tooltip: L10n.of(context).delete,
-                        icon: const Icon(FontAwesomeIcons.trash),
+                        icon: const Icon(Icons.delete_outlined),
                         onPressed: () => showFutureLoadingDialog(
                           context: context,
                           future: () =>

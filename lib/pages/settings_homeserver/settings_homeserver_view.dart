@@ -1,17 +1,15 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:matrix/matrix.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/localized_exception_extension.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:matrix/matrix.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
 import '../../widgets/matrix.dart';
 import 'settings_homeserver.dart';
 
@@ -58,7 +56,7 @@ class SettingsHomeserverView extends StatelessWidget {
                   final data = snapshot.data;
                   if (error != null) {
                     return ListTile(
-                      leading: const Icon(FontAwesomeIcons.circleExclamation),
+                      leading: const Icon(Icons.error_outlined),
                       title: Text(
                         error.toLocalizedString(
                           context,
@@ -77,7 +75,7 @@ class SettingsHomeserverView extends StatelessWidget {
                   final contacts = data.contacts;
                   if (supportPage == null && contacts == null) {
                     return ListTile(
-                      leading: const Icon(FontAwesomeIcons.circleExclamation),
+                      leading: const Icon(Icons.error_outlined),
                       title: Text(
                         L10n.of(context).noContactInformationProvided,
                         style: const TextStyle(fontSize: 14),
@@ -128,7 +126,7 @@ class SettingsHomeserverView extends StatelessWidget {
                       mainAxisAlignment: .center,
                       children: [
                         Icon(
-                          FontAwesomeIcons.circleExclamation,
+                          Icons.error_outlined,
                           color: theme.colorScheme.error,
                         ),
                         const SizedBox(height: 12),
@@ -186,7 +184,7 @@ class SettingsHomeserverView extends StatelessWidget {
                       mainAxisAlignment: .center,
                       children: [
                         Icon(
-                          FontAwesomeIcons.circleExclamation,
+                          Icons.error_outlined,
                           color: theme.colorScheme.error,
                         ),
                         const SizedBox(height: 12),

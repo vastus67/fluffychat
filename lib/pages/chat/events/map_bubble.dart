@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+
+import '../../../config/app_config.dart';
 
 class MapBubble extends StatelessWidget {
   final double latitude;
@@ -44,6 +45,7 @@ class MapBubble extends StatelessWidget {
                     minZoom: 0,
                     urlTemplate:
                         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: AppConfig.appId,
                     subdomains: const ['a', 'b', 'c'],
                   ),
                   MarkerLayer(
@@ -60,7 +62,7 @@ class MapBubble extends StatelessWidget {
                           // Might have to do with psychological perception of where the tip exactly is
                           offset: const Offset(0, -12.5),
                           child: const Icon(
-                            FontAwesomeIcons.locationDot,
+                            Icons.location_pin,
                             color: Colors.red,
                             size: 30,
                           ),
@@ -73,7 +75,7 @@ class MapBubble extends StatelessWidget {
               Container(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  ' Â© OpenStreetMap contributors ',
+                  ' © OpenStreetMap contributors ',
                   style: TextStyle(
                     color: theme.brightness == Brightness.dark
                         ? Colors.white

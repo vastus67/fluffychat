@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/themes.dart';
-import 'package:afterdamage/theme/dracula_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 class UnreadBubble extends StatelessWidget {
   final Room room;
@@ -36,18 +33,6 @@ class UnreadBubble extends StatelessWidget {
             ? theme.colorScheme.primary
             : theme.colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(unreadBubbleSize),
-        boxShadow: hasNotifications || room.markedUnread
-            ? [
-                BoxShadow(
-                  color: (room.highlightCount > 0
-                          ? theme.colorScheme.error
-                          : theme.colorScheme.primary)
-                      .withOpacity(0.4),
-                  blurRadius: 8,
-                  spreadRadius: 0,
-                ),
-              ]
-            : null,
       ),
       child: hasNotifications || room.markedUnread
           ? Text(
@@ -61,7 +46,7 @@ class UnreadBubble extends StatelessWidget {
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
-              textAlign: TextAlign.center,
+              textAlign: .center,
             )
           : const SizedBox.shrink(),
     );

@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
+import 'package:flutter/material.dart';
+
 import 'mxc_image.dart';
 
 class MxcImageViewer extends StatelessWidget {
@@ -24,7 +23,7 @@ class MxcImageViewer extends StatelessWidget {
           elevation: 0,
           leading: IconButton(
             style: iconButtonStyle,
-            icon: const FaIcon(FontAwesomeIcons.xmark),
+            icon: const Icon(Icons.close),
             onPressed: Navigator.of(context).pop,
             color: Colors.white,
             tooltip: L10n.of(context).close,

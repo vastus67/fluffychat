@@ -1,10 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat_details/chat_details.dart';
 import 'package:afterdamage/pages/chat_details/participant_list_item.dart';
@@ -14,6 +7,11 @@ import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/chat_settings_popup_menu.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../utils/url_launcher.dart';
 import '../../widgets/mxc_image_viewer.dart';
 import '../../widgets/qr_code_viewer.dart';
@@ -66,14 +64,14 @@ class ChatDetailsView extends StatelessWidget {
               if (room.canonicalAlias.isNotEmpty)
                 IconButton(
                   tooltip: L10n.of(context).share,
-                  icon: const Icon(FontAwesomeIcons.qrcode),
+                  icon: const Icon(Icons.qr_code_rounded),
                   onPressed: () =>
                       showQrCodeViewer(context, room.canonicalAlias),
                 )
               else if (directChatMatrixID != null)
                 IconButton(
                   tooltip: L10n.of(context).share,
-                  icon: const Icon(FontAwesomeIcons.qrcode),
+                  icon: const Icon(Icons.qr_code_rounded),
                   onPressed: () =>
                       showQrCodeViewer(context, directChatMatrixID),
                 ),
@@ -128,7 +126,7 @@ class ChatDetailsView extends StatelessWidget {
                                         onPressed: controller.setAvatarAction,
                                         heroTag: null,
                                         child: const Icon(
-                                          FontAwesomeIcons.camera,
+                                          Icons.camera_alt_outlined,
                                         ),
                                       ),
                                     ),
@@ -154,12 +152,12 @@ class ChatDetailsView extends StatelessWidget {
                                           ),
                                     icon: Icon(
                                       room.isDirectChat
-                                          ? FontAwesomeIcons.comment
+                                          ? Icons.chat_bubble_outline
                                           : room.canChangeStateEvent(
                                               EventTypes.RoomName,
                                             )
-                                          ? FontAwesomeIcons.penToSquare
-                                          : FontAwesomeIcons.copy,
+                                          ? Icons.edit_outlined
+                                          : Icons.copy_outlined,
                                       size: 16,
                                     ),
                                     style: TextButton.styleFrom(
@@ -183,7 +181,7 @@ class ChatDetailsView extends StatelessWidget {
                                             '/rooms/${controller.roomId}/details/members',
                                           ),
                                     icon: const Icon(
-                                      FontAwesomeIcons.users,
+                                      Icons.group_outlined,
                                       size: 14,
                                     ),
                                     style: TextButton.styleFrom(
@@ -223,7 +221,7 @@ class ChatDetailsView extends StatelessWidget {
                                     tooltip: L10n.of(
                                       context,
                                     ).setChatDescription,
-                                    icon: const Icon(FontAwesomeIcons.penToSquare),
+                                    icon: const Icon(Icons.edit_outlined),
                                   )
                                 : null,
                           ),
@@ -266,7 +264,7 @@ class ChatDetailsView extends StatelessWidget {
                                   theme.colorScheme.surfaceContainer,
                               foregroundColor: iconColor,
                               child: const Icon(
-                                FontAwesomeIcons.userShield,
+                                Icons.admin_panel_settings_outlined,
                               ),
                             ),
                             title: Text(L10n.of(context).accessAndVisibility),
@@ -276,7 +274,7 @@ class ChatDetailsView extends StatelessWidget {
                             onTap: () => context.push(
                               '/rooms/${room.id}/details/access',
                             ),
-                            trailing: const Icon(FontAwesomeIcons.chevronRight),
+                            trailing: const Icon(Icons.chevron_right_outlined),
                           ),
                           ListTile(
                             title: Text(L10n.of(context).chatPermissions),
@@ -287,9 +285,9 @@ class ChatDetailsView extends StatelessWidget {
                               backgroundColor:
                                   theme.colorScheme.surfaceContainer,
                               foregroundColor: iconColor,
-                              child: const Icon(FontAwesomeIcons.sliders),
+                              child: const Icon(Icons.tune_outlined),
                             ),
-                            trailing: const Icon(FontAwesomeIcons.chevronRight),
+                            trailing: const Icon(Icons.chevron_right_outlined),
                             onTap: () => context.push(
                               '/rooms/${room.id}/details/permissions',
                             ),
@@ -316,9 +314,9 @@ class ChatDetailsView extends StatelessWidget {
                               foregroundColor:
                                   theme.colorScheme.onPrimaryContainer,
                               radius: Avatar.defaultSize / 2,
-                              child: const Icon(FontAwesomeIcons.plus),
+                              child: const Icon(Icons.add_outlined),
                             ),
-                            trailing: const Icon(FontAwesomeIcons.chevronRight),
+                            trailing: const Icon(Icons.chevron_right_outlined),
                             onTap: () => context.go('/rooms/${room.id}/invite'),
                           ),
                       ],
@@ -334,14 +332,14 @@ class ChatDetailsView extends StatelessWidget {
                       leading: CircleAvatar(
                         backgroundColor: theme.scaffoldBackgroundColor,
                         child: const Icon(
-                          FontAwesomeIcons.users,
+                          Icons.group_outlined,
                           color: Colors.grey,
                         ),
                       ),
                       onTap: () => context.push(
                         '/rooms/${controller.roomId!}/details/members',
                       ),
-                      trailing: const Icon(FontAwesomeIcons.chevronRight),
+                      trailing: const Icon(Icons.chevron_right_outlined),
                     ),
             ),
           ),

@@ -1,13 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:async/async.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/localized_exception_extension.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:flutter/material.dart';
 
 /// Displays a loading dialog which reacts to the given [future]. The dialog
 /// will be dismissed and the value will be returned when the future completes.
@@ -86,7 +83,11 @@ class LoadingDialogState<T> extends State<LoadingDialog> {
   void initState() {
     super.initState();
     widget.future.then(
-      (result) => Navigator.of(context).pop<Result<T>>(Result.value(result)),
+      (result) {
+        if (!mounted) return;
+        if (!Navigator.of(context).canPop()) return;
+        Navigator.of(context).pop<Result<T>>(Result.value(result));
+      },
       onError: (e, s) => setState(() {
         exception = e;
         stackTrace = s;
@@ -105,7 +106,7 @@ class LoadingDialogState<T> extends State<LoadingDialog> {
       title: exception == null
           ? null
           : Icon(
-              FontAwesomeIcons.circleExclamation,
+              Icons.error_outline_outlined,
               color: Theme.of(context).colorScheme.error,
               size: 48,
             ),

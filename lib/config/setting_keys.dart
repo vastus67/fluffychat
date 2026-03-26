@@ -58,7 +58,25 @@ enum AppSettings<T> {
   backgroundColorDark<int>('chat.fluffy.background_color_dark', 0),
   emojiSuggestionLocale<String>('emoji_suggestion_locale', ''),
   blockScreenshots<bool>('chat.goth.block_screenshots', false),
-  enableSoftLogout<bool>('chat.fluffy.enable_soft_logout', false);
+  enableSoftLogout<bool>('chat.fluffy.enable_soft_logout', false),
+  enableMatrixNativeOIDC<bool>('chat.fluffy.enable_matrix_native_oidc', false),
+  jitsiFeature<bool>('chat.fluffy.enable_jitsi', false),
+  jitsiDomain<String>('chat.fluffy.jitsi_domain', 'meet.jit.si'),
+  presetHomeserver<String>('chat.fluffy.preset_homeserver', ''),
+  welcomeText<String>('chat.fluffy.welcome_text', ''),
+  website<String>('chat.fluffy.website_url', 'https://afterdamage.chat'),
+  logoUrl<String>(
+    'chat.fluffy.logo_url',
+    'https://afterdamage.chat/assets/favicon.png',
+  ),
+  privacyPolicy<String>(
+    'chat.fluffy.privacy_policy_url',
+    'https://afterdamage.chat/privacy',
+  ),
+  tos<String>('chat.fluffy.tos_url', 'https://afterdamage.chat/tos'),
+  sendTimelineEventTimeout<int>('chat.fluffy.send_timeline_event_timeout', 15),
+  lastSeenSupportBanner<int>('chat.fluffy.last_seen_support_banner', 0),
+  supportBannerOptOut<bool>('chat.fluffy.support_banner_opt_out', false);
 
   final String key;
   final T defaultValue;
@@ -67,6 +85,11 @@ enum AppSettings<T> {
 
   static SharedPreferences get store => _store!;
   static SharedPreferences? _store;
+
+  static Future<void> reset({bool loadWebConfigFile = true}) async {
+    await AppSettings._store!.clear();
+    await init(loadWebConfigFile: loadWebConfigFile);
+  }
 
   static Future<SharedPreferences> init({bool loadWebConfigFile = true}) async {
     if (AppSettings._store != null) return AppSettings.store;

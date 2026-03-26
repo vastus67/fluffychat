@@ -1,11 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:async/async.dart' show Result;
 import 'package:cross_file/cross_file.dart';
-import 'package:matrix/matrix.dart';
-import 'package:mime/mime.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/localized_exception_extension.dart';
@@ -15,6 +9,11 @@ import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/size_string.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/dialog_text_field.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart' hide Result;
+import 'package:mime/mime.dart';
+
 import '../../utils/resize_video.dart';
 
 class SendFileDialog extends StatefulWidget {
@@ -54,8 +53,9 @@ class SendFileDialogState extends State<SendFileDialog> {
       }
       scaffoldMessenger.showLoadingSnackBar(l10n.prepareSendingAttachment);
       Navigator.of(context, rootNavigator: false).pop();
-      final clientConfig = await widget.room.client.getConfig();
-      final maxUploadSize = clientConfig.mUploadSize ?? 100 * 1000 * 1000;
+      final clientConfig = await Result.capture(widget.room.client.getConfig());
+      final maxUploadSize =
+          clientConfig.asValue?.value.mUploadSize ?? 100 * 1000 * 1000;
 
       for (final xfile in widget.files) {
         final MatrixFile file;
@@ -261,7 +261,7 @@ class SendFileDialogState extends State<SendFileDialog> {
                                           width: 256,
                                           height: 256,
                                           child: Icon(
-                                            FontAwesomeIcons.image,
+                                            Icons.broken_image_outlined,
                                             size: 64,
                                           ),
                                         ),
@@ -285,7 +285,7 @@ class SendFileDialogState extends State<SendFileDialog> {
                                             width: 256,
                                             height: 256,
                                             child: Icon(
-                                              FontAwesomeIcons.image,
+                                              Icons.broken_image_outlined,
                                               size: 64,
                                             ),
                                           ),
@@ -307,12 +307,12 @@ class SendFileDialogState extends State<SendFileDialog> {
                         children: [
                           Icon(
                             uniqueFileType == null
-                                ? FontAwesomeIcons.fileLines
+                                ? Icons.description_outlined
                                 : uniqueFileType == 'video'
-                                ? FontAwesomeIcons.fileVideo
+                                ? Icons.video_file_outlined
                                 : uniqueFileType == 'audio'
-                                ? FontAwesomeIcons.fileAudio
-                                : FontAwesomeIcons.fileLines,
+                                ? Icons.audio_file_outlined
+                                : Icons.description_outlined,
                             size: 32,
                           ),
                           const SizedBox(width: 8),

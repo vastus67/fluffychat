@@ -1,16 +1,14 @@
-import 'package:flutter/material.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 abstract class UpdateNotifier {
   static const String versionStoreKey = 'last_known_version';
 
-  static void showUpdateSnackBar(BuildContext context) async {
+  static Future<void> showUpdateSnackBar(BuildContext context) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final currentVersion = await PlatformInfos.getVersion();
     final store = await SharedPreferences.getInstance();

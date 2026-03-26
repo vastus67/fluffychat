@@ -1,15 +1,13 @@
 import 'dart:io';
 
+import 'package:afterdamage/config/setting_keys.dart';
+import 'package:afterdamage/l10n/l10n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:afterdamage/config/setting_keys.dart';
-import 'package:afterdamage/l10n/l10n.dart';
 import '../config/app_config.dart';
 
 abstract class PlatformInfos {
@@ -34,7 +32,10 @@ abstract class PlatformInfos {
   static bool get supportsVideoPlayer =>
       !PlatformInfos.isWindows && !PlatformInfos.isLinux;
 
-  /// Web could also record in theory but currently only wav which is too large
+  static bool get supportsCustomImageResizer =>
+      PlatformInfos.isWeb || PlatformInfos.isMobile;
+
+  /// Web could also record in theory but currently creates broken opus
   static bool get platformCanRecord => (isMobile || isMacOS);
 
   static String get clientName =>
@@ -48,7 +49,7 @@ abstract class PlatformInfos {
     return version;
   }
 
-  static void showDialog(BuildContext context) async {
+  static Future<void> showDialog(BuildContext context) async {
     final version = await PlatformInfos.getVersion();
     showAboutDialog(
       context: context,
@@ -56,7 +57,7 @@ abstract class PlatformInfos {
         Text(L10n.of(context).versionWithNumber(version)),
         TextButton.icon(
           onPressed: () => launchUrlString(AppConfig.sourceCodeUrl),
-          icon: const Icon(FontAwesomeIcons.code),
+          icon: const Icon(Icons.source_outlined),
           label: Text(L10n.of(context).sourceCode),
         ),
         Builder(
@@ -66,7 +67,7 @@ abstract class PlatformInfos {
                 context.go('/logs');
                 Navigator.of(innerContext).pop();
               },
-              icon: const Icon(FontAwesomeIcons.list),
+              icon: const Icon(Icons.list_outlined),
               label: Text(L10n.of(context).logs),
             );
           },
@@ -78,14 +79,14 @@ abstract class PlatformInfos {
                 context.go('/configs');
                 Navigator.of(innerContext).pop();
               },
-              icon: const Icon(FontAwesomeIcons.gears),
+              icon: const Icon(Icons.settings_applications_outlined),
               label: Text(L10n.of(context).advancedConfigs),
             );
           },
         ),
       ],
       applicationIcon: Image.asset(
-        'assets/afterdamage-logo.png',
+        'assets/logo.png',
         width: 64,
         height: 64,
         filterQuality: FilterQuality.medium,

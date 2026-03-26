@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/widgets/layouts/login_scaffold.dart';
+import 'package:flutter/material.dart';
+
 import 'login.dart';
 
 class LoginView extends StatelessWidget {
@@ -36,14 +35,7 @@ class LoginView extends StatelessWidget {
               children: <Widget>[
                 Hero(
                   tag: 'info-logo',
-                  child: Center(
-                    child: Image.asset(
-                      'assets/afterdamage-logo.png',
-                      width: 250,
-                      height: 250,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
+                  child: Image.asset('assets/banner_transparent.png'),
                 ),
                 const SizedBox(height: 16),
                 Padding(
@@ -60,11 +52,11 @@ class LoginView extends StatelessWidget {
                         ? null
                         : [AutofillHints.username],
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(FontAwesomeIcons.circleUser),
+                      prefixIcon: const Icon(Icons.account_box_outlined),
                       errorText: controller.usernameError,
                       errorStyle: const TextStyle(color: Colors.orange),
                       hintText: '@username:domain',
-                      labelText: L10n.of(context).emailOrUsername,
+                      labelText: L10n.of(context).matrixId,
                     ),
                   ),
                 ),
@@ -82,15 +74,15 @@ class LoginView extends StatelessWidget {
                     obscureText: !controller.showPassword,
                     onSubmitted: (_) => controller.login(),
                     decoration: InputDecoration(
-                      prefixIcon: const Icon(FontAwesomeIcons.lock),
+                      prefixIcon: const Icon(Icons.lock_outlined),
                       errorText: controller.passwordError,
                       errorStyle: const TextStyle(color: Colors.orange),
                       suffixIcon: IconButton(
                         onPressed: controller.toggleShowPassword,
                         icon: Icon(
                           controller.showPassword
-                              ? FontAwesomeIcons.eyeSlash
-                              : FontAwesomeIcons.eye,
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
                           color: Colors.black,
                         ),
                       ),

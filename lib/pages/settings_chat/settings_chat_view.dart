@@ -1,8 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:go_router/go_router.dart';
-
 import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
@@ -10,6 +5,9 @@ import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 import 'package:afterdamage/widgets/settings_switch_list_tile.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 import 'settings_chat.dart';
 
 class SettingsChatView extends StatelessWidget {
@@ -74,7 +72,7 @@ class SettingsChatView extends StatelessWidget {
                 onTap: () => context.go('/rooms/settings/chat/emotes'),
                 trailing: const Padding(
                   padding: EdgeInsets.all(16.0),
-                  child: Icon(FontAwesomeIcons.chevronRight),
+                  child: Icon(Icons.chevron_right_outlined),
                 ),
               ),
               Divider(color: theme.dividerColor),
@@ -89,7 +87,6 @@ class SettingsChatView extends StatelessWidget {
               ),
               SettingsSwitchListTile.adaptive(
                 title: L10n.of(context).experimentalVideoCalls,
-                subtitle: L10n.of(context).enableCallsDescription,
                 onChanged: (b) {
                   Matrix.of(context).createVoipPlugin();
                   return;

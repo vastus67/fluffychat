@@ -1,15 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter/services.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/url_launcher.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'package:afterdamage/widgets/mxc_image.dart';
 import 'package:afterdamage/widgets/mxc_image_viewer.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../widgets/matrix.dart';
 import 'settings_emotes.dart';
 
@@ -109,7 +107,7 @@ class EmotesSettingsView extends StatelessWidget {
                               horizontal: 4.0,
                             ),
                             child: FilterChip(
-                              label: const Icon(FontAwesomeIcons.plus, size: 20),
+                              label: const Icon(Icons.add_outlined, size: 20),
                               onSelected: controller.showSave
                                   ? null
                                   : (_) => controller.createImagePack(),
@@ -184,7 +182,7 @@ class EmotesSettingsView extends StatelessWidget {
                     suffixIcon: attributionUrl == null
                         ? null
                         : IconButton(
-                            icon: const Icon(FontAwesomeIcons.link),
+                            icon: const Icon(Icons.link_outlined),
                             onPressed: () => UrlLauncher(
                               context,
                               attributionUrl.toString(),
@@ -199,7 +197,7 @@ class EmotesSettingsView extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton.icon(
                   onPressed: controller.createStickers,
-                  icon: const Icon(FontAwesomeIcons.upload),
+                  icon: const Icon(Icons.upload_outlined),
                   label: Text(L10n.of(context).createSticker),
                 ),
               ),
@@ -303,7 +301,7 @@ class EmotesSettingsView extends StatelessWidget {
                                               ImagePackUsage.sticker,
                                             ) ??
                                             true)
-                                          const Icon(FontAwesomeIcons.check),
+                                          const Icon(Icons.check_outlined),
                                         const SizedBox(width: 12),
                                         Text(L10n.of(context).useAsSticker),
                                       ],
@@ -318,14 +316,14 @@ class EmotesSettingsView extends StatelessWidget {
                                               ImagePackUsage.emoticon,
                                             ) ??
                                             true)
-                                          const Icon(FontAwesomeIcons.check),
+                                          const Icon(Icons.check_outlined),
                                         const SizedBox(width: 12),
                                         Text(L10n.of(context).useAsEmoji),
                                       ],
                                     ),
                                   ),
                                 ],
-                                icon: const Icon(FontAwesomeIcons.penToSquare),
+                                icon: const Icon(Icons.edit_outlined),
                               ),
                           ],
                         ),
@@ -336,7 +334,7 @@ class EmotesSettingsView extends StatelessWidget {
                                 tooltip: L10n.of(context).delete,
                                 onPressed: () =>
                                     controller.removeImageAction(imageCode),
-                                icon: const Icon(FontAwesomeIcons.trash),
+                                icon: const Icon(Icons.delete_outlined),
                               ),
                       );
                     },

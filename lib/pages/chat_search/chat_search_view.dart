@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat_search/chat_search_files_tab.dart';
@@ -9,6 +6,7 @@ import 'package:afterdamage/pages/chat_search/chat_search_message_tab.dart';
 import 'package:afterdamage/pages/chat_search/chat_search_page.dart';
 import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:flutter/material.dart';
 
 class ChatSearchView extends StatelessWidget {
   final ChatSearchController controller;
@@ -57,12 +55,12 @@ class ChatSearchView extends StatelessWidget {
                 enabled: controller.tabController.index == 0,
                 decoration: InputDecoration(
                   hintText: L10n.of(context).search,
-                  prefixIcon: const Icon(FontAwesomeIcons.magnifyingGlass),
+                  prefixIcon: const Icon(Icons.search_outlined),
                   filled: true,
                   fillColor: theme.colorScheme.secondaryContainer,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(99),
                   ),
                   hintStyle: TextStyle(
                     color: theme.colorScheme.onPrimaryContainer,

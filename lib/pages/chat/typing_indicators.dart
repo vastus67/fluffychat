@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/pages/chat/chat.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
 
 class TypingIndicators extends StatelessWidget {
   final ChatController controller;

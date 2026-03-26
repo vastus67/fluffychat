@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/config/themes.dart';
+import 'package:flutter/material.dart';
 
 Future<T?> showScaffoldDialog<T>({
   required BuildContext context,

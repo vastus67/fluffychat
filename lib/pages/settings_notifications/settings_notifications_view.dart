@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/settings_notifications/push_rule_extensions.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../utils/localized_exception_extension.dart';
 import '../../widgets/matrix.dart';
 import 'settings_notifications.dart';

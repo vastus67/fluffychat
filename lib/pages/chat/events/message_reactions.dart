@@ -1,14 +1,11 @@
-import 'package:flutter/material.dart';
-
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
-import 'package:afterdamage/theme/dracula_theme.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 import 'package:afterdamage/widgets/mxc_image.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 class MessageReactions extends StatelessWidget {
   final Event event;
@@ -27,7 +24,7 @@ class MessageReactions extends StatelessWidget {
 
     for (final e in allReactionEvents) {
       final key = e.content
-          .tryGetMap<String, dynamic>('m.relates_to')
+          .tryGetMap<String, Object?>('m.relates_to')
           ?.tryGet<String>('key');
       if (key != null) {
         if (!reactionMap.containsKey(key)) {
@@ -67,7 +64,7 @@ class MessageReactions extends StatelessWidget {
                 if (evt != null) {
                   showFutureLoadingDialog(
                     context: context,
-                    future: () => evt.redactEvent(),
+                    future: evt.redactEvent,
                   );
                 }
               } else {
@@ -154,7 +151,7 @@ class _Reaction extends StatelessWidget {
     return InkWell(
       onTap: () => onTap != null ? onTap!() : null,
       onLongPress: () => onLongPress != null ? onLongPress!() : null,
-      borderRadius: BorderRadius.circular(DraculaTheme.radiusMedium),
+      borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
       child: Container(
         decoration: BoxDecoration(
           color: reacted == true
@@ -164,23 +161,11 @@ class _Reaction extends StatelessWidget {
             color: reacted == true
                 ? theme.colorScheme.primary
                 : theme.colorScheme.surfaceContainerHigh,
-            width: 1.5,
+            width: 1,
           ),
-          borderRadius: BorderRadius.circular(DraculaTheme.radiusMedium),
-          boxShadow: reacted == true
-              ? [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withOpacity(0.3),
-                    blurRadius: 8,
-                    spreadRadius: 0,
-                  ),
-                ]
-              : null,
+          borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
         ),
-        padding: const EdgeInsets.symmetric(
-          horizontal: DraculaTheme.spacingSm,
-          vertical: DraculaTheme.spacingXs,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
         child: content,
       ),
     );

@@ -109,6 +109,8 @@ class ChatController extends State<ChatPageWithRoom>
 
   late final String readMarkerEventId;
 
+  late final Set<String> bigEmojis;
+
   String get roomId => widget.room.id;
 
   final AutoScrollController scrollController = AutoScrollController();
@@ -366,6 +368,14 @@ class ChatController extends State<ChatPageWithRoom>
       AppSettings.displayChatDetailsColumn.value,
     );
 
+    bigEmojis = defaultEmojiSet.fold(
+      <String>{},
+      (emojis, category) => {
+        ...emojis,
+        ...(category.emoji.map((emoji) => emoji.emoji)),
+      },
+    );
+
     sendingClient = Matrix.of(context).client;
     final lastEventThreadId =
         room.lastEvent?.relationshipType == RelationshipTypes.thread
@@ -458,10 +468,14 @@ class ChatController extends State<ChatPageWithRoom>
     scrollUpBannerEventId = eventId;
   });
 
+  bool firstUpdateReceived = false;
+
   void updateView() {
     if (!mounted) return;
     setReadMarker();
-    setState(() {});
+    setState(() {
+      firstUpdateReceived = true;
+    });
   }
 
   Future<void>? loadTimelineFuture;

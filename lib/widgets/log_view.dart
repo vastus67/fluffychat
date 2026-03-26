@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
@@ -26,11 +25,11 @@ class LogViewerState extends State<LogViewer> {
         leading: BackButton(onPressed: () => context.go('/')),
         actions: [
           IconButton(
-            icon: const FaIcon(FontAwesomeIcons.magnifyingGlassPlus),
+            icon: const Icon(Icons.zoom_in_outlined),
             onPressed: () => setState(() => fontSize++),
           ),
           IconButton(
-            icon: const FaIcon(FontAwesomeIcons.magnifyingGlassMinus),
+            icon: const Icon(Icons.zoom_out_outlined),
             onPressed: () => setState(() => fontSize--),
           ),
           PopupMenuButton<Level>(
@@ -82,10 +81,10 @@ extension on LogEvent {
   String toDisplayString() {
     var str = '# [${level.toString().split('.').last.toUpperCase()}] $title';
     if (exception != null) {
-      str += ' - ${exception.toString()}';
+      str += ' - $exception';
     }
     if (stackTrace != null) {
-      str += '\n${stackTrace.toString()}';
+      str += '\n$stackTrace';
     }
     return str;
   }

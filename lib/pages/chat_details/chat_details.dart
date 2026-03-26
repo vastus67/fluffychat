@@ -1,11 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:collection/collection.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat_details/chat_details_view.dart';
 import 'package:afterdamage/pages/settings/settings.dart';
@@ -16,8 +10,9 @@ import 'package:afterdamage/widgets/adaptive_dialogs/show_modal_action_popup.dar
 import 'package:afterdamage/widgets/adaptive_dialogs/show_text_input_dialog.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import 'package:afterdamage/widgets/matrix.dart';
-
-enum AliasActions { copy, delete, setCanonical }
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:matrix/matrix.dart';
 
 class ChatDetails extends StatefulWidget {
   final String roomId;
@@ -41,7 +36,7 @@ class ChatDetailsController extends State<ChatDetails> {
 
   String? get roomId => widget.roomId;
 
-  void setDisplaynameAction() async {
+  Future<void> setDisplaynameAction() async {
     final room = Matrix.of(context).client.getRoomById(roomId!)!;
     final input = await showTextInputDialog(
       context: context,
@@ -62,7 +57,7 @@ class ChatDetailsController extends State<ChatDetails> {
     }
   }
 
-  void setTopicAction() async {
+  Future<void> setTopicAction() async {
     final room = Matrix.of(context).client.getRoomById(roomId!)!;
     final input = await showTextInputDialog(
       context: context,
@@ -86,7 +81,7 @@ class ChatDetailsController extends State<ChatDetails> {
     }
   }
 
-  void setAvatarAction() async {
+  Future<void> setAvatarAction() async {
     final room = Matrix.of(context).client.getRoomById(roomId!);
     final actions = [
       if (PlatformInfos.isMobile)
@@ -94,19 +89,19 @@ class ChatDetailsController extends State<ChatDetails> {
           value: AvatarAction.camera,
           label: L10n.of(context).openCamera,
           isDefaultAction: true,
-          icon: const Icon(FontAwesomeIcons.camera),
+          icon: const Icon(Icons.camera_alt_outlined),
         ),
       AdaptiveModalAction(
         value: AvatarAction.file,
         label: L10n.of(context).openGallery,
-        icon: const Icon(FontAwesomeIcons.image),
+        icon: const Icon(Icons.photo_outlined),
       ),
       if (room?.avatar != null)
         AdaptiveModalAction(
           value: AvatarAction.remove,
           label: L10n.of(context).delete,
           isDestructive: true,
-          icon: const Icon(FontAwesomeIcons.trash),
+          icon: const Icon(Icons.delete_outlined),
         ),
     ];
     final action = actions.length == 1

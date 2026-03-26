@@ -1,16 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:cross_file/cross_file.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
 
 abstract class ShareItem {}
 
@@ -49,7 +46,7 @@ class _ShareScaffoldDialogState extends State<ShareScaffoldDialog> {
     });
   }
 
-  void _forwardAction() async {
+  Future<void> _forwardAction() async {
     final roomId = selectedRoomId;
     if (roomId == null) {
       throw Exception(
@@ -96,7 +93,7 @@ class _ShareScaffoldDialogState extends State<ShareScaffoldDialog> {
                 fillColor: theme.colorScheme.secondaryContainer,
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(99),
                 ),
                 contentPadding: EdgeInsets.zero,
                 hintText: L10n.of(context).search,
@@ -108,7 +105,7 @@ class _ShareScaffoldDialogState extends State<ShareScaffoldDialog> {
                 prefixIcon: IconButton(
                   onPressed: () {},
                   icon: Icon(
-                    FontAwesomeIcons.magnifyingGlass,
+                    Icons.search_outlined,
                     color: theme.colorScheme.onPrimaryContainer,
                   ),
                 ),
@@ -133,7 +130,7 @@ class _ShareScaffoldDialogState extends State<ShareScaffoldDialog> {
                   opacity: filterOut ? 0.5 : 1,
                   child: CheckboxListTile.adaptive(
                     checkboxShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(90),
                     ),
                     controlAffinity: ListTileControlAffinity.trailing,
                     shape: RoundedRectangleBorder(

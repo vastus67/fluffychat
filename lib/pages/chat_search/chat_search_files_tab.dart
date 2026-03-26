@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat_search/search_footer.dart';
 import 'package:afterdamage/utils/date_time_extension.dart';
 import 'package:afterdamage/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 class ChatSearchFilesTab extends StatelessWidget {
   final Room room;
@@ -50,15 +47,15 @@ class ChatSearchFilesTab extends StatelessWidget {
           final filetype = (filename.contains('.')
               ? filename.split('.').last.toUpperCase()
               : event.content
-                        .tryGetMap<String, dynamic>('info')
+                        .tryGetMap<String, Object?>('info')
                         ?.tryGet<String>('mimetype')
                         ?.toUpperCase() ??
                     'UNKNOWN');
           final sizeString = event.sizeString;
           final prevEvent = i > 0 ? events[i - 1] : null;
-          final sameEnvironment = prevEvent == null
-              ? false
-              : prevEvent.originServerTs.sameEnvironment(event.originServerTs);
+          final sameEnvironment =
+              prevEvent != null &&
+              prevEvent.originServerTs.sameEnvironment(event.originServerTs);
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -90,7 +87,7 @@ class ChatSearchFilesTab extends StatelessWidget {
                   color: theme.colorScheme.onInverseSurface,
                   clipBehavior: Clip.hardEdge,
                   child: ListTile(
-                    leading: const Icon(FontAwesomeIcons.file),
+                    leading: const Icon(Icons.file_present_outlined),
                     title: Text(
                       filename,
                       maxLines: 1,

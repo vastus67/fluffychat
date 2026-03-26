@@ -1,17 +1,16 @@
-import 'package:flutter/material.dart';
-
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-import 'package:punycode/punycode.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/user_dialog.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
+import 'package:punycode/punycode.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
 import '../widgets/adaptive_dialogs/public_room_dialog.dart';
 import 'platform_infos.dart';
 
@@ -27,7 +26,7 @@ class UrlLauncher {
 
   const UrlLauncher(this.context, this.url, [this.name]);
 
-  void launchUrl() async {
+  Future<void> launchUrl() async {
     if (url!.toLowerCase().startsWith(AppConfig.deepLinkPrefix) ||
         url!.toLowerCase().startsWith(AppConfig.inviteLinkPrefix) ||
         {'#', '@', '!', '+', '\$'}.contains(url![0]) ||
@@ -66,7 +65,7 @@ class UrlLauncher {
             .split(';')
             .first
             .split(',')
-            .map((s) => double.tryParse(s))
+            .map(double.tryParse)
             .toList();
         if (latlong.length == 2 &&
             latlong.first != null &&
@@ -117,7 +116,7 @@ class UrlLauncher {
     );
   }
 
-  void openMatrixToUrl() async {
+  Future<void> openMatrixToUrl() async {
     final matrix = Matrix.of(context);
     final url = this.url!.replaceFirst(
       AppConfig.deepLinkPrefix,

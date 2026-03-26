@@ -1,10 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/config/themes.dart';
@@ -14,6 +7,10 @@ import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 import 'package:afterdamage/widgets/settings_switch_list_tile.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
+
 import 'settings_security.dart';
 
 class SettingsSecurityView extends StatelessWidget {
@@ -61,21 +58,6 @@ class SettingsSecurityView extends StatelessWidget {
                     ),
                   ),
                   SettingsSwitchListTile.adaptive(
-                    title: 'Block Screenshots',
-                    subtitle: 'Prevent capturing screenshots and screen recording',
-                    setting: AppSettings.blockScreenshots,
-                    onChanged: (val) async {
-                      try {
-                        // ignore: avoid_dynamic_calls
-                        if (val) {
-                          await (const MethodChannel('screen_protector')).invokeMethod('preventScreenshotOn');
-                        } else {
-                          await (const MethodChannel('screen_protector')).invokeMethod('preventScreenshotOff');
-                        }
-                      } catch(e) {}
-                    },
-                  ),
-                  SettingsSwitchListTile.adaptive(
                     title: L10n.of(context).sendTypingNotifications,
                     subtitle: L10n.of(
                       context,
@@ -88,7 +70,7 @@ class SettingsSecurityView extends StatelessWidget {
                     setting: AppSettings.sendPublicReadReceipts,
                   ),
                   ListTile(
-                    trailing: const Icon(FontAwesomeIcons.chevronRight),
+                    trailing: const Icon(Icons.chevron_right_outlined),
                     title: Text(L10n.of(context).blockedUsers),
                     subtitle: Text(
                       L10n.of(context).thereAreCountUsersBlocked(
@@ -101,7 +83,7 @@ class SettingsSecurityView extends StatelessWidget {
                   if (Matrix.of(context).client.encryption != null) ...{
                     if (PlatformInfos.isMobile)
                       ListTile(
-                        trailing: const Icon(FontAwesomeIcons.chevronRight),
+                        trailing: const Icon(Icons.chevron_right_outlined),
                         title: Text(L10n.of(context).appLock),
                         subtitle: Text(L10n.of(context).appLockDescription),
                         onTap: controller.setAppLockAction,
@@ -156,7 +138,7 @@ class SettingsSecurityView extends StatelessWidget {
                   ),
                   ListTile(
                     title: Text(L10n.of(context).yourPublicKey),
-                    leading: const Icon(FontAwesomeIcons.key),
+                    leading: const Icon(Icons.vpn_key_outlined),
                     subtitle: SelectableText(
                       Matrix.of(context).client.fingerprintKey.beautified,
                       style: const TextStyle(fontFamily: 'RobotoMono'),
@@ -165,15 +147,15 @@ class SettingsSecurityView extends StatelessWidget {
                   if (capabilities?.mChangePassword?.enabled != false ||
                       error != null)
                     ListTile(
-                      leading: const Icon(FontAwesomeIcons.key),
-                      trailing: const Icon(FontAwesomeIcons.chevronRight),
+                      leading: const Icon(Icons.password_outlined),
+                      trailing: const Icon(Icons.chevron_right_outlined),
                       title: Text(L10n.of(context).changePassword),
                       onTap: () =>
                           context.go('/rooms/settings/security/password'),
                     ),
                   ListTile(
                     iconColor: Colors.orange,
-                    leading: const Icon(FontAwesomeIcons.trash),
+                    leading: const Icon(Icons.delete_sweep_outlined),
                     title: Text(
                       L10n.of(context).dehydrate,
                       style: const TextStyle(color: Colors.orange),
@@ -183,7 +165,7 @@ class SettingsSecurityView extends StatelessWidget {
                   Divider(color: theme.dividerColor),
                   ListTile(
                     iconColor: Colors.red,
-                    leading: const Icon(FontAwesomeIcons.trash),
+                    leading: const Icon(Icons.delete_outlined),
                     title: Text(
                       L10n.of(context).deleteAccount,
                       style: const TextStyle(color: Colors.red),

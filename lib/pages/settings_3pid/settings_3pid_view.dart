@@ -1,12 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/settings_3pid/settings_3pid.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 class Settings3PidView extends StatelessWidget {
   final Settings3PidController controller;
@@ -24,7 +21,7 @@ class Settings3PidView extends StatelessWidget {
         title: Text(L10n.of(context).passwordRecovery),
         actions: [
           IconButton(
-            icon: const Icon(FontAwesomeIcons.plus),
+            icon: const Icon(Icons.add_outlined),
             onPressed: controller.add3PidAction,
             tooltip: L10n.of(context).addEmail,
           ),
@@ -63,8 +60,8 @@ class Settings3PidView extends StatelessWidget {
                             : Colors.grey,
                         child: Icon(
                           identifier.isEmpty
-                              ? FontAwesomeIcons.triangleExclamation
-                              : FontAwesomeIcons.circleInfo,
+                              ? Icons.warning_outlined
+                              : Icons.info_outlined,
                         ),
                       ),
                       title: Text(
@@ -88,7 +85,7 @@ class Settings3PidView extends StatelessWidget {
                           title: Text(identifier[i].address),
                           trailing: IconButton(
                             tooltip: L10n.of(context).delete,
-                            icon: const Icon(FontAwesomeIcons.trash),
+                            icon: const Icon(Icons.delete_forever_outlined),
                             color: Colors.red,
                             onPressed: () =>
                                 controller.delete3Pid(identifier[i]),
@@ -109,9 +106,9 @@ extension on ThirdPartyIdentifier {
   IconData get iconData {
     switch (medium) {
       case ThirdPartyIdentifierMedium.email:
-        return FontAwesomeIcons.envelope;
+        return Icons.mail_outline_rounded;
       case ThirdPartyIdentifierMedium.msisdn:
-        return FontAwesomeIcons.mobileScreen;
+        return Icons.phone_android_outlined;
     }
   }
 }
