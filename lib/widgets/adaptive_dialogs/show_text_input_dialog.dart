@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter_linkify/flutter_linkify.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/url_launcher.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/dialog_text_field.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 
 Future<String?> showTextInputDialog({
   required BuildContext context,

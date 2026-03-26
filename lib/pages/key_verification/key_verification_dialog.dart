@@ -1,18 +1,15 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter/services.dart';
-
-import 'package:matrix/encryption.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:matrix/encryption.dart';
+import 'package:matrix/matrix.dart';
 
 class KeyVerificationDialog extends StatefulWidget {
   Future<bool?> show(BuildContext context) => showAdaptiveDialog<bool>(
@@ -121,7 +118,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         final textEditingController = TextEditingController();
         String input;
         body = Container(
-          margin: const EdgeInsets.only(left: 8.0, right: 8.0),
+          margin: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
             mainAxisSize: .min,
             children: <Widget>[
@@ -249,7 +246,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         } else {
           title = Text(L10n.of(context).compareNumbersMatch);
           final numbers = widget.request.sasNumbers;
-          final numbstr = '${numbers[0]}-${numbers[1]}-${numbers[2]}';
+          final numbstr = '${numbers.first}-${numbers[1]}-${numbers[2]}';
           compareWidget = TextSpan(
             text: numbstr,
             style: const TextStyle(fontSize: 40),
@@ -296,7 +293,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         body = const Padding(
           padding: EdgeInsets.all(16.0),
           child: Icon(
-            FontAwesomeIcons.shieldHalved,
+            Icons.verified_outlined,
             color: Colors.green,
             size: 128.0,
           ),
@@ -315,7 +312,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
           mainAxisSize: .min,
           children: <Widget>[
             const SizedBox(height: 16),
-            Icon(FontAwesomeIcons.circleXmark, color: theme.colorScheme.error, size: 64.0),
+            Icon(Icons.cancel, color: theme.colorScheme.error, size: 64.0),
             const SizedBox(height: 16),
             // TODO: Add better error UI to user
             Text(

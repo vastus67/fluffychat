@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 class PermissionsListTile extends StatelessWidget {
   final String permissionKey;

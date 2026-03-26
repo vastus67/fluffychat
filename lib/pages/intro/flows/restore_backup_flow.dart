@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-
 import 'package:afterdamage/utils/file_selector.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
 
 Future<void> restoreBackupFlow(BuildContext context) async {
   final picked = await selectFiles(context);

@@ -1,13 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/invitation_selection/invitation_selection.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../widgets/adaptive_dialogs/user_dialog.dart';
 
 class InvitationSelectionView extends StatelessWidget {
@@ -50,7 +48,7 @@ class InvitationSelectionView extends StatelessWidget {
                   fillColor: theme.colorScheme.secondaryContainer,
                   border: OutlineInputBorder(
                     borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(99),
                   ),
                   hintStyle: TextStyle(
                     color: theme.colorScheme.onPrimaryContainer,
@@ -70,7 +68,7 @@ class InvitationSelectionView extends StatelessWidget {
                             ),
                           ),
                         )
-                      : const Icon(FontAwesomeIcons.magnifyingGlass),
+                      : const Icon(Icons.search_outlined),
                 ),
                 onChanged: controller.searchUserWithCoolDown,
               ),
@@ -192,10 +190,9 @@ class _InviteContactListTile extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: TextStyle(color: theme.colorScheme.secondary),
       ),
-      trailing: TextButton.icon(
+      trailing: TextButton(
         onPressed: isMember ? null : onTap,
-        label: Text(isMember ? l10n.participant : l10n.invite),
-        icon: Icon(isMember ? FontAwesomeIcons.check : FontAwesomeIcons.plus),
+        child: Text(isMember ? l10n.participant : l10n.invite),
       ),
     );
   }

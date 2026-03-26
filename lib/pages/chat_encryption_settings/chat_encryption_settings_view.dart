@@ -1,17 +1,14 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat_encryption_settings/chat_encryption_settings.dart';
 import 'package:afterdamage/utils/beautify_string_extension.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ChatEncryptionSettingsView extends StatelessWidget {
   final ChatEncryptionSettingsController controller;
@@ -30,7 +27,7 @@ class ChatEncryptionSettingsView extends StatelessWidget {
       builder: (context, _) => Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(FontAwesomeIcons.xmark),
+            icon: const Icon(Icons.close_outlined),
             onPressed: () => context.go('/rooms/${controller.roomId!}'),
           ),
           title: Text(L10n.of(context).encryption),
@@ -49,14 +46,14 @@ class ChatEncryptionSettingsView extends StatelessWidget {
                 secondary: CircleAvatar(
                   foregroundColor: theme.colorScheme.onPrimaryContainer,
                   backgroundColor: theme.colorScheme.primaryContainer,
-                  child: const Icon(FontAwesomeIcons.lock),
+                  child: const Icon(Icons.lock_outlined),
                 ),
                 title: Text(L10n.of(context).encryptThisChat),
                 value: room.encrypted,
                 onChanged: controller.enableEncryption,
               ),
               Icon(
-                FontAwesomeIcons.shieldHalved,
+                CupertinoIcons.lock_shield,
                 size: 128,
                 color: theme.colorScheme.onInverseSurface,
               ),
@@ -67,7 +64,7 @@ class ChatEncryptionSettingsView extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: controller.startVerification,
-                      icon: const Icon(FontAwesomeIcons.shieldHalved),
+                      icon: const Icon(Icons.verified_outlined),
                       label: Text(L10n.of(context).verifyStart),
                     ),
                   ),

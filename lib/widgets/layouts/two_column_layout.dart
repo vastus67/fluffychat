@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
-
 import 'package:afterdamage/config/themes.dart';
-import 'package:afterdamage/pages/dialer/call_banner.dart';
+import 'package:flutter/material.dart';
 
 class TwoColumnLayout extends StatelessWidget {
   final Widget mainView;
   final Widget sideView;
+  final bool hasNavigationRail;
 
   const TwoColumnLayout({
     super.key,
     required this.mainView,
     required this.sideView,
+    this.hasNavigationRail = true,
   });
   @override
   Widget build(BuildContext context) {
@@ -20,33 +20,16 @@ class TwoColumnLayout extends StatelessWidget {
       child: Scaffold(
         body: Row(
           children: [
-            // Left sidebar: chat list + call panel at bottom
-            SizedBox(
-              width: FluffyThemes.columnWidth + FluffyThemes.navRailWidth,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      clipBehavior: Clip.antiAlias,
-                      decoration: const BoxDecoration(),
-                      child: mainView,
-                    ),
-                  ),
-                  // Discord-style call sidebar panel
-                  const GlobalCallSidebar(),
-                ],
-              ),
+            Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(),
+              width:
+                  FluffyThemes.columnWidth +
+                  (hasNavigationRail ? FluffyThemes.navRailWidth : 0),
+              child: mainView,
             ),
             Container(width: 1.0, color: theme.dividerColor),
-            // Right side: call panel on top + chat content below
-            Expanded(
-              child: Column(
-                children: [
-                  const GlobalCallFloatingPanel(),
-                  Expanded(child: ClipRRect(child: sideView)),
-                ],
-              ),
-            ),
+            Expanded(child: ClipRRect(child: sideView)),
           ],
         ),
       ),

@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/widgets/app_lock.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LockScreen extends StatefulWidget {
   const LockScreen({super.key});
@@ -21,7 +19,7 @@ class _LockScreenState extends State<LockScreen> {
   bool _inputBlocked = false;
   final TextEditingController _textEditingController = TextEditingController();
 
-  void tryUnlock(String text) async {
+  Future<void> tryUnlock(String text) async {
     text = text.trim();
     setState(() {
       _errorText = null;
@@ -79,7 +77,9 @@ class _LockScreenState extends State<LockScreen> {
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  const SizedBox(height: 64),  // Space instead of logo
+                  Center(
+                    child: Image.asset('assets/info-logo.png', width: 256),
+                  ),
                   TextField(
                     controller: _textEditingController,
                     textInputAction: TextInputAction.done,
@@ -96,7 +96,7 @@ class _LockScreenState extends State<LockScreen> {
                       errorText: _errorText,
                       hintText: '****',
                       suffix: IconButton(
-                        icon: const FaIcon(FontAwesomeIcons.lockOpen),
+                        icon: const Icon(Icons.lock_open_outlined),
                         onPressed: () => tryUnlock(_textEditingController.text),
                       ),
                     ),

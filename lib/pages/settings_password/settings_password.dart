@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
-
-import 'package:go_router/go_router.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/settings_password/settings_password_view.dart';
 import 'package:afterdamage/utils/localized_exception_extension.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsPassword extends StatefulWidget {
   const SettingsPassword({super.key});
@@ -25,7 +23,7 @@ class SettingsPasswordController extends State<SettingsPassword> {
 
   bool loading = false;
 
-  void changePassword() async {
+  Future<void> changePassword() async {
     setState(() {
       oldPasswordError = newPassword1Error = newPassword2Error = null;
     });

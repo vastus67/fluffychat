@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/client_manager.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:matrix/matrix.dart';
 
 class SessionBackup {
   final String? olmAccount;

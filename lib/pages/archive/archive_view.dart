@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/archive/archive.dart';
 import 'package:afterdamage/pages/chat_list/chat_list_item.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
 
 class ArchiveView extends StatelessWidget {
   final ArchiveController controller;
@@ -29,7 +26,7 @@ class ArchiveView extends StatelessWidget {
                 child: TextButton.icon(
                   onPressed: controller.forgetAllAction,
                   label: Text(L10n.of(context).clearArchive),
-                  icon: const Icon(FontAwesomeIcons.broom),
+                  icon: const Icon(Icons.cleaning_services_outlined),
                 ),
               ),
           ],
@@ -53,7 +50,7 @@ class ArchiveView extends StatelessWidget {
               } else {
                 if (controller.archive.isEmpty) {
                   return const Center(
-                    child: Icon(FontAwesomeIcons.boxArchive, size: 80),
+                    child: Icon(Icons.archive_outlined, size: 80),
                   );
                 }
                 return ListView.builder(

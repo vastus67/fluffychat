@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/pages/chat_permissions_settings/chat_permissions_settings.dart';
 import 'package:afterdamage/pages/chat_permissions_settings/permission_list_tile.dart';
 import 'package:afterdamage/widgets/layouts/max_width_body.dart';
 import 'package:afterdamage/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 class ChatPermissionsSettingsView extends StatelessWidget {
   final ChatPermissionsSettingsController controller;
@@ -45,7 +42,7 @@ class ChatPermissionsSettingsView extends StatelessWidget {
             return Column(
               children: [
                 ListTile(
-                  leading: const Icon(FontAwesomeIcons.circleInfo),
+                  leading: const Icon(Icons.info_outlined),
                   subtitle: Text(L10n.of(context).chatPermissionsDescription),
                 ),
                 Divider(color: theme.dividerColor),

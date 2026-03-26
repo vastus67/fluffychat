@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../utils/date_time_extension.dart';
 import '../../utils/matrix_sdk_extensions/device_extension.dart';
 import '../../widgets/matrix.dart';
@@ -52,26 +50,26 @@ class UserDeviceListItem extends StatelessWidget {
               actions: [
                 AdaptiveModalAction(
                   value: UserDeviceListItemAction.rename,
-                  icon: const Icon(FontAwesomeIcons.penToSquare),
+                  icon: const Icon(Icons.edit_outlined),
                   label: L10n.of(context).changeDeviceName,
                 ),
                 if (!isOwnDevice && keys != null) ...{
                   AdaptiveModalAction(
                     value: UserDeviceListItemAction.verify,
-                    icon: const Icon(FontAwesomeIcons.shieldHalved),
+                    icon: const Icon(Icons.verified_outlined),
                     label: L10n.of(context).verifyStart,
                   ),
                   if (!keys.blocked)
                     AdaptiveModalAction(
                       value: UserDeviceListItemAction.block,
-                      icon: const Icon(FontAwesomeIcons.ban),
+                      icon: const Icon(Icons.block_outlined),
                       label: L10n.of(context).blockDevice,
                       isDestructive: true,
                     ),
                   if (keys.blocked)
                     AdaptiveModalAction(
                       value: UserDeviceListItemAction.unblock,
-                      icon: const Icon(FontAwesomeIcons.ban),
+                      icon: const Icon(Icons.block),
                       label: L10n.of(context).unblockDevice,
                       isDestructive: true,
                     ),
@@ -79,7 +77,7 @@ class UserDeviceListItem extends StatelessWidget {
                 if (!isOwnDevice)
                   AdaptiveModalAction(
                     value: UserDeviceListItemAction.remove,
-                    icon: const Icon(FontAwesomeIcons.trash),
+                    icon: const Icon(Icons.delete_outlined),
                     label: L10n.of(context).delete,
                     isDestructive: true,
                   ),

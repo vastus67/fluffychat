@@ -1,13 +1,11 @@
-import 'package:flutter/material.dart';
-
-import 'package:intl/intl.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/pages/chat/events/video_player.dart';
 import 'package:afterdamage/pages/chat_search/search_footer.dart';
 import 'package:afterdamage/pages/image_viewer/image_viewer.dart';
 import 'package:afterdamage/widgets/mxc_image.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:matrix/matrix.dart';
 
 class ChatSearchImagesTab extends StatelessWidget {
   final Room room;

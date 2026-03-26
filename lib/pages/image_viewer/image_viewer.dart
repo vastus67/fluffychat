@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/pages/image_viewer/image_viewer_view.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/show_scaffold_dialog.dart';
 import 'package:afterdamage/widgets/share_scaffold_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../utils/matrix_sdk_extensions/event_extension.dart';
 
 class ImageViewer extends StatefulWidget {
@@ -67,7 +66,7 @@ class ImageViewerController extends State<ImageViewer> {
     }
   }
 
-  void prevImage() async {
+  Future<void> prevImage() async {
     await pageController.previousPage(
       duration: FluffyThemes.animationDuration,
       curve: FluffyThemes.animationCurve,
@@ -76,7 +75,7 @@ class ImageViewerController extends State<ImageViewer> {
     setState(() {});
   }
 
-  void nextImage() async {
+  Future<void> nextImage() async {
     await pageController.nextPage(
       duration: FluffyThemes.animationDuration,
       curve: FluffyThemes.animationCurve,

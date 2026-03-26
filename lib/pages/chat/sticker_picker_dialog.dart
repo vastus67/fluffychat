@@ -1,12 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/url_launcher.dart';
 import 'package:afterdamage/widgets/mxc_image.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../widgets/avatar.dart';
 
 class StickerPickerDialog extends StatefulWidget {
@@ -130,7 +128,7 @@ class StickerPickerDialogState extends State<StickerPickerDialog> {
                   decoration: InputDecoration(
                     filled: true,
                     hintText: L10n.of(context).search,
-                    prefixIcon: const Icon(FontAwesomeIcons.magnifyingGlass),
+                    prefixIcon: const Icon(Icons.search_outlined),
                     contentPadding: EdgeInsets.zero,
                   ),
                   onChanged: (s) => setState(() => searchFilter = s),
@@ -150,7 +148,7 @@ class StickerPickerDialogState extends State<StickerPickerDialog> {
                           context,
                           AppConfig.howDoIGetStickersTutorial,
                         ).launchUrl(),
-                        icon: const Icon(FontAwesomeIcons.compass),
+                        icon: const Icon(Icons.explore_outlined),
                         label: Text(L10n.of(context).discover),
                       ),
                     ],

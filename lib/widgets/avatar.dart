@@ -24,6 +24,7 @@ class Avatar extends StatelessWidget {
   final BorderSide? border;
   final Color? backgroundColor;
   final Color? textColor;
+  final ShapeBorder? shapeBorder;
 
   const Avatar({
     this.mxContent,
@@ -38,6 +39,7 @@ class Avatar extends StatelessWidget {
     this.icon,
     this.backgroundColor,
     this.textColor,
+    this.shapeBorder,
     super.key,
   });
 

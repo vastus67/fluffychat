@@ -1,14 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/adaptive_bottom_sheet.dart';
 import 'package:afterdamage/utils/date_time_extension.dart';
 import 'package:afterdamage/widgets/avatar.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 extension EventInfoDialogExtension on Event {
   void showInfoDialog(BuildContext context) => showAdaptiveBottomSheet(

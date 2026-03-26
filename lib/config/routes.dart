@@ -1,10 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/pages/archive/archive.dart';
 import 'package:afterdamage/pages/bootstrap/bootstrap_dialog.dart';
@@ -17,12 +12,11 @@ import 'package:afterdamage/pages/chat_members/chat_members.dart';
 import 'package:afterdamage/pages/chat_permissions_settings/chat_permissions_settings.dart';
 import 'package:afterdamage/pages/chat_search/chat_search_page.dart';
 import 'package:afterdamage/pages/device_settings/device_settings.dart';
-import 'package:afterdamage/pages/intro/intro_page.dart';
+import 'package:afterdamage/pages/intro/intro_page_presenter.dart';
 import 'package:afterdamage/pages/invitation_selection/invitation_selection.dart';
 import 'package:afterdamage/pages/login/login.dart';
 import 'package:afterdamage/pages/new_group/new_group.dart';
 import 'package:afterdamage/pages/new_private_chat/new_private_chat.dart';
-import 'package:afterdamage/pages/spaces/spaces_page.dart';
 import 'package:afterdamage/pages/settings/settings.dart';
 import 'package:afterdamage/pages/settings_3pid/settings_3pid.dart';
 import 'package:afterdamage/pages/settings_chat/settings_chat.dart';
@@ -34,13 +28,15 @@ import 'package:afterdamage/pages/settings_password/settings_password.dart';
 import 'package:afterdamage/pages/settings_security/settings_security.dart';
 import 'package:afterdamage/pages/settings_style/settings_style.dart';
 import 'package:afterdamage/pages/sign_in/sign_in_page.dart';
-import 'package:afterdamage/pages/dialer/call_banner.dart';
 import 'package:afterdamage/widgets/config_viewer.dart';
 import 'package:afterdamage/widgets/layouts/empty_page.dart';
 import 'package:afterdamage/widgets/layouts/two_column_layout.dart';
 import 'package:afterdamage/widgets/log_view.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 import 'package:afterdamage/widgets/share_scaffold_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
 
 abstract class AppRoutes {
   static FutureOr<String?> loggedInRedirect(
@@ -70,7 +66,7 @@ abstract class AppRoutes {
     GoRoute(
       path: '/home',
       pageBuilder: (context, state) =>
-          defaultPageBuilder(context, state, const IntroPage()),
+          defaultPageBuilder(context, state, const IntroPagePresenter()),
       redirect: loggedInRedirect,
       routes: [
         GoRoute(
@@ -133,14 +129,7 @@ abstract class AppRoutes {
                 ),
                 sideView: child,
               )
-            // Single-column mode: call panel at top of content.
-            : Column(
-                children: [
-                  const GlobalCallFloatingPanel(),
-                  const GlobalCallBanner(),
-                  Expanded(child: child),
-                ],
-              ),
+            : child,
       ),
       routes: [
         GoRoute(
@@ -178,21 +167,24 @@ abstract class AppRoutes {
               redirect: loggedOutRedirect,
             ),
             GoRoute(
-              path: 'spaces',
-              pageBuilder: (context, state) =>
-                  defaultPageBuilder(context, state, const SpacesPage()),
-              redirect: loggedOutRedirect,
-            ),
-            GoRoute(
               path: 'newprivatechat',
-              pageBuilder: (context, state) =>
-                  defaultPageBuilder(context, state, const NewPrivateChat()),
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                NewPrivateChat(
+                  key: ValueKey('new_chat_${state.uri.query}'),
+                  deeplink: state.uri.queryParameters['deeplink'],
+                ),
+              ),
               redirect: loggedOutRedirect,
             ),
             GoRoute(
               path: 'newgroup',
-              pageBuilder: (context, state) =>
-                  defaultPageBuilder(context, state, const NewGroup()),
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                NewGroup(spaceId: state.uri.queryParameters['space_id']),
+              ),
               redirect: loggedOutRedirect,
             ),
             GoRoute(
@@ -200,7 +192,10 @@ abstract class AppRoutes {
               pageBuilder: (context, state) => defaultPageBuilder(
                 context,
                 state,
-                const NewGroup(createGroupType: CreateGroupType.space),
+                NewGroup(
+                  createGroupType: CreateGroupType.space,
+                  spaceId: state.uri.queryParameters['space_id'],
+                ),
               ),
               redirect: loggedOutRedirect,
             ),
@@ -212,14 +207,9 @@ abstract class AppRoutes {
                     ? TwoColumnLayout(
                         mainView: Settings(key: state.pageKey),
                         sideView: child,
+                        hasNavigationRail: false,
                       )
-                    : Column(
-                        children: [
-                          const GlobalCallFloatingPanel(),
-                          const GlobalCallBanner(),
-                          Expanded(child: child),
-                        ],
-                      ),
+                    : child,
               ),
               routes: [
                 GoRoute(
@@ -283,8 +273,11 @@ abstract class AppRoutes {
                     GoRoute(
                       path: 'addaccount',
                       redirect: loggedOutRedirect,
-                      pageBuilder: (context, state) =>
-                          defaultPageBuilder(context, state, const IntroPage()),
+                      pageBuilder: (context, state) => defaultPageBuilder(
+                        context,
+                        state,
+                        const IntroPagePresenter(),
+                      ),
                       routes: [
                         GoRoute(
                           path: 'sign_in',

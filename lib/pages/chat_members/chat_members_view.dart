@@ -1,11 +1,9 @@
+import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/utils/localized_exception_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:afterdamage/l10n/l10n.dart';
-import 'package:afterdamage/utils/localized_exception_extension.dart';
 import '../../widgets/layouts/max_width_body.dart';
 import '../../widgets/matrix.dart';
 import '../chat_details/participant_list_item.dart';
@@ -47,7 +45,7 @@ class ChatMembersView extends StatelessWidget {
           if (room.canInvite)
             IconButton(
               onPressed: () => context.go('/rooms/${room.id}/invite'),
-              icon: const Icon(FontAwesomeIcons.userPlus),
+              icon: const Icon(Icons.person_add_outlined),
             ),
         ],
       ),
@@ -61,12 +59,12 @@ class ChatMembersView extends StatelessWidget {
                   child: Column(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(FontAwesomeIcons.circleExclamation),
+                      const Icon(Icons.error_outline),
                       Text(error.toLocalizedString(context)),
                       const SizedBox(height: 8),
                       OutlinedButton.icon(
                         onPressed: controller.refreshMembers,
-                        icon: const Icon(FontAwesomeIcons.arrowsRotate),
+                        icon: const Icon(Icons.refresh_outlined),
                         label: Text(L10n.of(context).tryAgain),
                       ),
                     ],
@@ -110,13 +108,13 @@ class ChatMembersView extends StatelessWidget {
                               fillColor: theme.colorScheme.secondaryContainer,
                               border: OutlineInputBorder(
                                 borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(99),
                               ),
                               hintStyle: TextStyle(
                                 color: theme.colorScheme.onPrimaryContainer,
                                 fontWeight: FontWeight.normal,
                               ),
-                              prefixIcon: const Icon(FontAwesomeIcons.magnifyingGlass),
+                              prefixIcon: const Icon(Icons.search_outlined),
                               hintText: L10n.of(context).search,
                             ),
                           ),
@@ -125,10 +123,7 @@ class ChatMembersView extends StatelessWidget {
                           SizedBox(
                             height: 64,
                             child: ListView.builder(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0,
-                                vertical: 12.0,
-                              ),
+                              padding: const EdgeInsets.all(12.0),
                               scrollDirection: Axis.horizontal,
                               itemCount: availableFilters.length,
                               itemBuilder: (context, i) => Padding(

@@ -137,7 +137,7 @@ class SettingsStyleView extends StatelessWidget {
             Divider(color: theme.dividerColor),
             ListTile(
               title: Text(
-                L10n.of(context).backgroundColor,
+                L10n.of(context).setWallpaper,
                 style: TextStyle(
                   color: theme.colorScheme.secondary,
                   fontWeight: FontWeight.bold,

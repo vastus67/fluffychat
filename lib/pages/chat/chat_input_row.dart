@@ -267,49 +267,73 @@ class ChatInputRow extends StatelessWidget {
                         ],
                       ),
                     ),
+                  AnimatedContainer(
+                    duration: FluffyThemes.animationDuration,
+                    curve: FluffyThemes.animationCurve,
+                    width: controller.sendController.text.isNotEmpty
+                        ? 0
+                        : height,
+                    height: height,
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(),
+                    clipBehavior: Clip.hardEdge,
+                    child: PopupMenuButton<int>(
+                      useRootNavigator: true,
+                      tooltip: 'Burn on Read',
+                      initialValue: controller.burnTime,
+                      icon: Icon(
+                        FontAwesomeIcons.fire,
+                        color: controller.burnTime > 0
+                            ? Colors.orange
+                            : theme.colorScheme.onPrimaryContainer,
+                        size: 16,
+                      ),
+                      onSelected: controller.setBurnTime,
+                      itemBuilder: (context) => [
+                        const PopupMenuItem<int>(
+                          value: 0,
+                          child: Text('Off'),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 3,
+                          child: Text('3 seconds'),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 5,
+                          child: Text('5 seconds'),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 10,
+                          child: Text('10 seconds'),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 30,
+                          child: Text('30 seconds'),
+                        ),
+                      ],
+                    ),
+                  ),
                   Container(
                     height: height,
                     width: height,
                     alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        PopupMenuButton<int>(
-                          useRootNavigator: true,
-                          tooltip: 'Burn on Read',
-                          initialValue: controller.burnTime,
-                          icon: Icon(
-                            FontAwesomeIcons.fire, 
-                            color: controller.burnTime > 0 ? Colors.orange : theme.colorScheme.onPrimaryContainer,
-                            size: 16,
-                          ),
-                          onSelected: controller.setBurnTime,
-                          itemBuilder: (context) => [
-                            const PopupMenuItem<int>(value: 0, child: Text('Off')),
-                            const PopupMenuItem<int>(value: 3, child: Text('3 seconds')),
-                            const PopupMenuItem<int>(value: 5, child: Text('5 seconds')),
-                            const PopupMenuItem<int>(value: 10, child: Text('10 seconds')),
-                            const PopupMenuItem<int>(value: 30, child: Text('30 seconds')),
-                          ],
-                        ),
-                        IconButton(
+                    child: IconButton(
                       tooltip: L10n.of(context).emojis,
                       color: theme.colorScheme.onPrimaryContainer,
                       icon: PageTransitionSwitcher(
-                        transitionBuilder:
-                            (
-                              Widget child,
-                              Animation<double> primaryAnimation,
-                              Animation<double> secondaryAnimation,
-                            ) {
-                              return SharedAxisTransition(
-                                animation: primaryAnimation,
-                                secondaryAnimation: secondaryAnimation,
-                                transitionType: SharedAxisTransitionType.scaled,
-                                fillColor: Colors.transparent,
-                                child: child,
-                              );
-                            },
+                        transitionBuilder: (
+                          Widget child,
+                          Animation<double> primaryAnimation,
+                          Animation<double> secondaryAnimation,
+                        ) {
+                          return SharedAxisTransition(
+                            animation: primaryAnimation,
+                            secondaryAnimation: secondaryAnimation,
+                            transitionType: SharedAxisTransitionType.scaled,
+                            fillColor: Colors.transparent,
+                            child: child,
+                          );
+                        },
                         child: Icon(
                           controller.showEmojiPicker
                               ? FontAwesomeIcons.keyboard
@@ -319,9 +343,7 @@ class ChatInputRow extends StatelessWidget {
                       ),
                       onPressed: controller.emojiPickerAction,
                     ),
-                  ],
-                ),
-              ),
+                  ),
                   if (Matrix.of(context).isMultiAccount &&
                       Matrix.of(context).hasComplexBundles &&
                       Matrix.of(context).currentBundle!.length > 1)

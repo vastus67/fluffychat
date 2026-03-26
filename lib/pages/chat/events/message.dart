@@ -53,6 +53,7 @@ class Message extends StatelessWidget {
   final List<Color> colors;
   final void Function()? onExpand;
   final bool isCollapsed;
+  final Set<String> bigEmojis;
 
   const Message(
     this.event, {
@@ -78,6 +79,7 @@ class Message extends StatelessWidget {
     this.onExpand,
     required this.enterThread,
     this.isCollapsed = false,
+    required this.bigEmojis,
     super.key,
   });
 
@@ -488,7 +490,7 @@ class Message extends StatelessWidget {
                                                     onSelect(event);
                                                   },
                                             child: AnimatedOpacity(
-                                              opacity: animateIn
+                                              opacity: (animateIn && !event.status.isSending)
                                                   ? 0
                                                   : event.messageType ==
                                                             MessageTypes
@@ -653,6 +655,7 @@ class Message extends StatelessWidget {
                                                               borderRadius,
                                                           timeline: timeline,
                                                           selected: selected,
+                                                          bigEmojis: bigEmojis,
                                                         ),
                                                         if (event
                                                             .hasAggregatedEvents(

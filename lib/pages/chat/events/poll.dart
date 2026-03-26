@@ -1,15 +1,13 @@
-import 'package:flutter/material.dart';
-
 import 'package:async/async.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:matrix/matrix.dart' hide Result;
-
 import 'package:afterdamage/config/app_config.dart';
 import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/url_launcher.dart';
 import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/future_loading_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:matrix/matrix.dart' hide Result;
 
 class PollWidget extends StatelessWidget {
   final Event event;
@@ -25,13 +23,9 @@ class PollWidget extends StatelessWidget {
   });
 
   void _endPoll(BuildContext context) =>
-      showFutureLoadingDialog(context: context, future: () => event.endPoll());
+      showFutureLoadingDialog(context: context, future: event.endPoll);
 
-  void _toggleVote(
-    BuildContext context,
-    String answerId,
-    int maxSelection,
-  ) async {
+  void _toggleVote(BuildContext context, String answerId, int maxSelection) {
     final userId = event.room.client.userID!;
     final answerIds = event.getPollResponses(timeline)[userId] ?? {};
     if (!answerIds.remove(answerId)) {
@@ -111,7 +105,7 @@ class PollWidget extends StatelessWidget {
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 checkboxScaleFactor: 1.5,
                 checkboxShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(32),
                 ),
                 onChanged: !canVote
                     ? null
