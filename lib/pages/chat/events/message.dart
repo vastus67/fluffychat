@@ -303,10 +303,10 @@ class Message extends StatelessWidget {
                 ),
               StatefulBuilder(
                 builder: (context, setState) {
-                  if (animateIn && resetAnimateIn != null) {
+                  if (animateIn) {
                     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                       animateIn = false;
-                      setState(resetAnimateIn);
+                      setState(resetAnimateIn ?? () {});
                     });
                   }
                   return AnimatedSize(
@@ -316,7 +316,7 @@ class Message extends StatelessWidget {
                     alignment: ownMessage
                         ? Alignment.bottomRight
                         : Alignment.bottomLeft,
-                    child: animateIn
+                    child: (animateIn && !event.status.isSending)
                         ? const SizedBox(height: 0, width: double.infinity)
                         : Stack(
                             clipBehavior: Clip.none,

@@ -128,8 +128,8 @@ class DraculaBase {
         elevation: 0,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        iconTheme: IconThemeData(color: colorScheme.primary),
-        actionsIconTheme: IconThemeData(color: colorScheme.primary),
+        iconTheme: IconThemeData(color: DraculaColors.foreground),
+        actionsIconTheme: IconThemeData(color: DraculaColors.foreground),
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,

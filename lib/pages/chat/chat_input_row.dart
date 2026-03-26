@@ -149,9 +149,9 @@ class ChatInputRow extends StatelessWidget {
                             child: ListTile(
                               leading: CircleAvatar(
                                 backgroundColor:
-                                    theme.colorScheme.onPrimaryContainer,
-                                foregroundColor:
                                     theme.colorScheme.primaryContainer,
+                                foregroundColor:
+                                    theme.colorScheme.onPrimaryContainer,
                                 child: const Icon(FontAwesomeIcons.crosshairs),
                               ),
                               title: Text(L10n.of(context).shareLocation),
@@ -163,9 +163,9 @@ class ChatInputRow extends StatelessWidget {
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundColor:
-                                  theme.colorScheme.onPrimaryContainer,
-                              foregroundColor:
                                   theme.colorScheme.primaryContainer,
+                              foregroundColor:
+                                  theme.colorScheme.onPrimaryContainer,
                               child: const Icon(FontAwesomeIcons.squarePollVertical),
                             ),
                             title: Text(L10n.of(context).startPoll),
@@ -177,9 +177,9 @@ class ChatInputRow extends StatelessWidget {
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundColor:
-                                  theme.colorScheme.onPrimaryContainer,
-                              foregroundColor:
                                   theme.colorScheme.primaryContainer,
+                              foregroundColor:
+                                  theme.colorScheme.onPrimaryContainer,
                               child: const Icon(FontAwesomeIcons.image),
                             ),
                             title: Text(L10n.of(context).sendImage),
@@ -191,9 +191,9 @@ class ChatInputRow extends StatelessWidget {
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundColor:
-                                  theme.colorScheme.onPrimaryContainer,
-                              foregroundColor:
                                   theme.colorScheme.primaryContainer,
+                              foregroundColor:
+                                  theme.colorScheme.onPrimaryContainer,
                               child: const Icon(
                                 FontAwesomeIcons.video,
                               ),
@@ -207,9 +207,9 @@ class ChatInputRow extends StatelessWidget {
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundColor:
-                                  theme.colorScheme.onPrimaryContainer,
-                              foregroundColor:
                                   theme.colorScheme.primaryContainer,
+                              foregroundColor:
+                                  theme.colorScheme.onPrimaryContainer,
                               child: const Icon(FontAwesomeIcons.paperclip),
                             ),
                             title: Text(L10n.of(context).sendFile),
