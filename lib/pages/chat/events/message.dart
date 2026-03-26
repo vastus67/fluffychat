@@ -26,7 +26,6 @@ import 'message_reactions.dart';
 import 'reply_content.dart';
 import 'state_message.dart';
 
-final Set<String> _burnTimers = {};
 final Set<String> _burnedEvents = {};
 
 class Message extends StatelessWidget {
@@ -108,18 +107,10 @@ class Message extends StatelessWidget {
     // Goth Matrix: Burn on read logic
     final burnTime = event.content.tryGet<int>('org.goth.burn_time');
     final isBurnMessage = burnTime != null && burnTime > 0;
-    
-    if (isBurnMessage && !event.redacted && !_burnTimers.contains(event.eventId)) {
-      _burnTimers.add(event.eventId);
-      Future.delayed(Duration(seconds: burnTime), () {
-        if (!event.redacted) {
-          _burnedEvents.add(event.eventId);
-          event.room.redactEvent(event.eventId);
-        }
-      });
-    }
-
-    final isBurning = event.redacted && (_burnedEvents.contains(event.eventId) || event.content.tryGet<bool>('org.matrix.ephemeral') == true);
+    final alreadyBurned = _burnedEvents.contains(event.eventId);
+    // burnSeconds is only set when the event is live (not yet redacted) and not already burned.
+    // FireBurnWrapper owns the countdown timer and plays the animation before calling redactEvent.
+    final burnSeconds = (isBurnMessage && !event.redacted && !alreadyBurned) ? burnTime : null;
 
     final client = Matrix.of(context).client;
     final ownMessage = event.senderId == client.userID;
@@ -243,9 +234,7 @@ class Message extends StatelessWidget {
 
     final enterThread = this.enterThread;
 
-    return FireBurnWrapper(
-      isBurning: isBurning,
-      child: Center(
+    return Center(
       child: Swipeable(
         key: ValueKey(event.eventId),
         background: const Padding(
@@ -489,7 +478,15 @@ class Message extends StatelessWidget {
                                                     HapticFeedback.heavyImpact();
                                                     onSelect(event);
                                                   },
-                                            child: AnimatedOpacity(
+                                            child: FireBurnWrapper(
+                                              burnSeconds: burnSeconds,
+                                              alreadyBurned: alreadyBurned,
+                                              eventId: event.eventId,
+                                              onBurnComplete: isBurnMessage ? () {
+                                                _burnedEvents.add(event.eventId);
+                                                event.room.redactEvent(event.eventId);
+                                              } : null,
+                                              child: AnimatedOpacity(
                                               opacity: (animateIn && !event.status.isSending)
                                                   ? 0
                                                   : event.messageType ==
@@ -708,6 +705,7 @@ class Message extends StatelessWidget {
                                                   ),
                                                 ),
                                               ),
+                                            ),
                                             ),
                                           ),
                                         ),
@@ -999,7 +997,6 @@ class Message extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }
@@ -1077,9 +1074,19 @@ class BubblePainter extends CustomPainter {
 
 class FireBurnWrapper extends StatefulWidget {
   final Widget child;
-  final bool isBurning;
+  final int? burnSeconds;
+  final bool alreadyBurned;
+  final String? eventId;
+  final VoidCallback? onBurnComplete;
 
-  const FireBurnWrapper({super.key, required this.child, required this.isBurning});
+  const FireBurnWrapper({
+    super.key,
+    required this.child,
+    this.burnSeconds,
+    this.alreadyBurned = false,
+    this.eventId,
+    this.onBurnComplete,
+  });
 
   @override
   State<FireBurnWrapper> createState() => _FireBurnWrapperState();
@@ -1097,14 +1104,28 @@ class _FireBurnWrapperState extends State<FireBurnWrapper> with SingleTickerProv
       duration: const Duration(milliseconds: 2200),
     );
     _progress = CurvedAnimation(parent: _controller, curve: Curves.easeInCubic);
-    if (widget.isBurning) _controller.forward();
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        widget.onBurnComplete?.call();
+      }
+    });
+    if (widget.alreadyBurned) {
+      _controller.value = 1.0;
+    } else if (widget.burnSeconds != null) {
+      Future.delayed(Duration(seconds: widget.burnSeconds!), _startBurn);
+    }
+  }
+
+  void _startBurn() {
+    if (!mounted) return;
+    _controller.forward();
   }
 
   @override
   void didUpdateWidget(FireBurnWrapper oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.isBurning && !oldWidget.isBurning) {
-      _controller.forward();
+    if (widget.alreadyBurned && !oldWidget.alreadyBurned && _controller.value < 1.0) {
+      _controller.value = 1.0;
     }
   }
 
@@ -1120,7 +1141,7 @@ class _FireBurnWrapperState extends State<FireBurnWrapper> with SingleTickerProv
       animation: _progress,
       builder: (context, child) {
         final progress = _progress.value;
-        if (progress >= 1.0) return const SizedBox.shrink();
+        if (progress >= 1.0 || widget.alreadyBurned) return const SizedBox.shrink();
         if (progress == 0.0) return child!;
 
         // burnFraction = how much of the message is still visible (top portion).
