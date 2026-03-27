@@ -49,8 +49,8 @@ class Avatar extends StatelessWidget {
 
     final name = this.name;
     final fallbackLetters = name == null || name.isEmpty
-        ? '@'
-        : name.substring(0, 1).toUpperCase();
+        ? '𐌰'
+        : name.soulInitial;
 
     final noPic =
         mxContent == null ||
@@ -104,7 +104,7 @@ class Avatar extends StatelessWidget {
                         fallbackLetters,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'Veilrune',
+                          fontFamily: 'Cardo',
                           color: avatarFg,
                           fontWeight: FontWeight.bold,
                           fontSize: (size / 2.0).roundToDouble(),
