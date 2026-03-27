@@ -44,6 +44,40 @@ Color contrastForeground(Color bg) {
   return luminance > 0.4 ? Colors.black : Colors.white;
 }
 
+/// Soul-Mapping: each Latin letter maps to a pool of three arcane Unicode glyphs
+/// drawn from the Gothic (4th c.), Elder Futhark Runic, and Old Italic scripts.
+/// All three scripts are covered by the bundled Cardo font.
+/// A deterministic hash of the full name string selects one entry from the pool,
+/// so the same name always produces the same glyph.
+const Map<String, List<String>> _soulCharPools = {
+  'A': ['𐌰', 'ᚨ', '𐌀'], // Gothic a,    Runic ansuz,    Old Italic A
+  'B': ['𐌱', 'ᛒ', '𐌁'], // Gothic b,    Runic berkanan, Old Italic BE
+  'C': ['𐌺', 'ᚳ', '𐌂'], // Gothic k,    Runic cen (Anglo-Saxon C), Old Italic KE
+  'D': ['𐌳', 'ᛞ', '𐌃'], // Gothic d,    Runic dagaz,    Old Italic DE
+  'E': ['𐌴', 'ᛖ', '𐌄'], // Gothic e,    Runic ehwaz,    Old Italic E
+  'F': ['𐍆', 'ᚠ', '𐌅'], // Gothic f,    Runic fehu,     Old Italic VE
+  'G': ['𐌲', 'ᚷ', '𐌆'], // Gothic g,    Runic gebo,     Old Italic ZE
+  'H': ['𐌷', 'ᚻ', '𐌇'], // Gothic h,    Runic hagalaz,  Old Italic HE
+  'I': ['𐌹', 'ᛁ', '𐌉'], // Gothic i,    Runic isa,      Old Italic I
+  'J': ['𐌾', 'ᛃ', '𐌊'], // Gothic j,    Runic jera,     Old Italic KA
+  'K': ['𐌺', 'ᚲ', '𐌊'], // Gothic k,    Runic kenaz,    Old Italic KA
+  'L': ['𐌻', 'ᛚ', '𐌋'], // Gothic l,    Runic laguz,    Old Italic EL
+  'M': ['𐌼', 'ᛗ', '𐌌'], // Gothic m,    Runic mannaz,   Old Italic EM
+  'N': ['𐌽', 'ᚾ', '𐌍'], // Gothic n,    Runic naudiz,   Old Italic EN
+  'O': ['𐍉', 'ᛟ', '𐌏'], // Gothic o,    Runic othalan,  Old Italic O
+  'P': ['𐍀', 'ᛈ', '𐌐'], // Gothic p,    Runic pertho,   Old Italic PE
+  'Q': ['𐌵', 'ᚴ', '𐌒'], // Gothic q,    Runic (k-var),  Old Italic KU
+  'R': ['𐍂', 'ᚱ', '𐌓'], // Gothic r,    Runic raido,    Old Italic ER
+  'S': ['𐍃', 'ᛊ', '𐌔'], // Gothic s,    Runic sowilo,   Old Italic ES
+  'T': ['𐍄', 'ᛏ', '𐌕'], // Gothic t,    Runic tiwaz,    Old Italic TE
+  'U': ['𐌿', 'ᚢ', '𐌖'], // Gothic u,    Runic uruz,     Old Italic UPH
+  'V': ['𐍅', 'ᚢ', '𐌅'], // Gothic w/v,  Runic uruz (V sound), Old Italic VE
+  'W': ['𐍅', 'ᚹ', '𐌗'], // Gothic w,    Runic wunjo,    Old Italic EKS
+  'X': ['𐍇', 'ᛉ', '𐌗'], // Gothic x,    Runic algiz,    Old Italic EKS
+  'Y': ['𐌾', 'ᛇ', '𐌝'], // Gothic j/y,  Runic iwaz,     Old Italic II
+  'Z': ['𐌶', 'ᛦ', '𐌙'], // Gothic z,    Runic yr,       Old Italic KHE
+};
+
 extension StringColor on String {
   // ── Legacy HSL-based helpers (used for sender-name text colors) ──
 
@@ -88,4 +122,14 @@ extension StringColor on String {
 
   /// Auto-contrast foreground (white or black) for [avatarBackground].
   Color get avatarForeground => contrastForeground(avatarBackground);
+
+  /// Returns a deterministic arcane Unicode glyph for this string, based on
+  /// its first character (A–Z) and a stable hash of the full string.
+  /// Non-Latin first characters fall back to the Gothic 𐌰 glyph.
+  String get soulInitial {
+    if (isEmpty) return '𐌰';
+    final first = this[0].toUpperCase();
+    final pool = _soulCharPools[first] ?? _soulCharPools['A']!;
+    return pool[_stableStringHash(this).abs() % pool.length];
+  }
 }
