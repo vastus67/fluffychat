@@ -1,6 +1,6 @@
 # Afterdamage Chat
 
-**Afterdamage Chat** is an open source [Matrix](https://matrix.org) client written in [Flutter](https://flutter.dev). The goal of the app is to create an easy to use instant messenger which is open source and accessible for everyone.
+**Afterdamage Chat** is an open source [Matrix](https://matrix.org) client written in [Flutter](https://flutter.dev).
 
 > **Note:** This is a customized fork. For the original project, visit [FluffyChat](https://github.com/krille-chan/fluffychat).
 
@@ -105,17 +105,3 @@ flutter build windows --release
 flutter build macos --release
 ```
 
-
-# Special thanks
-
-* <a href="https://github.com/fabiyamada">Fabiyamada</a> is a graphics designer and has made the fluffychat logo and the banner. Big thanks for her great designs.
-
-* <a href="https://github.com/advocatux">Advocatux</a> has made the Spanish translation with great love and care. He always stands by my side and supports my work with great commitment.
-
-* Thanks to MTRNord and Sorunome for developing.
-
-* Also thanks to all translators and testers! With your help, afterdamage is now available in more than 12 languages.
-
-* <a href="https://github.com/madsrh/WoodenBeaver">WoodenBeaver</a> sound theme for the notification sound.
-
-* The Matrix Foundation for making and maintaining the [emoji translations](https://github.com/matrix-org/matrix-spec/blob/main/data-definitions/sas-emoji.json) used for emoji verification, licensed Apache 2.0
