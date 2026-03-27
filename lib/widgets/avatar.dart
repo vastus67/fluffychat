@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:matrix/matrix.dart';
 
+import 'package:afterdamage/utils/avatar_sigil.dart';
 import 'package:afterdamage/utils/string_color.dart';
 import 'package:afterdamage/widgets/mxc_image.dart';
 import 'package:afterdamage/widgets/presence_builder.dart';
@@ -48,9 +49,7 @@ class Avatar extends StatelessWidget {
     final theme = Theme.of(context);
 
     final name = this.name;
-    final fallbackLetters = name == null || name.isEmpty
-        ? '@'
-        : name.substring(0, 1).toUpperCase();
+    final fallbackLetters = avatarSigil(name);
 
     final noPic =
         mxContent == null ||
@@ -104,10 +103,9 @@ class Avatar extends StatelessWidget {
                         fallbackLetters,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'Veilrune',
                           color: avatarFg,
                           fontWeight: FontWeight.bold,
-                          fontSize: (size / 2.0).roundToDouble(),
+                          fontSize: (size / 2.2).roundToDouble(),
                         ),
                       ),
                     )
