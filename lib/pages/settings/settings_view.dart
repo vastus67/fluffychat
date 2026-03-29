@@ -2,9 +2,12 @@ import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/l10n/l10n.dart';
 import 'package:afterdamage/utils/fluffy_share.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:afterdamage/widgets/avatar.dart';
+import 'package:afterdamage/widgets/future_loading_dialog.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -212,6 +215,32 @@ class SettingsView extends StatelessWidget {
               leading: const Icon(Icons.logout_outlined),
               title: Text(L10n.of(context).logout),
               onTap: controller.logoutAction,
+            ),
+            ListTile(
+              leading: const Icon(FontAwesomeIcons.radiation, color: Colors.red),
+              title: const Text('Panic', style: TextStyle(color: Colors.red)),
+              subtitle: const Text('Wipe local data and log out'),
+              onTap: () async {
+                final consent = await showOkCancelAlertDialog(
+                  context: context,
+                  title: 'Panic',
+                  message: 'This will wipe all local data and log you out. Are you absolutely sure?',
+                  okLabel: 'Burn it',
+                  cancelLabel: L10n.of(context).cancel,
+                );
+                if (consent != OkCancelResult.ok || !context.mounted) return;
+                await showFutureLoadingDialog(
+                  context: context,
+                  future: () async {
+                    await Matrix.of(context).client.clearCache();
+                    try {
+                      await Matrix.of(context).client.logout();
+                    } catch (_) {}
+                  },
+                );
+                if (!context.mounted) return;
+                context.go('/');
+              },
             ),
           ],
         ),

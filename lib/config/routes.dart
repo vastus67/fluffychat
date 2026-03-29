@@ -167,6 +167,20 @@ abstract class AppRoutes {
               redirect: loggedOutRedirect,
             ),
             GoRoute(
+              path: 'spaces',
+              redirect: loggedOutRedirect,
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                FluffyThemes.isColumnMode(context)
+                    ? const EmptyPage()
+                    : ChatList(
+                        activeChat: null,
+                        initialFilter: ActiveFilter.spaces,
+                      ),
+              ),
+            ),
+            GoRoute(
               path: 'newprivatechat',
               pageBuilder: (context, state) => defaultPageBuilder(
                 context,

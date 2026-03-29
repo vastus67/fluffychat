@@ -63,12 +63,14 @@ class ChatList extends StatefulWidget {
   final String? activeChat;
   final String? activeSpace;
   final bool displayNavigationRail;
+  final ActiveFilter initialFilter;
 
   const ChatList({
     super.key,
     required this.activeChat,
     this.activeSpace,
     this.displayNavigationRail = false,
+    this.initialFilter = ActiveFilter.allChats,
   });
 
   @override
@@ -140,7 +142,7 @@ class ChatListController extends State<ChatList>
   bool Function(Room) getRoomFilterByActiveFilter(ActiveFilter activeFilter) {
     switch (activeFilter) {
       case ActiveFilter.allChats:
-        return (room) => true;
+        return (room) => !room.isSpace;
       case ActiveFilter.messages:
         return (room) => !room.isSpace && room.isDirectChat;
       case ActiveFilter.groups:
@@ -375,7 +377,7 @@ class ChatListController extends State<ChatList>
 
   @override
   void initState() {
-    activeFilter = ActiveFilter.allChats;
+    activeFilter = widget.initialFilter;
     _initReceiveSharingIntent();
     _activeSpaceId = widget.activeSpace;
 
