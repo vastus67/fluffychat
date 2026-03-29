@@ -11,7 +11,6 @@ import 'package:matrix/matrix.dart';
 import 'package:webrtc_interface/webrtc_interface.dart' hide Navigator;
 
 import 'package:afterdamage/pages/chat_list/chat_list.dart';
-import 'package:afterdamage/pages/dialer/dialer.dart';
 import 'package:afterdamage/pages/dialer/group_call.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
 import 'package:afterdamage/utils/voip/callkit_events.dart' as ck;
@@ -50,7 +49,7 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   bool background = false;
   bool speakerOn = false;
   late VoIP voip;
-  OverlayEntry? overlayEntry;
+  OverlayEntry? overlayEntry; // legacy — kept for API compatibility, not used
   StreamSubscription<ck.CallEvent?>? _callkitEventSub;
   BuildContext get context => matrix.context;
 
@@ -137,38 +136,17 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   }
 
   void addCallingOverlay(String callId, CallSession call) {
-    // Use the inline Discord-style call sidebar panel on all platforms.
-    // On mobile, also keep the fullscreen overlay as a fallback for PIP.
+    // Notify the ValueNotifier so AppNavigationShell shows the full-screen
+    // CallScreen via its Stack overlay (the reliable in-tree approach).
+    // NOTE: we intentionally do NOT use Overlay.of(context) here because
+    // `matrix.context` sits ABOVE the Navigator/Overlay in the widget tree
+    // (Matrix wraps its child GoRouter), so Overlay.of() returns null and
+    // any insert attempt is silently dropped.
     activeCallNotifier.value = ActiveCallState(
       callId: callId,
       call: call,
       client: client,
     );
-
-    // On mobile (native) and PWA/compact-web (<600px), show the fullscreen call
-    // overlay with PIP minimize. Wide desktop web uses the embedded panel UX.
-    final isCompactWeb = kIsWeb && MediaQuery.sizeOf(context).width < 600;
-    if (PlatformInfos.isMobile || isCompactWeb) {
-      final context = this.context;
-
-      if (overlayEntry != null) {
-        Logs().e('[VOIP] addCallingOverlay: The call session already exists?');
-        overlayEntry!.remove();
-      }
-      overlayEntry = OverlayEntry(
-        builder: (_) => Calling(
-          context: context,
-          client: client,
-          callId: callId,
-          call: call,
-          onClear: () {
-            overlayEntry?.remove();
-            overlayEntry = null;
-          },
-        ),
-      );
-      Overlay.of(context).insert(overlayEntry!);
-    }
   }
 
   @override
@@ -325,12 +303,13 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
     if (overlayEntry != null) {
       overlayEntry!.remove();
       overlayEntry = null;
-      if (PlatformInfos.isAndroid) {
-        FlutterForegroundTask.setOnLockScreenVisibility(false);
-        FlutterForegroundTask.stopService();
-        final wasForeground = matrix.store.getString('wasForeground');
-        wasForeground == 'false' ? FlutterForegroundTask.minimizeApp() : null;
-      }
+    }
+
+    if (PlatformInfos.isAndroid) {
+      FlutterForegroundTask.setOnLockScreenVisibility(false);
+      FlutterForegroundTask.stopService();
+      final wasForeground = matrix.store.getString('wasForeground');
+      if (wasForeground == 'false') FlutterForegroundTask.minimizeApp();
     }
   }
 
