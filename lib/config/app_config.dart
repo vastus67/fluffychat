@@ -13,11 +13,11 @@ abstract class AppConfig {
   static const bool hideTypingUsernames = false;
 
   static const String inviteLinkPrefix = 'https://matrix.to/#/';
-  static const String deepLinkPrefix = 'im.fluffychat://chat/';
-  static const String appSsoUrlScheme = 'im.fluffychat.auth';
+  static const String deepLinkPrefix = 'im.afterdamage://chat/';
+  static const String appSsoUrlScheme = 'im.afterdamage.auth';
   static const String schemePrefix = 'matrix:';
-  static const String pushNotificationsChannelId = 'fluffychat_push';
-  static const String pushNotificationsAppId = 'chat.fluffy.fluffychat';
+  static const String pushNotificationsChannelId = 'afterdamage_push';
+  static const String pushNotificationsAppId = 'chat.afterdamage.afterdamage';
   static const double borderRadius = 8.0;
   static const double spaceBorderRadius = 11.0;
   static const double columnWidth = 360.0;
@@ -31,8 +31,8 @@ abstract class AppConfig {
       'https://joinmatrix.org/';
   static const String howDoIGetStickersTutorial =
       'https://matrix.org/docs/';
-  static const String appId = 'im.fluffychat.FluffyChat';
-  static const String appOpenUrlScheme = 'im.fluffychat';
+  static const String appId = 'im.afterdamage.Afterdamage';
+  static const String appOpenUrlScheme = 'im.afterdamage';
 
   static const String sourceCodeUrl =
       'https://github.com/krille-chan/fluffychat';
