@@ -86,8 +86,10 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
       client: client,
     );
 
-    // On mobile (non-web), still show the fullscreen overlay for native PIP
-    if (!kIsWeb && PlatformInfos.isMobile) {
+    // On mobile (native) and PWA/compact-web (<600px), show the fullscreen call
+    // overlay with PIP minimize. Wide desktop web uses the embedded panel UX.
+    final isCompactWeb = kIsWeb && MediaQuery.sizeOf(context).width < 600;
+    if (PlatformInfos.isMobile || isCompactWeb) {
       final context = this.context;
 
       if (overlayEntry != null) {

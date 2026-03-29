@@ -143,6 +143,15 @@ class AppNavRail extends StatelessWidget {
             ),
           ),
 
+          // Panic Button
+          const Divider(
+            color: DraculaColors.currentLine,
+            height: 1,
+          ),
+          _NavRailPanicButton(
+            extended: extended,
+          ),
+
           // Discord-style call panel (sits above settings, below nav)
           const GlobalCallSidebar(),
 
