@@ -14,9 +14,9 @@ import 'package:afterdamage/pages/chat_list/chat_list.dart';
 import 'package:afterdamage/pages/dialer/dialer.dart';
 import 'package:afterdamage/pages/dialer/group_call.dart';
 import 'package:afterdamage/utils/platform_infos.dart';
+import 'package:afterdamage/utils/voip/callkit_events.dart' as ck;
 import 'package:afterdamage/utils/voip/callkit_service.dart';
 import 'package:afterdamage/utils/voip/web_media_fixer.dart';
-import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import '../../utils/voip/user_media_manager.dart';
 import '../widgets/matrix.dart';
 
@@ -51,7 +51,7 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   bool speakerOn = false;
   late VoIP voip;
   OverlayEntry? overlayEntry;
-  StreamSubscription<CallEvent?>? _callkitEventSub;
+  StreamSubscription<ck.CallEvent?>? _callkitEventSub;
   BuildContext get context => matrix.context;
 
   /// Wrapper that catches getUserMedia permission errors on web so incoming
@@ -81,9 +81,11 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   /// Listens to native call UI events (Accept / Decline / End) from
   /// flutter_callkit_incoming and forwards them to the active CallSession.
   void _listenCallkitEvents() {
-    _callkitEventSub = FlutterCallkitIncoming.onEvent.listen((event) async {
+    _callkitEventSub = ck.FlutterCallkitIncoming.onEvent.listen((event) async {
       if (event == null) return;
-      final callId = (event.body as Map?)?.tryGet<String>('id');
+      final body = event.body;
+      if (body is! Map) return;
+      final callId = body['id'] as String?;
       if (callId == null) return;
 
       // Find the matching call session by callId.
@@ -96,7 +98,7 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
       }
 
       switch (event.event) {
-        case Event.actionCallAccept:
+        case ck.Event.actionCallAccept:
           Logs().i('[VOIP] Callkit accept => answering call $callId');
           try {
             await call.answer();
@@ -104,7 +106,7 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
             Logs().w('[VOIP] Callkit answer failed: $e');
           }
           break;
-        case Event.actionCallDecline:
+        case ck.Event.actionCallDecline:
           Logs().i('[VOIP] Callkit decline => rejecting call $callId');
           try {
             await call.reject();
@@ -112,8 +114,8 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
             Logs().w('[VOIP] Callkit reject failed: $e');
           }
           break;
-        case Event.actionCallEnded:
-        case Event.actionCallTimeout:
+        case ck.Event.actionCallEnded:
+        case ck.Event.actionCallTimeout:
           Logs().i('[VOIP] Callkit ended/timeout => hanging up call $callId');
           if (!call.callHasEnded) {
             try {
@@ -122,8 +124,6 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
               Logs().w('[VOIP] Callkit hangup failed: $e');
             }
           }
-          break;
-        default:
           break;
       }
     });
@@ -297,7 +297,7 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
     if (CallkitService.instance.isSupported) {
       call.onCallStateChanged.stream.listen((state) {
         if (state == CallState.kConnected) {
-          FlutterCallkitIncoming.setCallConnected(call.callId)
+          ck.FlutterCallkitIncoming.setCallConnected(call.callId)
               .catchError((e) => Logs().w('[VOIP] setCallConnected failed: $e'));
         }
       });
