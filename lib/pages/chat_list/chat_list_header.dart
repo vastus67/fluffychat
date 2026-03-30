@@ -63,7 +63,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
           : null,
       leading: showMenuButton
           ? IconButton(
-              icon: const Icon(FontAwesomeIcons.bars),
+              icon: const FaIcon(FontAwesomeIcons.bars),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
@@ -107,7 +107,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                   ? controller.isSearchMode
                         ? IconButton(
                             tooltip: L10n.of(context).cancel,
-                            icon: const Icon(FontAwesomeIcons.xmark),
+                            icon: const FaIcon(FontAwesomeIcons.xmark),
                             onPressed: controller.cancelSearch,
                             color: theme.colorScheme.onPrimaryContainer,
                           )
@@ -156,7 +156,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                               ),
                               textStyle: const TextStyle(fontSize: 12),
                             ),
-                            icon: const Icon(FontAwesomeIcons.penToSquare, size: 16),
+                            icon: const FaIcon(FontAwesomeIcons.penToSquare, size: 16),
                             label: Text(
                               controller.searchServer ??
                                   Matrix.of(context).client.homeserver!.host,

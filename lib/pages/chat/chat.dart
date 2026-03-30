@@ -1479,7 +1479,7 @@ class ChatController extends State<ChatPageWithRoom>
                   child: ChatDetails(
                     roomId: roomId,
                     embeddedCloseButton: IconButton(
-                      icon: const Icon(FontAwesomeIcons.xmark),
+                      icon: const FaIcon(FontAwesomeIcons.xmark),
                       onPressed: toggleDisplayChatDetailsColumn,
                     ),
                   ),

@@ -77,17 +77,17 @@ class ChatListViewBody extends StatelessWidget {
                   if (controller.isSearchMode) ...[
                     SearchTitle(
                       title: L10n.of(context).publicRooms,
-                      icon: const Icon(FontAwesomeIcons.compass),
+                      icon: const FaIcon(FontAwesomeIcons.compass),
                     ),
                     PublicRoomsHorizontalList(publicRooms: publicRooms),
                     SearchTitle(
                       title: L10n.of(context).publicSpaces,
-                      icon: const Icon(FontAwesomeIcons.cubes),
+                      icon: const FaIcon(FontAwesomeIcons.cubes),
                     ),
                     PublicRoomsHorizontalList(publicRooms: publicSpaces),
                     SearchTitle(
                       title: L10n.of(context).users,
-                      icon: const Icon(FontAwesomeIcons.users),
+                      icon: const FaIcon(FontAwesomeIcons.users),
                     ),
                     AnimatedContainer(
                       clipBehavior: Clip.hardEdge,
@@ -175,7 +175,7 @@ class ChatListViewBody extends StatelessWidget {
                   if (controller.isSearchMode)
                     SearchTitle(
                       title: L10n.of(context).chats,
-                      icon: const Icon(FontAwesomeIcons.comments),
+                      icon: const FaIcon(FontAwesomeIcons.comments),
                     ),
                   if (client.prevBatch != null &&
                       rooms.isEmpty &&

@@ -131,11 +131,11 @@ class AppNavRail extends StatelessWidget {
                   : NavigationRailLabelType.all,
               destinations: [
                 NavigationRailDestination(
-                  icon: const Icon(FontAwesomeIcons.comments),
+                  icon: const FaIcon(FontAwesomeIcons.comments),
                   label: Text(L10n.of(context).chats),
                 ),
                 NavigationRailDestination(
-                  icon: const Icon(FontAwesomeIcons.globe),
+                  icon: const FaIcon(FontAwesomeIcons.globe),
                   label: Text(L10n.of(context).spaces),
                 ),
               ],
@@ -300,7 +300,7 @@ class _NavRailSettingsButton extends StatelessWidget {
           mainAxisAlignment:
               extended ? MainAxisAlignment.start : MainAxisAlignment.center,
           children: [
-            Icon(FontAwesomeIcons.gear, color: color, size: 20),
+            FaIcon(FontAwesomeIcons.gear, color: color, size: 20),
             if (extended) ...[
               const SizedBox(width: 12),
               Text(
@@ -360,7 +360,7 @@ class _NavRailPanicButton extends StatelessWidget {
           mainAxisAlignment:
               extended ? MainAxisAlignment.start : MainAxisAlignment.center,
           children: [
-            const Icon(FontAwesomeIcons.radiation, color: color, size: 20),
+            const FaIcon(FontAwesomeIcons.radiation, color: color, size: 20),
             if (extended) ...[
               const SizedBox(width: 12),
               const Text(

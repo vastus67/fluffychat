@@ -393,7 +393,7 @@ class MyCallingPage extends State<Calling> {
       heroTag: 'switchCamera',
       onPressed: _switchCamera,
       backgroundColor: Colors.black45,
-      child: const Icon(FontAwesomeIcons.cameraRotate),
+      child: const FaIcon(FontAwesomeIcons.cameraRotate),
     );
     final switchSpeakerButton = FloatingActionButton(
       heroTag: 'switchSpeaker',
@@ -407,7 +407,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _hangUp,
       tooltip: 'Hangup',
       backgroundColor: _state == CallState.kEnded ? Colors.black45 : Colors.red,
-      child: const Icon(FontAwesomeIcons.phoneSlash),
+      child: const FaIcon(FontAwesomeIcons.phoneSlash),
     );
 
     final answerButton = FloatingActionButton(
@@ -415,7 +415,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _answerCall,
       tooltip: 'Answer',
       backgroundColor: Colors.green,
-      child: const Icon(FontAwesomeIcons.phone),
+      child: const FaIcon(FontAwesomeIcons.phone),
     );
 
     final muteMicButton = FloatingActionButton(
@@ -431,7 +431,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _screenSharing,
       foregroundColor: isScreensharingEnabled ? Colors.black26 : Colors.white,
       backgroundColor: isScreensharingEnabled ? Colors.white : Colors.black45,
-      child: const Icon(FontAwesomeIcons.desktop),
+      child: const FaIcon(FontAwesomeIcons.desktop),
     );
 
     final holdButton = FloatingActionButton(
@@ -439,7 +439,7 @@ class MyCallingPage extends State<Calling> {
       onPressed: _remoteOnHold,
       foregroundColor: isRemoteOnHold ? Colors.black26 : Colors.white,
       backgroundColor: isRemoteOnHold ? Colors.white : Colors.black45,
-      child: const Icon(FontAwesomeIcons.pause),
+      child: const FaIcon(FontAwesomeIcons.pause),
     );
 
     final muteCameraButton = FloatingActionButton(
@@ -502,7 +502,7 @@ class MyCallingPage extends State<Calling> {
           child: Column(
             mainAxisAlignment: .center,
             children: [
-              const Icon(FontAwesomeIcons.pause, size: 48.0, color: Colors.white),
+              const FaIcon(FontAwesomeIcons.pause, size: 48.0, color: Colors.white),
               Text(
                 title,
                 style: const TextStyle(color: Colors.white, fontSize: 24.0),
@@ -638,7 +638,7 @@ class MyCallingPage extends State<Calling> {
                         left: 24.0,
                         child: IconButton(
                           color: Colors.black45,
-                          icon: const Icon(FontAwesomeIcons.arrowLeft),
+                          icon: const FaIcon(FontAwesomeIcons.arrowLeft),
                           onPressed: () {
                             PIPView.of(context)?.setFloating(true);
                           },

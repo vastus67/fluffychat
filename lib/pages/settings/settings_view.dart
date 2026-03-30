@@ -217,7 +217,7 @@ class SettingsView extends StatelessWidget {
               onTap: controller.logoutAction,
             ),
             ListTile(
-              leading: const Icon(FontAwesomeIcons.radiation, color: Colors.red),
+              leading: const FaIcon(FontAwesomeIcons.radiation, color: Colors.red),
               title: const Text('Panic', style: TextStyle(color: Colors.red)),
               subtitle: const Text('Wipe local data and log out'),
               onTap: () async {

@@ -24,20 +24,20 @@ class RecordingInputRow extends StatelessWidget {
       children: [
         IconButton(
           tooltip: L10n.of(context).cancel,
-          icon: const Icon(FontAwesomeIcons.trash),
+          icon: const FaIcon(FontAwesomeIcons.trash),
           color: theme.colorScheme.error,
           onPressed: state.cancel,
         ),
         if (state.isPaused)
           IconButton(
             tooltip: L10n.of(context).resume,
-            icon: const Icon(FontAwesomeIcons.circlePlay),
+            icon: const FaIcon(FontAwesomeIcons.circlePlay),
             onPressed: state.resume,
           )
         else
           IconButton(
             tooltip: L10n.of(context).pause,
-            icon: const Icon(FontAwesomeIcons.circlePause),
+            icon: const FaIcon(FontAwesomeIcons.circlePause),
             onPressed: state.pause,
           ),
         Text(time),
@@ -81,7 +81,7 @@ class RecordingInputRow extends StatelessWidget {
                   dimension: 24,
                   child: CircularProgressIndicator.adaptive(),
                 )
-              : const Icon(FontAwesomeIcons.paperPlane),
+              : const FaIcon(FontAwesomeIcons.paperPlane),
           onPressed: state.isSending ? null : () => state.stopAndSend(onSend),
         ),
       ],

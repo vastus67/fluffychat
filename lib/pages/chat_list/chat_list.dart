@@ -553,7 +553,7 @@ class ChatListController extends State<ChatList>
               child: Row(
                 mainAxisSize: .min,
                 children: [
-                  const Icon(FontAwesomeIcons.objectGroup),
+                  const FaIcon(FontAwesomeIcons.objectGroup),
                   const SizedBox(width: 12),
                   Text(L10n.of(context).addToSpace),
                 ],

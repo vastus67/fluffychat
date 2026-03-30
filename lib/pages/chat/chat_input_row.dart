@@ -71,7 +71,7 @@ class ChatInputRow extends StatelessWidget {
                         onPressed: controller.deleteErrorEventsAction,
                         child: Row(
                           children: <Widget>[
-                            const Icon(FontAwesomeIcons.trash),
+                            const FaIcon(FontAwesomeIcons.trash),
                             Text(L10n.of(context).delete),
                           ],
                         ),
@@ -85,7 +85,7 @@ class ChatInputRow extends StatelessWidget {
                         onPressed: controller.forwardEventsAction,
                         child: Row(
                           children: <Widget>[
-                            const Icon(FontAwesomeIcons.chevronLeft),
+                            const FaIcon(FontAwesomeIcons.chevronLeft),
                             Text(L10n.of(context).forward),
                           ],
                         ),
@@ -104,7 +104,7 @@ class ChatInputRow extends StatelessWidget {
                                   child: Row(
                                     children: <Widget>[
                                       Text(L10n.of(context).reply),
-                                      const Icon(FontAwesomeIcons.chevronRight),
+                                      const FaIcon(FontAwesomeIcons.chevronRight),
                                     ],
                                   ),
                                 ),
@@ -118,7 +118,7 @@ class ChatInputRow extends StatelessWidget {
                                     children: <Widget>[
                                       Text(L10n.of(context).tryToSendAgain),
                                       const SizedBox(width: 4),
-                                      const Icon(FontAwesomeIcons.paperPlane, size: 16),
+                                      const FaIcon(FontAwesomeIcons.paperPlane, size: 16),
                                     ],
                                   ),
                                 ),
@@ -139,7 +139,7 @@ class ChatInputRow extends StatelessWidget {
                     clipBehavior: Clip.hardEdge,
                     child: PopupMenuButton<AddPopupMenuActions>(
                       useRootNavigator: true,
-                      icon: const Icon(FontAwesomeIcons.circlePlus),
+                      icon: const FaIcon(FontAwesomeIcons.circlePlus),
                       iconColor: theme.colorScheme.onPrimaryContainer,
                       onSelected: controller.onAddPopupMenuButtonSelected,
                       itemBuilder: (BuildContext context) => [
@@ -152,7 +152,7 @@ class ChatInputRow extends StatelessWidget {
                                     theme.colorScheme.primaryContainer,
                                 foregroundColor:
                                     theme.colorScheme.onPrimaryContainer,
-                                child: const Icon(FontAwesomeIcons.crosshairs),
+                                child: const FaIcon(FontAwesomeIcons.crosshairs),
                               ),
                               title: Text(L10n.of(context).shareLocation),
                               contentPadding: const EdgeInsets.all(0),
@@ -166,7 +166,7 @@ class ChatInputRow extends StatelessWidget {
                                   theme.colorScheme.primaryContainer,
                               foregroundColor:
                                   theme.colorScheme.onPrimaryContainer,
-                              child: const Icon(FontAwesomeIcons.squarePollVertical),
+                              child: const FaIcon(FontAwesomeIcons.squarePollVertical),
                             ),
                             title: Text(L10n.of(context).startPoll),
                             contentPadding: const EdgeInsets.all(0),
@@ -180,7 +180,7 @@ class ChatInputRow extends StatelessWidget {
                                   theme.colorScheme.primaryContainer,
                               foregroundColor:
                                   theme.colorScheme.onPrimaryContainer,
-                              child: const Icon(FontAwesomeIcons.image),
+                              child: const FaIcon(FontAwesomeIcons.image),
                             ),
                             title: Text(L10n.of(context).sendImage),
                             contentPadding: const EdgeInsets.all(0),
@@ -210,7 +210,7 @@ class ChatInputRow extends StatelessWidget {
                                   theme.colorScheme.primaryContainer,
                               foregroundColor:
                                   theme.colorScheme.onPrimaryContainer,
-                              child: const Icon(FontAwesomeIcons.paperclip),
+                              child: const FaIcon(FontAwesomeIcons.paperclip),
                             ),
                             title: Text(L10n.of(context).sendFile),
                             contentPadding: const EdgeInsets.all(0),
@@ -232,7 +232,7 @@ class ChatInputRow extends StatelessWidget {
                       clipBehavior: Clip.hardEdge,
                       child: PopupMenuButton(
                         useRootNavigator: true,
-                        icon: const Icon(FontAwesomeIcons.camera),
+                        icon: const FaIcon(FontAwesomeIcons.camera),
                         onSelected: controller.onAddPopupMenuButtonSelected,
                         iconColor: theme.colorScheme.onPrimaryContainer,
                         itemBuilder: (context) => [
@@ -244,7 +244,7 @@ class ChatInputRow extends StatelessWidget {
                                     theme.colorScheme.onPrimaryContainer,
                                 foregroundColor:
                                     theme.colorScheme.primaryContainer,
-                                child: const Icon(FontAwesomeIcons.video),
+                                child: const FaIcon(FontAwesomeIcons.video),
                               ),
                               title: Text(L10n.of(context).recordAVideo),
                               contentPadding: const EdgeInsets.all(0),
@@ -258,7 +258,7 @@ class ChatInputRow extends StatelessWidget {
                                     theme.colorScheme.onPrimaryContainer,
                                 foregroundColor:
                                     theme.colorScheme.primaryContainer,
-                                child: const Icon(FontAwesomeIcons.camera),
+                                child: const FaIcon(FontAwesomeIcons.camera),
                               ),
                               title: Text(L10n.of(context).takeAPhoto),
                               contentPadding: const EdgeInsets.all(0),
@@ -426,7 +426,7 @@ class ChatInputRow extends StatelessWidget {
                               backgroundColor: theme.bubbleColor,
                               foregroundColor: theme.onBubbleColor,
                             ),
-                            icon: const Icon(FontAwesomeIcons.microphone),
+                            icon: const FaIcon(FontAwesomeIcons.microphone),
                           )
                         : IconButton(
                             tooltip: L10n.of(context).send,
@@ -435,7 +435,7 @@ class ChatInputRow extends StatelessWidget {
                               backgroundColor: theme.bubbleColor,
                               foregroundColor: theme.onBubbleColor,
                             ),
-                            icon: const Icon(FontAwesomeIcons.paperPlane),
+                            icon: const FaIcon(FontAwesomeIcons.paperPlane),
                           ),
                   ),
                 ],

@@ -239,7 +239,7 @@ class Message extends StatelessWidget {
         key: ValueKey(event.eventId),
         background: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0),
-          child: Center(child: Icon(FontAwesomeIcons.check)),
+          child: Center(child: FaIcon(FontAwesomeIcons.check)),
         ),
         direction: AppSettings.swipeRightToLeftToReply.value
             ? SwipeDirection.endToStart
@@ -946,7 +946,7 @@ class Message extends StatelessWidget {
                                     theme.colorScheme.secondaryContainer,
                               ),
                               onPressed: () => enterThread(event.eventId),
-                              icon: const Icon(FontAwesomeIcons.solidComment),
+                              icon: const FaIcon(FontAwesomeIcons.solidComment),
                               label: Text(
                                 '${L10n.of(context).countReplies(threadChildren.length)} | ${threadChildren.first.calcLocalizedBodyFallback(MatrixLocals(L10n.of(context)), withSenderNamePrefix: true)}',
                                 maxLines: 1,

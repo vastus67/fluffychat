@@ -238,7 +238,7 @@ class _GroupCallingState extends State<GroupCalling> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(FontAwesomeIcons.users, size: 48, color: Colors.white54),
+            FaIcon(FontAwesomeIcons.users, size: 48, color: Colors.white54),
             SizedBox(height: 16),
             Text(
               'Waiting for participants...',
@@ -299,13 +299,13 @@ class _GroupCallingState extends State<GroupCalling> {
           onPressed: _toggleScreenShare,
           foregroundColor: _screenSharing ? Colors.black26 : Colors.white,
           backgroundColor: _screenSharing ? Colors.white : Colors.black45,
-          child: const Icon(FontAwesomeIcons.desktop),
+          child: const FaIcon(FontAwesomeIcons.desktop),
         ),
       FloatingActionButton(
         heroTag: 'gc_leave',
         onPressed: _leaveCall,
         backgroundColor: Colors.red,
-        child: const Icon(FontAwesomeIcons.phoneSlash),
+        child: const FaIcon(FontAwesomeIcons.phoneSlash),
       ),
     ];
   }

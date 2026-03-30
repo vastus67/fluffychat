@@ -42,7 +42,7 @@ class ChatView extends StatelessWidget {
       return [
         if (controller.canEditSelectedEvents)
           IconButton(
-            icon: const Icon(FontAwesomeIcons.penToSquare),
+            icon: const FaIcon(FontAwesomeIcons.penToSquare),
             tooltip: L10n.of(context).edit,
             onPressed: controller.editSelectedEventAction,
           ),
@@ -50,20 +50,20 @@ class ChatView extends StatelessWidget {
             controller.activeThreadId == null &&
             controller.room.canSendDefaultMessages)
           IconButton(
-            icon: const Icon(FontAwesomeIcons.comment),
+            icon: const FaIcon(FontAwesomeIcons.comment),
             tooltip: L10n.of(context).replyInThread,
             onPressed: () => controller.enterThread(
               controller.selectedEvents.single.eventId,
             ),
           ),
         IconButton(
-          icon: const Icon(FontAwesomeIcons.copy),
+          icon: const FaIcon(FontAwesomeIcons.copy),
           tooltip: L10n.of(context).copyToClipboard,
           onPressed: controller.copyEventsAction,
         ),
         if (controller.canRedactSelectedEvents)
           IconButton(
-            icon: const Icon(FontAwesomeIcons.trash),
+            icon: const FaIcon(FontAwesomeIcons.trash),
             tooltip: L10n.of(context).redactMessage,
             onPressed: controller.redactEventsAction,
           ),
@@ -89,7 +89,7 @@ class ChatView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(FontAwesomeIcons.thumbtack),
+                      const FaIcon(FontAwesomeIcons.thumbtack),
                       const SizedBox(width: 12),
                       Text(L10n.of(context).pinMessage),
                     ],
@@ -102,7 +102,7 @@ class ChatView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(FontAwesomeIcons.download),
+                      const FaIcon(FontAwesomeIcons.download),
                       const SizedBox(width: 12),
                       Text(L10n.of(context).downloadFile),
                     ],
@@ -113,7 +113,7 @@ class ChatView extends StatelessWidget {
                 child: Row(
                   mainAxisSize: .min,
                   children: [
-                    const Icon(FontAwesomeIcons.circleInfo),
+                    const FaIcon(FontAwesomeIcons.circleInfo),
                     const SizedBox(width: 12),
                     Text(L10n.of(context).messageInfo),
                   ],
@@ -125,7 +125,7 @@ class ChatView extends StatelessWidget {
                   child: Row(
                     mainAxisSize: .min,
                     children: [
-                      const Icon(FontAwesomeIcons.shield, color: Colors.red),
+                      const FaIcon(FontAwesomeIcons.shield, color: Colors.red),
                       const SizedBox(width: 12),
                       Text(L10n.of(context).reportMessage),
                     ],
@@ -139,19 +139,19 @@ class ChatView extends StatelessWidget {
         if (controller.room.isDirectChat)
           IconButton(
             onPressed: controller.onVoiceCallTap,
-            icon: const Icon(FontAwesomeIcons.phone),
+            icon: const FaIcon(FontAwesomeIcons.phone),
             tooltip: L10n.of(context).voiceCall,
           ),
         if (controller.room.isDirectChat)
           IconButton(
             onPressed: controller.onVideoCallTap,
-            icon: const Icon(FontAwesomeIcons.video),
+            icon: const FaIcon(FontAwesomeIcons.video),
             tooltip: L10n.of(context).videoCall,
           ),
         if (!controller.room.isDirectChat)
           IconButton(
             onPressed: controller.onGroupCallButtonTap,
-            icon: const Icon(FontAwesomeIcons.video),
+            icon: const FaIcon(FontAwesomeIcons.video),
             tooltip: L10n.of(context).videoCall,
           ),
         EncryptionButton(controller.room),
@@ -225,14 +225,14 @@ class ChatView extends StatelessWidget {
                 automaticallyImplyLeading: false,
                 leading: controller.selectMode
                     ? IconButton(
-                        icon: const Icon(FontAwesomeIcons.xmark),
+                        icon: const FaIcon(FontAwesomeIcons.xmark),
                         onPressed: controller.clearSelectedEvents,
                         tooltip: L10n.of(context).close,
                         color: theme.colorScheme.onTertiaryContainer,
                       )
                     : activeThreadId != null
                     ? IconButton(
-                        icon: const Icon(FontAwesomeIcons.xmark),
+                        icon: const FaIcon(FontAwesomeIcons.xmark),
                         onPressed: controller.closeThread,
                         tooltip: L10n.of(context).backToMainChat,
                         color: theme.colorScheme.onSecondaryContainer,
@@ -265,7 +265,7 @@ class ChatView extends StatelessWidget {
                             child: TextButton.icon(
                               onPressed: () =>
                                   controller.scrollToEventId(activeThreadId),
-                              icon: const Icon(FontAwesomeIcons.solidComment),
+                              icon: const FaIcon(FontAwesomeIcons.solidComment),
                               label: Text(L10n.of(context).replyInThread),
                               style: TextButton.styleFrom(
                                 foregroundColor:
@@ -282,7 +282,7 @@ class ChatView extends StatelessWidget {
                         ChatAppBarListTile(
                           leading: IconButton(
                             color: theme.colorScheme.onSurfaceVariant,
-                            icon: const Icon(FontAwesomeIcons.xmark),
+                            icon: const FaIcon(FontAwesomeIcons.xmark),
                             tooltip: L10n.of(context).close,
                             onPressed: () {
                               controller.discardScrollUpBannerEventId();
@@ -313,7 +313,7 @@ class ChatView extends StatelessWidget {
                         mini: true,
                         backgroundColor: theme.colorScheme.surface,
                         foregroundColor: theme.colorScheme.onSurface,
-                        child: const Icon(FontAwesomeIcons.arrowDown),
+                        child: const FaIcon(FontAwesomeIcons.arrowDown),
                       ),
                     )
                   : null,
@@ -358,7 +358,7 @@ class ChatView extends StatelessWidget {
                               margin: EdgeInsets.all(bottomSheetPadding),
                               width: double.infinity,
                               child: ElevatedButton.icon(
-                                icon: const Icon(FontAwesomeIcons.chevronRight),
+                                icon: const FaIcon(FontAwesomeIcons.chevronRight),
                                 label: Text(L10n.of(context).enterNewChat),
                                 onPressed: controller.goToNewRoomAction,
                               ),
@@ -451,7 +451,7 @@ class ChatView extends StatelessWidget {
                       Container(
                         color: theme.scaffoldBackgroundColor.withAlpha(230),
                         alignment: Alignment.center,
-                        child: const Icon(FontAwesomeIcons.upload, size: 100),
+                        child: const FaIcon(FontAwesomeIcons.upload, size: 100),
                       ),
                   ],
                 ),

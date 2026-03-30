@@ -34,7 +34,7 @@ class SpacesPage extends StatelessWidget {
         leading: isCompact ? null : BackButton(onPressed: () => context.go('/rooms')),
         actions: [
           IconButton(
-            icon: const Icon(FontAwesomeIcons.plus),
+            icon: const FaIcon(FontAwesomeIcons.plus),
             tooltip: L10n.of(context).createNewSpace,
             onPressed: () => context.go('/rooms/newspace'),
           ),
@@ -75,7 +75,7 @@ class SpacesPage extends StatelessWidget {
                   const SizedBox(height: 24),
                   FilledButton.icon(
                     onPressed: () => context.go('/rooms/newspace'),
-                    icon: const Icon(FontAwesomeIcons.plus),
+                    icon: const FaIcon(FontAwesomeIcons.plus),
                     label: Text(L10n.of(context).createNewSpace),
                   ),
                 ],
@@ -112,7 +112,7 @@ class SpacesPage extends StatelessWidget {
                     fontSize: 12,
                   ),
                 ),
-                trailing: const Icon(FontAwesomeIcons.angleRight, size: 16),
+                trailing: const FaIcon(FontAwesomeIcons.angleRight, size: 16),
                 onTap: () {
                   // Navigate to chat list filtered by this space
                   context.go('/rooms?spaceId=${space.id}');

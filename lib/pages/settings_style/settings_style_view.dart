@@ -50,17 +50,17 @@ class SettingsStyleView extends StatelessWidget {
                   ButtonSegment(
                     value: ThemeMode.light,
                     label: Text(L10n.of(context).lightTheme),
-                    icon: const Icon(FontAwesomeIcons.sun),
+                    icon: const FaIcon(FontAwesomeIcons.sun),
                   ),
                   ButtonSegment(
                     value: ThemeMode.dark,
                     label: Text(L10n.of(context).darkTheme),
-                    icon: const Icon(FontAwesomeIcons.moon),
+                    icon: const FaIcon(FontAwesomeIcons.moon),
                   ),
                   ButtonSegment(
                     value: ThemeMode.system,
                     label: Text(L10n.of(context).systemTheme),
-                    icon: const Icon(FontAwesomeIcons.circleHalfStroke),
+                    icon: const FaIcon(FontAwesomeIcons.circleHalfStroke),
                   ),
                 ],
               ),
@@ -373,13 +373,13 @@ class SettingsStyleView extends StatelessWidget {
                               theme.colorScheme.onSecondaryContainer,
                         ),
                         onPressed: controller.setWallpaper,
-                        icon: const Icon(FontAwesomeIcons.penToSquare),
+                        icon: const FaIcon(FontAwesomeIcons.penToSquare),
                         label: Text(L10n.of(context).setWallpaper),
                       ),
                       trailing: accountConfig.wallpaperUrl == null
                           ? null
                           : IconButton(
-                              icon: const Icon(FontAwesomeIcons.trash),
+                              icon: const FaIcon(FontAwesomeIcons.trash),
                               color: theme.colorScheme.error,
                               onPressed: controller.deleteChatWallpaper,
                             ),

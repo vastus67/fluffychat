@@ -187,7 +187,7 @@ class _DraculaThemeExampleState extends State<DraculaThemeExample> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          child: const Icon(FontAwesomeIcons.plus),
+          child: const FaIcon(FontAwesomeIcons.plus),
         ),
       ),
     );

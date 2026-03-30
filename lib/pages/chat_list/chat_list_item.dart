@@ -199,7 +199,7 @@ class ChatListItem extends StatelessWidget {
                   if (isMuted)
                     const Padding(
                       padding: EdgeInsets.only(left: 4.0),
-                      child: Icon(FontAwesomeIcons.bellSlash, size: 16),
+                      child: FaIcon(FontAwesomeIcons.bellSlash, size: 16),
                     ),
                   if (room.isFavourite)
                     Padding(
@@ -370,7 +370,7 @@ class ChatListItem extends StatelessWidget {
                   ? room.membership == Membership.invite
                         ? IconButton(
                             tooltip: L10n.of(context).declineInvitation,
-                            icon: const Icon(FontAwesomeIcons.trash),
+                            icon: const FaIcon(FontAwesomeIcons.trash),
                             color: theme.colorScheme.error,
                             onPressed: () async {
                               final consent = await showOkCancelAlertDialog(
@@ -390,7 +390,7 @@ class ChatListItem extends StatelessWidget {
                           )
                         : null
                   : IconButton(
-                      icon: const Icon(FontAwesomeIcons.trash),
+                      icon: const FaIcon(FontAwesomeIcons.trash),
                       onPressed: onForget,
                     ),
               ),

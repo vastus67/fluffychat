@@ -61,11 +61,11 @@ class SpacesNavigationRail extends StatelessWidget {
                             onTap: onGoToChats,
                             icon: const Padding(
                               padding: EdgeInsets.all(10.0),
-                              child: Icon(FontAwesomeIcons.comments),
+                              child: FaIcon(FontAwesomeIcons.comments),
                             ),
                             selectedIcon: const Padding(
                               padding: EdgeInsets.all(10.0),
-                              child: Icon(FontAwesomeIcons.solidComments),
+                              child: FaIcon(FontAwesomeIcons.solidComments),
                             ),
                             toolTip: L10n.of(context).chats,
                             unreadBadgeFilter: (room) => true,
@@ -78,7 +78,7 @@ class SpacesNavigationRail extends StatelessWidget {
                             onTap: () => context.go('/rooms/newspace'),
                             icon: const Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: Icon(FontAwesomeIcons.plus),
+                              child: FaIcon(FontAwesomeIcons.plus),
                             ),
                             toolTip: L10n.of(context).createNewSpace,
                           );
@@ -117,11 +117,11 @@ class SpacesNavigationRail extends StatelessWidget {
                     onTap: () => context.go('/rooms/settings'),
                     icon: const Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: Icon(FontAwesomeIcons.gear),
+                      child: FaIcon(FontAwesomeIcons.gear),
                     ),
                     selectedIcon: const Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: Icon(FontAwesomeIcons.gear),
+                      child: FaIcon(FontAwesomeIcons.gear),
                     ),
                     toolTip: L10n.of(context).settings,
                   ),
