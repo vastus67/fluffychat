@@ -72,23 +72,44 @@ class AppNavigationShell extends StatelessWidget {
             child: scaffold,
           );
         } else {
-          // Desktop/Web: persistent navigation rail + compact call panels.
-          return Scaffold(
+          // Desktop/Web: persistent navigation rail.
+          // Same Stack approach used for mobile so the CallScreen appears
+          // reliably regardless of whether the user is on the correct route.
+          final scaffold = Scaffold(
             key: scaffoldKey,
             body: Row(
               children: [
                 AppNavRail(extended: isExpanded),
-                Expanded(
-                  child: Column(
-                    children: [
-                      const GlobalCallFloatingPanel(),
-                      Expanded(child: body),
-                    ],
-                  ),
-                ),
+                Expanded(child: body),
               ],
             ),
             floatingActionButton: floatingActionButton,
+          );
+
+          if (voipPlugin == null) return scaffold;
+
+          return ValueListenableBuilder<ActiveCallState?>(
+            valueListenable: voipPlugin.activeCallNotifier,
+            builder: (ctx, activeCall, child) {
+              if (activeCall == null) return child!;
+
+              return Stack(
+                children: [
+                  child!,
+                  Positioned.fill(
+                    child: CallScreen(
+                      call: activeCall.call,
+                      client: activeCall.client,
+                      onClear: () {
+                        voipPlugin.activeCallNotifier.value = null;
+                        voipPlugin.callExpandedNotifier.value = false;
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+            child: scaffold,
           );
         }
       },
