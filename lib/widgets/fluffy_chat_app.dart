@@ -118,6 +118,8 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
   ValueNotifier<ActiveCallState?>? _notifier;
   ActiveCallState? _activeCall;
   OverlayEntry? _callOverlay;
+  int _insertRetries = 0;
+  static const _maxInsertRetries = 30; // ~500ms worth of frames
 
   @override
   void didChangeDependencies() {
@@ -129,9 +131,7 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
       _notifier!.addListener(_onCallChanged);
       _activeCall = _notifier!.value;
       if (_activeCall != null && _callOverlay == null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && _activeCall != null) _insertCallOverlay();
-        });
+        _scheduleInsert();
       }
     }
   }
@@ -143,25 +143,43 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
     _activeCall = newCall;
 
     if (newCall != null && !hadCall) {
-      _insertCallOverlay();
+      // Schedule to next frame — the notifier fires synchronously inside
+      // addCallingOverlay() which may be in the middle of a build phase.
+      _insertRetries = 0;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _insertCallOverlay();
+      });
     } else if (newCall == null && hadCall) {
       _removeCallOverlay();
     } else if (newCall != null) {
-      // Same call, different state — just rebuild the entry.
+      // Same call object, state may have changed — rebuild the entry.
       _callOverlay?.markNeedsBuild();
     }
   }
 
+  void _scheduleInsert() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _activeCall != null && _callOverlay == null) {
+        _insertRetries = 0;
+        _insertCallOverlay();
+      }
+    });
+  }
+
   void _insertCallOverlay() {
-    if (_callOverlay != null) return;
+    if (_callOverlay != null || !mounted || _activeCall == null) return;
     final navigatorState = FluffyChatApp.navigatorKey.currentState;
     if (navigatorState == null || navigatorState.overlay == null) {
-      // Navigator not mounted yet — retry next frame.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _activeCall != null && _callOverlay == null) {
+      // Navigator not mounted yet — retry on the next frame up to a limit.
+      _insertRetries++;
+      if (_insertRetries <= _maxInsertRetries) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           _insertCallOverlay();
-        }
-      });
+        });
+      } else {
+        Logs().w('[CallRoot] Gave up inserting call overlay after '
+            '$_maxInsertRetries retries — Navigator still null');
+      }
       return;
     }
 
@@ -173,6 +191,7 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
       },
     );
     navigatorState.overlay!.insert(_callOverlay!);
+    Logs().i('[CallRoot] Call overlay inserted');
   }
 
   void _removeCallOverlay() {
