@@ -27,10 +27,17 @@ class CallScreen extends StatefulWidget {
   /// on desktop).
   final VoidCallback? onClear;
 
+  /// Whether to render the call screen's own top bar.
+  /// Set to [false] when the screen is embedded inside a windowed container
+  /// (e.g. the floating Discord-style window on web) that provides its own
+  /// title bar and drag handle.
+  final bool showTopBar;
+
   const CallScreen({
     required this.call,
     required this.client,
     this.onClear,
+    this.showTopBar = true,
     super.key,
   });
 
@@ -352,6 +359,7 @@ class _CallScreenState extends State<CallScreen> with TickerProviderStateMixin {
   // ── Top bar ───────────────────────────────────────────────────────────────
 
   Widget _buildTopBar() {
+    if (!widget.showTopBar) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Row(

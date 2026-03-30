@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -90,9 +91,12 @@ class FluffyChatApp extends StatelessWidget {
   }
 }
 
-/// Wraps the entire app in a Stack so the [CallScreen] can be shown on top
-/// of any route. This widget lives inside [Matrix] so it can access the
-/// VoIP plugin and listen to [VoipPlugin.activeCallNotifier].
+/// Wraps the entire app so the call UI is always present on every route.
+/// Lives inside [Matrix] so it can read [VoipPlugin] and subscribe to
+/// [VoipPlugin.activeCallNotifier].
+///
+/// * **Web / browser**: shows a floating draggable window (Discord-style).
+/// * **Native mobile / desktop**: shows a full-screen overlay.
 class _CallScreenRoot extends StatelessWidget {
   final Widget? child;
   const _CallScreenRoot({this.child});
@@ -108,6 +112,22 @@ class _CallScreenRoot extends StatelessWidget {
       builder: (ctx, activeCall, appChild) {
         if (activeCall == null) return appChild ?? const SizedBox.shrink();
 
+        void onClear() {
+          voipPlugin.activeCallNotifier.value = null;
+          voipPlugin.callExpandedNotifier.value = false;
+        }
+
+        if (kIsWeb) {
+          // Floating draggable window on web/PWA-desktop.
+          return Stack(
+            children: [
+              if (appChild != null) appChild,
+              _CallWindowOverlay(activeCall: activeCall, onClear: onClear),
+            ],
+          );
+        }
+
+        // Full-screen overlay on native mobile/desktop.
         return Stack(
           children: [
             if (appChild != null) appChild,
@@ -115,16 +135,116 @@ class _CallScreenRoot extends StatelessWidget {
               child: CallScreen(
                 call: activeCall.call,
                 client: activeCall.client,
-                onClear: () {
-                  voipPlugin.activeCallNotifier.value = null;
-                  voipPlugin.callExpandedNotifier.value = false;
-                },
+                onClear: onClear,
               ),
             ),
           ],
         );
       },
       child: child,
+    );
+  }
+}
+
+/// Floating draggable call window for web — mirrors Discord's in-browser call
+/// overlay. Centered on first appearance, draggable via the title bar strip,
+/// and clamped to the screen bounds.
+class _CallWindowOverlay extends StatefulWidget {
+  final ActiveCallState activeCall;
+  final VoidCallback onClear;
+
+  const _CallWindowOverlay({
+    required this.activeCall,
+    required this.onClear,
+  });
+
+  @override
+  State<_CallWindowOverlay> createState() => _CallWindowOverlayState();
+}
+
+class _CallWindowOverlayState extends State<_CallWindowOverlay> {
+  static const double _w = 360;
+  static const double _h = 500; // 36px title bar + 464px content
+
+  Offset? _offset;
+
+  String get _windowTitle {
+    final call = widget.activeCall.call;
+    final isVideo = call.type == CallType.kVideo;
+    if (call.state == CallState.kRinging && !call.isOutgoing) {
+      return isVideo ? 'Incoming video call' : 'Incoming call';
+    }
+    return isVideo ? 'Video call' : 'Voice call';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+    final maxLeft = (size.width - _w).clamp(0.0, size.width);
+    final maxTop = (size.height - _h).clamp(0.0, size.height);
+
+    final left = (_offset?.dx ?? (size.width - _w) / 2).clamp(0.0, maxLeft);
+    final top = (_offset?.dy ?? (size.height - _h) / 2.5).clamp(0.0, maxTop);
+
+    return Positioned(
+      left: left,
+      top: top,
+      width: _w,
+      height: _h,
+      child: Material(
+        elevation: 24,
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.transparent,
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            // ── Drag handle title bar ──────────────────────────────────
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onPanUpdate: (details) {
+                setState(() {
+                  _offset = Offset(
+                    (left + details.delta.dx).clamp(0.0, maxLeft),
+                    (top + details.delta.dy).clamp(0.0, maxTop),
+                  );
+                });
+              },
+              child: Container(
+                height: 36,
+                color: const Color(0xFF12121F),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.drag_indicator,
+                      color: Colors.white38,
+                      size: 14,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      _windowTitle,
+                      style: const TextStyle(
+                        color: Colors.white60,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // ── Call screen content ────────────────────────────────────
+            Expanded(
+              child: CallScreen(
+                call: widget.activeCall.call,
+                client: widget.activeCall.client,
+                showTopBar: false,
+                onClear: widget.onClear,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
