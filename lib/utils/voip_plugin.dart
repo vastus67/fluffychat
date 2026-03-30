@@ -62,12 +62,13 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   WebMediaDevicesWrapper? get mediaDevicesWrapper =>
       kIsWeb ? _webMediaDevices : null;
 
-  /// Notifier for the active 1:1 call. Used by the inline CallSidebarPanel.
-  final ValueNotifier<ActiveCallState?> activeCallNotifier =
-      ValueNotifier<ActiveCallState?>(null);
+  /// Notifier for the active 1:1 call. Delegates to [MatrixState.activeCallNotifier]
+  /// so the overlay is always wired up even before [VoipPlugin] is created.
+  ValueNotifier<ActiveCallState?> get activeCallNotifier =>
+      matrix.activeCallNotifier;
 
   /// Whether the floating call panel (video pop-out) is expanded.
-  final ValueNotifier<bool> callExpandedNotifier = ValueNotifier<bool>(false);
+  ValueNotifier<bool> get callExpandedNotifier => matrix.callExpandedNotifier;
 
   void dispose() {
     if (!kIsWeb) {

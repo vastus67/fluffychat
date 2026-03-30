@@ -92,45 +92,49 @@ class FluffyChatApp extends StatelessWidget {
 }
 
 /// Wraps the entire app so the call UI is always present on every route.
-/// Lives inside [Matrix] so it can read [VoipPlugin] and subscribe to
-/// [VoipPlugin.activeCallNotifier].
+/// Lives inside [Matrix] so it can subscribe to [MatrixState.activeCallNotifier],
+/// which is always non-null (it lives on MatrixState even before VoipPlugin
+/// is created). This fixes the receiver-side bug: previously, if VoipPlugin
+/// was null when this widget first built, it returned early without a listener
+/// and never saw incoming calls.
 ///
-/// * **Web / browser**: shows a floating draggable window (Discord-style).
-/// * **Native mobile / desktop**: shows a full-screen overlay.
+/// * **Web / browser**: Discord-style top panel (full-width, ~410px, anchored
+///   at the top — chat still visible below).
+/// * **Native mobile / desktop / PWA**: full-screen overlay.
 class _CallScreenRoot extends StatelessWidget {
   final Widget? child;
   const _CallScreenRoot({this.child});
 
   @override
   Widget build(BuildContext context) {
-    final voipPlugin = Matrix.of(context).voipPlugin;
-
-    if (voipPlugin == null) return child ?? const SizedBox.shrink();
+    // activeCallNotifier lives on MatrixState — always available, never null.
+    final matrixState = Matrix.of(context);
 
     return ValueListenableBuilder<ActiveCallState?>(
-      valueListenable: voipPlugin.activeCallNotifier,
+      valueListenable: matrixState.activeCallNotifier,
       builder: (ctx, activeCall, appChild) {
         if (activeCall == null) return appChild ?? const SizedBox.shrink();
 
         void onClear() {
-          voipPlugin.activeCallNotifier.value = null;
-          voipPlugin.callExpandedNotifier.value = false;
+          matrixState.activeCallNotifier.value = null;
+          matrixState.callExpandedNotifier.value = false;
         }
 
         if (kIsWeb) {
-          // Floating draggable window on web/PWA-desktop.
+          // Discord-style top panel: full-width, fixed height, anchored at top.
+          // App content renders at full size behind/below — chat stays visible.
           return Stack(
             children: [
-              if (appChild != null) appChild,
-              _CallWindowOverlay(activeCall: activeCall, onClear: onClear),
+              Positioned.fill(child: appChild ?? const SizedBox.shrink()),
+              _WebCallPanel(activeCall: activeCall, onClear: onClear),
             ],
           );
         }
 
-        // Full-screen overlay on native mobile/desktop.
+        // Native (Android / iOS / desktop / PWA): full-screen overlay.
         return Stack(
           children: [
-            if (appChild != null) appChild,
+            Positioned.fill(child: appChild ?? const SizedBox.shrink()),
             Positioned.fill(
               child: CallScreen(
                 call: activeCall.call,
@@ -146,103 +150,39 @@ class _CallScreenRoot extends StatelessWidget {
   }
 }
 
-/// Floating draggable call window for web — mirrors Discord's in-browser call
-/// overlay. Centered on first appearance, draggable via the title bar strip,
-/// and clamped to the screen bounds.
-class _CallWindowOverlay extends StatefulWidget {
+/// Full-width call panel anchored to the top of the screen on web/browser,
+/// matching Discord's "call above chat" layout. The chat content renders
+/// behind the Stack so messages are visible below the panel.
+class _WebCallPanel extends StatelessWidget {
+  static const double _kPanelHeight = 410;
+
   final ActiveCallState activeCall;
   final VoidCallback onClear;
 
-  const _CallWindowOverlay({
-    required this.activeCall,
-    required this.onClear,
-  });
-
-  @override
-  State<_CallWindowOverlay> createState() => _CallWindowOverlayState();
-}
-
-class _CallWindowOverlayState extends State<_CallWindowOverlay> {
-  static const double _w = 360;
-  static const double _h = 500; // 36px title bar + 464px content
-
-  Offset? _offset;
-
-  String get _windowTitle {
-    final call = widget.activeCall.call;
-    final isVideo = call.type == CallType.kVideo;
-    if (call.state == CallState.kRinging && !call.isOutgoing) {
-      return isVideo ? 'Incoming video call' : 'Incoming call';
-    }
-    return isVideo ? 'Video call' : 'Voice call';
-  }
+  const _WebCallPanel({required this.activeCall, required this.onClear});
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final maxLeft = (size.width - _w).clamp(0.0, size.width);
-    final maxTop = (size.height - _h).clamp(0.0, size.height);
-
-    final left = (_offset?.dx ?? (size.width - _w) / 2).clamp(0.0, maxLeft);
-    final top = (_offset?.dy ?? (size.height - _h) / 2.5).clamp(0.0, maxTop);
-
     return Positioned(
-      left: left,
-      top: top,
-      width: _w,
-      height: _h,
-      child: Material(
-        elevation: 24,
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.transparent,
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          children: [
-            // ── Drag handle title bar ──────────────────────────────────
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onPanUpdate: (details) {
-                setState(() {
-                  _offset = Offset(
-                    (left + details.delta.dx).clamp(0.0, maxLeft),
-                    (top + details.delta.dy).clamp(0.0, maxTop),
-                  );
-                });
-              },
-              child: Container(
-                height: 36,
-                color: const Color(0xFF12121F),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.drag_indicator,
-                      color: Colors.white38,
-                      size: 14,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      _windowTitle,
-                      style: const TextStyle(
-                        color: Colors.white60,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // ── Call screen content ────────────────────────────────────
-            Expanded(
-              child: CallScreen(
-                call: widget.activeCall.call,
-                client: widget.activeCall.client,
-                showTopBar: false,
-                onClear: widget.onClear,
-              ),
+      top: 0,
+      left: 0,
+      right: 0,
+      height: _kPanelHeight,
+      child: DecoratedBox(
+        decoration: const BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x88000000),
+              blurRadius: 16,
+              offset: Offset(0, 4),
             ),
           ],
+        ),
+        child: CallScreen(
+          call: activeCall.call,
+          client: activeCall.client,
+          showTopBar: true,
+          onClear: onClear,
         ),
       ),
     );

@@ -80,6 +80,14 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
 
   VoipPlugin? voipPlugin;
 
+  // Stable call-state notifiers — live on MatrixState so the call overlay is
+  // always wired up regardless of whether VoipPlugin has been initialised yet.
+  // This fixes the receiver-side bug where _CallScreenRoot built before login
+  // would never see activeCallNotifier because voipPlugin was null at that time.
+  final ValueNotifier<ActiveCallState?> activeCallNotifier =
+      ValueNotifier<ActiveCallState?>(null);
+  final ValueNotifier<bool> callExpandedNotifier = ValueNotifier<bool>(false);
+
   bool get isMultiAccount => widget.clients.length > 1;
 
   int getClientIndexByMatrixId(String matrixId) =>
@@ -381,6 +389,9 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     client.httpClient.close();
 
     linuxNotifications?.close();
+
+    activeCallNotifier.dispose();
+    callExpandedNotifier.dispose();
 
     super.dispose();
   }
