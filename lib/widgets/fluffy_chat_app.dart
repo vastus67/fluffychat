@@ -151,11 +151,28 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
     if (activeCall == null) return appChild;
 
     if (kIsWeb) {
-      // Discord-style: call area on top, app content below — no overlay.
-      return _WebCallPanel(
-        activeCall: activeCall,
-        onClear: _onClear,
-        appChild: appChild,
+      // Overlay the call panel only on the RIGHT content pane.
+      // In column mode the left sidebar is columnWidth + navRailWidth + 1px divider.
+      // The call panel is Positioned to start after that.
+      final isColumnMode = FluffyThemes.isColumnMode(context);
+      final leftOffset = isColumnMode
+          ? FluffyThemes.columnWidth + FluffyThemes.navRailWidth + 1.0
+          : 0.0;
+
+      return Stack(
+        children: [
+          appChild,
+          Positioned(
+            top: 0,
+            left: leftOffset,
+            right: 0,
+            bottom: 0,
+            child: _WebCallPanel(
+              activeCall: activeCall,
+              onClear: _onClear,
+            ),
+          ),
+        ],
       );
     }
 
@@ -176,22 +193,15 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
 
 /// Discord-style call panel for web.
 ///
-/// Instead of overlaying on top of everything (which covers the nav rail and
-/// DM list), this widget injects itself into the child's layout using a
-/// [Column]: call area on top, original app child below. The call area is
-/// only as tall as it needs to be and never covers navigation.
-///
-/// When there is no active call, [_CallScreenRoot] returns [appChild] directly
-/// so this widget is never mounted.
+/// Positioned by [_CallScreenRoot] to cover only the right content pane
+/// (after the sidebar). Fills the entire pane like Discord's voice call view.
 class _WebCallPanel extends StatefulWidget {
   final ActiveCallState activeCall;
   final VoidCallback onClear;
-  final Widget appChild;
 
   const _WebCallPanel({
     required this.activeCall,
     required this.onClear,
-    required this.appChild,
   });
 
   @override
@@ -336,79 +346,59 @@ class _WebCallPanelState extends State<_WebCallPanel> {
 
   @override
   Widget build(BuildContext context) {
-    // The call area sits ABOVE the normal app content in a Column,
-    // so it never overlays the nav rail or sidebar.
-    return Column(
-      children: [
-        // ── Call area (Discord-style) ──
-        _buildCallArea(),
-        // ── Original app content fills the rest ──
-        Expanded(child: widget.appChild),
-      ],
-    );
-  }
-
-  Widget _buildCallArea() {
     final isConnected = _isConnected;
     final isRinging = _isIncomingRinging;
 
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Color(0xFF2B2D31), // Discord dark surface
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF1E1F22), width: 1),
-        ),
-      ),
+    // Fills the entire right pane — positioned by the parent Stack.
+    return Material(
+      color: const Color(0xFF111214),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Main call display ──
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 32),
-            color: const Color(0xFF111214),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Two avatars side by side
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _CallAvatar(
-                      mxContent: _myAvatar,
-                      name: _myName,
-                      client: widget.activeCall.client,
-                      isConnected: isConnected,
-                    ),
-                    const SizedBox(width: 24),
-                    _CallAvatar(
-                      mxContent: _callerAvatar,
-                      name: _callerName,
-                      client: widget.activeCall.client,
-                      isConnected: isConnected,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                // Status text
-                Text(
-                  _statusLabel,
-                  style: TextStyle(
-                    color: isConnected
-                        ? const Color(0xFF43A047)
-                        : Colors.white54,
-                    fontSize: 13,
+          // ── Main call display (centered avatars) ──
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Two avatars side by side
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _CallAvatar(
+                        mxContent: _myAvatar,
+                        name: _myName,
+                        client: widget.activeCall.client,
+                        isConnected: isConnected,
+                      ),
+                      const SizedBox(width: 32),
+                      _CallAvatar(
+                        mxContent: _callerAvatar,
+                        name: _callerName,
+                        client: widget.activeCall.client,
+                        isConnected: isConnected,
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                  // Status text
+                  Text(
+                    _statusLabel,
+                    style: TextStyle(
+                      color: isConnected
+                          ? const Color(0xFF43A047)
+                          : Colors.white54,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
-          // ── Controls bar ──
+          // ── Controls bar (bottom) ──
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             color: const Color(0xFF2B2D31),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
