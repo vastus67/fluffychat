@@ -151,15 +151,11 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
     if (activeCall == null) return appChild;
 
     if (kIsWeb) {
-      // Discord-style panel on web — offset from nav rail.
-      return Stack(
-        children: [
-          appChild,
-          _WebCallPanel(
-            activeCall: activeCall,
-            onClear: _onClear,
-          ),
-        ],
+      // Discord-style: call area on top, app content below — no overlay.
+      return _WebCallPanel(
+        activeCall: activeCall,
+        onClear: _onClear,
+        appChild: appChild,
       );
     }
 
@@ -178,72 +174,36 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
   }
 }
 
-/// Discord-style call panel for web — sits at the top of the content area,
-/// to the right of the navigation rail. Uses [MediaQuery] to figure out break-
-/// points so it never overlaps the rail.
-class _WebCallPanel extends StatelessWidget {
+/// Discord-style call panel for web.
+///
+/// Instead of overlaying on top of everything (which covers the nav rail and
+/// DM list), this widget injects itself into the child's layout using a
+/// [Column]: call area on top, original app child below. The call area is
+/// only as tall as it needs to be and never covers navigation.
+///
+/// When there is no active call, [_CallScreenRoot] returns [appChild] directly
+/// so this widget is never mounted.
+class _WebCallPanel extends StatefulWidget {
   final ActiveCallState activeCall;
   final VoidCallback onClear;
+  final Widget appChild;
 
   const _WebCallPanel({
     required this.activeCall,
     required this.onClear,
+    required this.appChild,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isCompact = screenWidth < 600; // AppDestinations.compactWidth
-    final isExpanded = screenWidth >= 1024; // AppDestinations.expandedWidth
-
-    // On compact (mobile-like), no nav rail — panel fills full width.
-    // On medium, Flutter NavigationRail is ~72px.
-    // On expanded, the extended rail is ~256px.
-    final double leftOffset;
-    if (isCompact) {
-      leftOffset = 0;
-    } else if (isExpanded) {
-      leftOffset = 256;
-    } else {
-      leftOffset = 72;
-    }
-
-    return Positioned(
-      top: 0,
-      left: leftOffset,
-      right: 0,
-      child: Material(
-        elevation: 8,
-        color: Colors.transparent,
-        child: _DiscordCallBar(
-          activeCall: activeCall,
-          onClear: onClear,
-        ),
-      ),
-    );
-  }
+  State<_WebCallPanel> createState() => _WebCallPanelState();
 }
 
-/// The actual Discord-style call bar content: shows both user avatars with a
-/// green "connected" ring, call status, and answer/decline/hangup controls.
-class _DiscordCallBar extends StatefulWidget {
-  final ActiveCallState activeCall;
-  final VoidCallback onClear;
-
-  const _DiscordCallBar({
-    required this.activeCall,
-    required this.onClear,
-  });
-
-  @override
-  State<_DiscordCallBar> createState() => _DiscordCallBarState();
-}
-
-class _DiscordCallBarState extends State<_DiscordCallBar> {
+class _WebCallPanelState extends State<_WebCallPanel> {
   CallState? _state;
   Duration _callDuration = Duration.zero;
   DateTime? _connectedAt;
   Timer? _durationTimer;
+  bool _isMicMuted = false;
 
   CallSession get call => widget.activeCall.call;
 
@@ -251,6 +211,7 @@ class _DiscordCallBarState extends State<_DiscordCallBar> {
   void initState() {
     super.initState();
     _state = call.state;
+    _isMicMuted = call.isMicrophoneMuted;
     call.onCallStateChanged.stream.listen(_onCallStateChanged);
     if (_state == CallState.kConnected) {
       _connectedAt = DateTime.now();
@@ -260,7 +221,10 @@ class _DiscordCallBarState extends State<_DiscordCallBar> {
 
   void _onCallStateChanged(CallState state) {
     if (!mounted) return;
-    setState(() => _state = state);
+    setState(() {
+      _state = state;
+      _isMicMuted = call.isMicrophoneMuted;
+    });
     if (state == CallState.kConnected && _connectedAt == null) {
       _connectedAt = DateTime.now();
       _startTimer();
@@ -299,8 +263,10 @@ class _DiscordCallBarState extends State<_DiscordCallBar> {
     if (_isEnded) return 'Call ended';
     if (_isConnected) {
       final h = _callDuration.inHours;
-      final m = _callDuration.inMinutes.remainder(60).toString().padLeft(2, '0');
-      final s = _callDuration.inSeconds.remainder(60).toString().padLeft(2, '0');
+      final m =
+          _callDuration.inMinutes.remainder(60).toString().padLeft(2, '0');
+      final s =
+          _callDuration.inSeconds.remainder(60).toString().padLeft(2, '0');
       return h > 0 ? '$h:$m:$s' : '$m:$s';
     }
     if (_isIncomingRinging) return 'Incoming call…';
@@ -351,224 +317,228 @@ class _DiscordCallBarState extends State<_DiscordCallBar> {
     return user.displayName ?? myId.localpart ?? 'You';
   }
 
+  Future<void> _toggleMic() async {
+    try {
+      await call.setMicrophoneMuted(!call.isMicrophoneMuted);
+    } catch (e) {
+      Logs().w('[WebCallPanel] setMicrophoneMuted error: $e');
+    }
+    if (mounted) setState(() => _isMicMuted = call.isMicrophoneMuted);
+  }
+
+  void _hangUp() {
+    if (call.isRinging && !call.isOutgoing) {
+      call.reject();
+    } else {
+      call.hangup(reason: CallErrorCode.userHangup);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // The call area sits ABOVE the normal app content in a Column,
+    // so it never overlays the nav rail or sidebar.
+    return Column(
+      children: [
+        // ── Call area (Discord-style) ──
+        _buildCallArea(),
+        // ── Original app content fills the rest ──
+        Expanded(child: widget.appChild),
+      ],
+    );
+  }
+
+  Widget _buildCallArea() {
     final isConnected = _isConnected;
     final isRinging = _isIncomingRinging;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E1F22), // Discord dark
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Color(0xFF2B2D31), // Discord dark surface
         border: Border(
-          bottom: BorderSide(
-            color: isConnected
-                ? const Color(0xFF43A047) // green when connected
-                : const Color(0xFF5865F2), // blurple when ringing
-            width: 2,
-          ),
+          bottom: BorderSide(color: Color(0xFF1E1F22), width: 1),
         ),
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Two avatars side by side with connection indicator
-          _AvatarPair(
-            myAvatar: _myAvatar,
-            myName: _myName,
-            theirAvatar: _callerAvatar,
-            theirName: _callerName,
-            client: widget.activeCall.client,
-            isConnected: isConnected,
-          ),
-          const SizedBox(width: 16),
-
-          // Call info
-          Expanded(
+          // ── Main call display ──
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 32),
+            color: const Color(0xFF111214),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  _callerName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                // Two avatars side by side
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _CallAvatar(
+                      mxContent: _myAvatar,
+                      name: _myName,
+                      client: widget.activeCall.client,
+                      isConnected: isConnected,
+                    ),
+                    const SizedBox(width: 24),
+                    _CallAvatar(
+                      mxContent: _callerAvatar,
+                      name: _callerName,
+                      client: widget.activeCall.client,
+                      isConnected: isConnected,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 16),
+                // Status text
                 Text(
                   _statusLabel,
                   style: TextStyle(
                     color: isConnected
                         ? const Color(0xFF43A047)
-                        : Colors.white60,
-                    fontSize: 12,
+                        : Colors.white54,
+                    fontSize: 13,
                   ),
                 ),
               ],
             ),
           ),
 
-          // Action buttons
-          if (isRinging) ...[
-            _BarButton(
-              icon: Icons.call,
-              color: const Color(0xFF43A047),
-              tooltip: 'Answer',
-              onTap: () => call.answer(),
+          // ── Controls bar ──
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: const Color(0xFF2B2D31),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Mic toggle
+                _ControlPill(
+                  icon: _isMicMuted ? Icons.mic_off : Icons.mic,
+                  active: _isMicMuted,
+                  onTap: _toggleMic,
+                  tooltip: _isMicMuted ? 'Unmute' : 'Mute',
+                ),
+                const SizedBox(width: 8),
+
+                if (isRinging) ...[
+                  // Answer button
+                  _ControlPill(
+                    icon: Icons.call,
+                    color: const Color(0xFF43A047),
+                    onTap: () => call.answer(),
+                    tooltip: 'Answer',
+                  ),
+                  const SizedBox(width: 8),
+                ],
+
+                // Hang up / Decline
+                _ControlPill(
+                  icon: Icons.call_end,
+                  color: const Color(0xFFE53935),
+                  onTap: isRinging ? () => call.reject() : _hangUp,
+                  tooltip: isRinging ? 'Decline' : 'Hang up',
+                ),
+              ],
             ),
-            const SizedBox(width: 8),
-            _BarButton(
-              icon: Icons.call_end,
-              color: const Color(0xFFE53935),
-              tooltip: 'Decline',
-              onTap: () => call.reject(),
-            ),
-          ] else if (!_isEnded) ...[
-            _BarButton(
-              icon: Icons.call_end,
-              color: const Color(0xFFE53935),
-              tooltip: 'Hang up',
-              onTap: () {
-                if (call.isRinging && !call.isOutgoing) {
-                  call.reject();
-                } else {
-                  call.hangup(reason: CallErrorCode.userHangup);
-                }
-              },
-            ),
-          ],
+          ),
         ],
       ),
     );
   }
 }
 
-/// Shows two overlapping avatars with a green ring when connected.
-class _AvatarPair extends StatelessWidget {
-  final Uri? myAvatar;
-  final String myName;
-  final Uri? theirAvatar;
-  final String theirName;
+/// Large circular avatar for the Discord-style call area.
+/// Shows a green ring when the call is connected.
+class _CallAvatar extends StatelessWidget {
+  final Uri? mxContent;
+  final String name;
   final Client client;
   final bool isConnected;
 
-  const _AvatarPair({
-    required this.myAvatar,
-    required this.myName,
-    required this.theirAvatar,
-    required this.theirName,
+  const _CallAvatar({
+    required this.mxContent,
+    required this.name,
     required this.client,
     required this.isConnected,
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 72,
-      height: 44,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // My avatar (left, slightly behind)
-          Positioned(
-            left: 0,
-            top: 0,
-            child: _RingedAvatar(
-              mxContent: myAvatar,
-              name: myName,
-              client: client,
-              size: 40,
-              showGreen: isConnected,
+    const double size = 80;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: size + 6,
+          height: size + 6,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color:
+                  isConnected ? const Color(0xFF43A047) : Colors.transparent,
+              width: 3,
             ),
           ),
-          // Their avatar (right, slightly overlapping)
-          Positioned(
-            left: 28,
-            top: 0,
-            child: _RingedAvatar(
-              mxContent: theirAvatar,
-              name: theirName,
+          child: ClipOval(
+            child: Avatar(
+              mxContent: mxContent,
+              name: name,
+              size: size,
               client: client,
-              size: 40,
-              showGreen: isConnected,
             ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          name,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 }
 
-/// Single avatar with optional green ring indicating a connected call.
-class _RingedAvatar extends StatelessWidget {
-  final Uri? mxContent;
-  final String name;
-  final Client client;
-  final double size;
-  final bool showGreen;
-
-  const _RingedAvatar({
-    required this.mxContent,
-    required this.name,
-    required this.client,
-    required this.size,
-    required this.showGreen,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size + 4,
-      height: size + 4,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: showGreen ? const Color(0xFF43A047) : Colors.transparent,
-          width: 2,
-        ),
-      ),
-      child: ClipOval(
-        child: Avatar(
-          mxContent: mxContent,
-          name: name,
-          size: size,
-          client: client,
-        ),
-      ),
-    );
-  }
-}
-
-/// Small icon button for the call bar.
-class _BarButton extends StatelessWidget {
+/// Rounded pill button for call controls (matches Discord's style).
+class _ControlPill extends StatelessWidget {
   final IconData icon;
-  final Color color;
-  final String tooltip;
+  final Color? color;
+  final bool active;
   final VoidCallback onTap;
+  final String tooltip;
 
-  const _BarButton({
+  const _ControlPill({
     required this.icon,
-    required this.color,
-    required this.tooltip,
+    this.color,
+    this.active = false,
     required this.onTap,
+    required this.tooltip,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bg = color ?? (active ? Colors.white : const Color(0xFF3C3F44));
+    final fg = color != null
+        ? Colors.white
+        : (active ? Colors.black : Colors.white);
+
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: color,
-        shape: const CircleBorder(),
+        color: bg,
+        borderRadius: BorderRadius.circular(24),
         child: InkWell(
-          customBorder: const CircleBorder(),
+          borderRadius: BorderRadius.circular(24),
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Icon(icon, color: Colors.white, size: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Icon(icon, color: fg, size: 20),
           ),
         ),
       ),

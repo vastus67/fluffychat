@@ -20,7 +20,7 @@ echo "==> Compiling native_executor.js web worker"
 dart compile js ./web/native_executor.dart -o ./web/native_executor.js -m
 
 echo "==> Building web"
-flutter build web --release
+flutter build web --release --no-tree-shake-icons
 
 echo "==> Copying config"
 cp config.sample.json build/web/config.json
