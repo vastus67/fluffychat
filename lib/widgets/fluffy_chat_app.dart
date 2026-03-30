@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'dart:async';
-
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +13,6 @@ import 'package:afterdamage/pages/dialer/call_screen.dart';
 import 'package:afterdamage/theme/dracula_accents.dart';
 import 'package:afterdamage/utils/voip_plugin.dart';
 import 'package:afterdamage/widgets/app_lock.dart';
-import 'package:afterdamage/widgets/avatar.dart';
 import 'package:afterdamage/widgets/matrix.dart';
 import 'package:afterdamage/widgets/theme_builder.dart';
 import '../utils/custom_scroll_behaviour.dart';
@@ -39,9 +36,14 @@ class FluffyChatApp extends StatelessWidget {
   /// in with qr code or magic link.
   static bool gotInitialLink = false;
 
+  // Key used to access the Navigator's Overlay for call UI insertion.
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   // Router must be outside of build method so that hot reload does not reset
   // the current path.
   static final GoRouter router = GoRouter(
+    navigatorKey: navigatorKey,
     routes: AppRoutes.routes,
     debugLogDiagnostics: true,
   );
@@ -96,13 +98,14 @@ class FluffyChatApp extends StatelessWidget {
 
 /// Wraps the entire app so the call UI is always present on every route.
 ///
-/// MUST be a [StatefulWidget] — explicit [addListener] subscription ensures
-/// the overlay fires immediately on every notification regardless of parent
-/// rebuild schedule.
+/// The call UI is inserted as an [OverlayEntry] inside the [Navigator]'s own
+/// [Overlay] (accessed via [FluffyChatApp.navigatorKey]). This ensures that
+/// [CallScreen] has proper widget ancestors (Overlay, Navigator, Material)
+/// — placing it as a sibling to the Navigator in a Stack would crash because
+/// Tooltip / IconButton / etc. inside CallScreen need an Overlay ancestor.
 ///
-/// * **Web / browser**: Discord-style compact panel at the top of the screen,
-///   offset to the right of the nav rail so it never covers navigation.
-/// * **Native / PWA**: full-screen overlay.
+/// * **Web column mode**: half-screen panel over the right content pane.
+/// * **Web narrow / PWA / native**: full-screen overlay.
 class _CallScreenRoot extends StatefulWidget {
   final Widget? child;
   const _CallScreenRoot({this.child});
@@ -114,6 +117,7 @@ class _CallScreenRoot extends StatefulWidget {
 class _CallScreenRootState extends State<_CallScreenRoot> {
   ValueNotifier<ActiveCallState?>? _notifier;
   ActiveCallState? _activeCall;
+  OverlayEntry? _callOverlay;
 
   @override
   void didChangeDependencies() {
@@ -124,16 +128,61 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
       _notifier = newNotifier;
       _notifier!.addListener(_onCallChanged);
       _activeCall = _notifier!.value;
+      if (_activeCall != null && _callOverlay == null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _activeCall != null) _insertCallOverlay();
+        });
+      }
     }
   }
 
   void _onCallChanged() {
     if (!mounted) return;
-    setState(() => _activeCall = _notifier?.value);
+    final newCall = _notifier?.value;
+    final hadCall = _activeCall != null;
+    _activeCall = newCall;
+
+    if (newCall != null && !hadCall) {
+      _insertCallOverlay();
+    } else if (newCall == null && hadCall) {
+      _removeCallOverlay();
+    } else if (newCall != null) {
+      // Same call, different state — just rebuild the entry.
+      _callOverlay?.markNeedsBuild();
+    }
+  }
+
+  void _insertCallOverlay() {
+    if (_callOverlay != null) return;
+    final navigatorState = FluffyChatApp.navigatorKey.currentState;
+    if (navigatorState == null || navigatorState.overlay == null) {
+      // Navigator not mounted yet — retry next frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _activeCall != null && _callOverlay == null) {
+          _insertCallOverlay();
+        }
+      });
+      return;
+    }
+
+    _callOverlay = OverlayEntry(
+      builder: (overlayContext) {
+        final activeCall = _activeCall;
+        if (activeCall == null) return const SizedBox.shrink();
+        return _buildCallUI(overlayContext, activeCall);
+      },
+    );
+    navigatorState.overlay!.insert(_callOverlay!);
+  }
+
+  void _removeCallOverlay() {
+    _callOverlay?.remove();
+    _callOverlay = null;
   }
 
   @override
   void dispose() {
+    _removeCallOverlay();
     _notifier?.removeListener(_onCallChanged);
     super.dispose();
   }
@@ -144,401 +193,57 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
     m.callExpandedNotifier.value = false;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final appChild = widget.child ?? const SizedBox.shrink();
-    final activeCall = _activeCall;
-    if (activeCall == null) return appChild;
-
+  /// Builds the call UI widget. Returned directly inside the Navigator's
+  /// Overlay, so [Positioned] is supported (the Overlay uses a Stack).
+  Widget _buildCallUI(BuildContext overlayContext, ActiveCallState activeCall) {
     if (kIsWeb) {
-      final isColumnMode = FluffyThemes.isColumnMode(context);
+      final isColumnMode = FluffyThemes.isColumnMode(overlayContext);
 
       if (!isColumnMode) {
-        // Narrow screen (phone PWA / small browser) — full-screen like native.
-        return Stack(
-          fit: StackFit.expand,
-          children: [
-            appChild,
-            CallScreen(
-              call: activeCall.call,
-              client: activeCall.client,
-              onClear: _onClear,
-            ),
-          ],
+        // Narrow screen (phone PWA / small browser): full-screen call.
+        return CallScreen(
+          call: activeCall.call,
+          client: activeCall.client,
+          onClear: _onClear,
         );
       }
 
-      // Desktop web in column mode — compact call panel at top of right pane.
-      // Left offset = sidebar width so nav rail + DM list stay visible.
+      // Desktop web column mode: half-screen on the right content pane.
       final leftOffset =
           FluffyThemes.columnWidth + FluffyThemes.navRailWidth + 1.0;
+      final screenHeight = MediaQuery.of(overlayContext).size.height;
 
-      return Stack(
-        children: [
-          appChild,
-          Positioned(
-            top: 0,
-            left: leftOffset,
-            right: 0,
-            child: _WebCallPanel(
-              activeCall: activeCall,
-              onClear: _onClear,
-            ),
+      return Positioned(
+        top: 0,
+        left: leftOffset,
+        right: 0,
+        height: screenHeight * 0.5,
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
           ),
-        ],
+          child: CallScreen(
+            call: activeCall.call,
+            client: activeCall.client,
+            onClear: _onClear,
+          ),
+        ),
       );
     }
 
     // Native (Android / iOS / desktop): full-screen overlay.
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        appChild,
-        CallScreen(
-          call: activeCall.call,
-          client: activeCall.client,
-          onClear: _onClear,
-        ),
-      ],
+    return CallScreen(
+      call: activeCall.call,
+      client: activeCall.client,
+      onClear: _onClear,
     );
-  }
-}
-
-/// Discord-style call panel for web.
-///
-/// Positioned by [_CallScreenRoot] to cover only the right content pane
-/// (after the sidebar). Fills the entire pane like Discord's voice call view.
-class _WebCallPanel extends StatefulWidget {
-  final ActiveCallState activeCall;
-  final VoidCallback onClear;
-
-  const _WebCallPanel({
-    required this.activeCall,
-    required this.onClear,
-  });
-
-  @override
-  State<_WebCallPanel> createState() => _WebCallPanelState();
-}
-
-class _WebCallPanelState extends State<_WebCallPanel> {
-  CallState? _state;
-  Duration _callDuration = Duration.zero;
-  DateTime? _connectedAt;
-  Timer? _durationTimer;
-  bool _isMicMuted = false;
-
-  CallSession get call => widget.activeCall.call;
-
-  @override
-  void initState() {
-    super.initState();
-    _state = call.state;
-    _isMicMuted = call.isMicrophoneMuted;
-    call.onCallStateChanged.stream.listen(_onCallStateChanged);
-    if (_state == CallState.kConnected) {
-      _connectedAt = DateTime.now();
-      _startTimer();
-    }
-  }
-
-  void _onCallStateChanged(CallState state) {
-    if (!mounted) return;
-    setState(() {
-      _state = state;
-      _isMicMuted = call.isMicrophoneMuted;
-    });
-    if (state == CallState.kConnected && _connectedAt == null) {
-      _connectedAt = DateTime.now();
-      _startTimer();
-    }
-    if (state == CallState.kEnded || state == CallState.kEnding) {
-      _durationTimer?.cancel();
-      Timer(const Duration(seconds: 2), () {
-        if (mounted) widget.onClear();
-      });
-    }
-  }
-
-  void _startTimer() {
-    _durationTimer?.cancel();
-    _durationTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted || _connectedAt == null) return;
-      setState(() {
-        _callDuration = DateTime.now().difference(_connectedAt!);
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _durationTimer?.cancel();
-    super.dispose();
-  }
-
-  bool get _isIncomingRinging =>
-      _state == CallState.kRinging && !call.isOutgoing;
-  bool get _isConnected => _state == CallState.kConnected;
-  bool get _isEnded =>
-      _state == CallState.kEnded || _state == CallState.kEnding;
-
-  String get _statusLabel {
-    if (_isEnded) return 'Call ended';
-    if (_isConnected) {
-      final h = _callDuration.inHours;
-      final m =
-          _callDuration.inMinutes.remainder(60).toString().padLeft(2, '0');
-      final s =
-          _callDuration.inSeconds.remainder(60).toString().padLeft(2, '0');
-      return h > 0 ? '$h:$m:$s' : '$m:$s';
-    }
-    if (_isIncomingRinging) return 'Incoming call…';
-    switch (_state) {
-      case CallState.kInviteSent:
-      case CallState.kCreateOffer:
-        return 'Calling…';
-      case CallState.kRinging:
-        return 'Ringing…';
-      case CallState.kCreateAnswer:
-      case CallState.kConnecting:
-        return 'Connecting…';
-      default:
-        return 'Setting up…';
-    }
-  }
-
-  String get _callerName {
-    if (call.room.isDirectChat) {
-      final userId = call.room.directChatMatrixID ?? '';
-      final user = call.room.unsafeGetUserFromMemoryOrFallback(userId);
-      return user.displayName ?? user.id;
-    }
-    return call.room.getLocalizedDisplayname();
-  }
-
-  Uri? get _callerAvatar {
-    if (call.room.isDirectChat) {
-      final userId = call.room.directChatMatrixID ?? '';
-      return call.room.unsafeGetUserFromMemoryOrFallback(userId).avatarUrl;
-    }
-    return null;
-  }
-
-  Uri? get _myAvatar {
-    final client = widget.activeCall.client;
-    final myId = client.userID;
-    if (myId == null) return null;
-    final user = call.room.unsafeGetUserFromMemoryOrFallback(myId);
-    return user.avatarUrl;
-  }
-
-  String get _myName {
-    final client = widget.activeCall.client;
-    final myId = client.userID;
-    if (myId == null) return 'You';
-    final user = call.room.unsafeGetUserFromMemoryOrFallback(myId);
-    return user.displayName ?? myId.localpart ?? 'You';
-  }
-
-  Future<void> _toggleMic() async {
-    try {
-      await call.setMicrophoneMuted(!call.isMicrophoneMuted);
-    } catch (e) {
-      Logs().w('[WebCallPanel] setMicrophoneMuted error: $e');
-    }
-    if (mounted) setState(() => _isMicMuted = call.isMicrophoneMuted);
-  }
-
-  void _hangUp() {
-    if (call.isRinging && !call.isOutgoing) {
-      call.reject();
-    } else {
-      call.hangup(reason: CallErrorCode.userHangup);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isConnected = _isConnected;
-    final isRinging = _isIncomingRinging;
-
-    // Compact top bar — chat remains visible and scrollable below.
-    return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF2B2D31),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
-        ),
-        boxShadow: [
-          BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2)),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            // ── Avatars ──
-            _CallAvatarSmall(
-              mxContent: _myAvatar,
-              name: _myName,
-              client: widget.activeCall.client,
-              isConnected: isConnected,
-            ),
-            const SizedBox(width: 8),
-            _CallAvatarSmall(
-              mxContent: _callerAvatar,
-              name: _callerName,
-              client: widget.activeCall.client,
-              isConnected: isConnected,
-            ),
-            const SizedBox(width: 12),
-
-            // ── Name + status ──
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _callerName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _statusLabel,
-                    style: TextStyle(
-                      color: isConnected
-                          ? const Color(0xFF43A047)
-                          : Colors.white54,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // ── Controls ──
-            _ControlPill(
-              icon: _isMicMuted ? Icons.mic_off : Icons.mic,
-              active: _isMicMuted,
-              onTap: _toggleMic,
-              tooltip: _isMicMuted ? 'Unmute' : 'Mute',
-            ),
-            const SizedBox(width: 8),
-
-            if (isRinging) ...[
-              _ControlPill(
-                icon: Icons.call,
-                color: const Color(0xFF43A047),
-                onTap: () => call.answer(),
-                tooltip: 'Answer',
-              ),
-              const SizedBox(width: 8),
-            ],
-
-            _ControlPill(
-              icon: Icons.call_end,
-              color: const Color(0xFFE53935),
-              onTap: isRinging ? () => call.reject() : _hangUp,
-              tooltip: isRinging ? 'Decline' : 'Hang up',
-            ),
-          ],
-        ),
-      ),
-    );
+    // Call UI is managed entirely via OverlayEntry — just pass through child.
+    return widget.child ?? const SizedBox.shrink();
   }
 }
 
-/// Small circular avatar for the compact call bar.
-class _CallAvatarSmall extends StatelessWidget {
-  final Uri? mxContent;
-  final String name;
-  final Client client;
-  final bool isConnected;
-
-  const _CallAvatarSmall({
-    required this.mxContent,
-    required this.name,
-    required this.client,
-    required this.isConnected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    const double size = 36;
-    return Container(
-      width: size + 4,
-      height: size + 4,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: isConnected ? const Color(0xFF43A047) : Colors.transparent,
-          width: 2,
-        ),
-      ),
-      child: ClipOval(
-        child: Avatar(
-          mxContent: mxContent,
-          name: name,
-          size: size,
-          client: client,
-        ),
-      ),
-    );
-  }
-}
-
-/// Rounded pill button for call controls (matches Discord's style).
-class _ControlPill extends StatelessWidget {
-  final IconData icon;
-  final Color? color;
-  final bool active;
-  final VoidCallback onTap;
-  final String tooltip;
-
-  const _ControlPill({
-    required this.icon,
-    this.color,
-    this.active = false,
-    required this.onTap,
-    required this.tooltip,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final bg = color ?? (active ? Colors.white : const Color(0xFF3C3F44));
-    final fg = color != null
-        ? Colors.white
-        : (active ? Colors.black : Colors.white);
-
-    return Tooltip(
-      message: tooltip,
-      child: Material(
-        color: Colors.transparent,
-        child: Ink(
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(24),
-            hoverColor: Colors.white10,
-            splashColor: Colors.white12,
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: Icon(icon, color: fg, size: 18),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
