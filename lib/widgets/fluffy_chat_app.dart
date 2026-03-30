@@ -151,13 +151,27 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
     if (activeCall == null) return appChild;
 
     if (kIsWeb) {
-      // Overlay the call panel only on the RIGHT content pane.
-      // In column mode the left sidebar is columnWidth + navRailWidth + 1px divider.
-      // The call panel is Positioned to start after that.
       final isColumnMode = FluffyThemes.isColumnMode(context);
-      final leftOffset = isColumnMode
-          ? FluffyThemes.columnWidth + FluffyThemes.navRailWidth + 1.0
-          : 0.0;
+
+      if (!isColumnMode) {
+        // Narrow screen (phone PWA / small browser) — full-screen like native.
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            appChild,
+            CallScreen(
+              call: activeCall.call,
+              client: activeCall.client,
+              onClear: _onClear,
+            ),
+          ],
+        );
+      }
+
+      // Desktop web in column mode — compact call panel at top of right pane.
+      // Left offset = sidebar width so nav rail + DM list stay visible.
+      final leftOffset =
+          FluffyThemes.columnWidth + FluffyThemes.navRailWidth + 1.0;
 
       return Stack(
         children: [
@@ -166,7 +180,6 @@ class _CallScreenRootState extends State<_CallScreenRoot> {
             top: 0,
             left: leftOffset,
             right: 0,
-            bottom: 0,
             child: _WebCallPanel(
               activeCall: activeCall,
               onClear: _onClear,
@@ -349,105 +362,108 @@ class _WebCallPanelState extends State<_WebCallPanel> {
     final isConnected = _isConnected;
     final isRinging = _isIncomingRinging;
 
-    // Fills the entire right pane — positioned by the parent Stack.
-    return Material(
-      color: const Color(0xFF111214),
-      child: Column(
-        children: [
-          // ── Main call display (centered avatars) ──
-          Expanded(
-            child: Center(
+    // Compact top bar — chat remains visible and scrollable below.
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFF2B2D31),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
+        boxShadow: [
+          BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2)),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          children: [
+            // ── Avatars ──
+            _CallAvatarSmall(
+              mxContent: _myAvatar,
+              name: _myName,
+              client: widget.activeCall.client,
+              isConnected: isConnected,
+            ),
+            const SizedBox(width: 8),
+            _CallAvatarSmall(
+              mxContent: _callerAvatar,
+              name: _callerName,
+              client: widget.activeCall.client,
+              isConnected: isConnected,
+            ),
+            const SizedBox(width: 12),
+
+            // ── Name + status ──
+            Expanded(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Two avatars side by side
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _CallAvatar(
-                        mxContent: _myAvatar,
-                        name: _myName,
-                        client: widget.activeCall.client,
-                        isConnected: isConnected,
-                      ),
-                      const SizedBox(width: 32),
-                      _CallAvatar(
-                        mxContent: _callerAvatar,
-                        name: _callerName,
-                        client: widget.activeCall.client,
-                        isConnected: isConnected,
-                      ),
-                    ],
+                  Text(
+                    _callerName,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 20),
-                  // Status text
+                  const SizedBox(height: 2),
                   Text(
                     _statusLabel,
                     style: TextStyle(
                       color: isConnected
                           ? const Color(0xFF43A047)
                           : Colors.white54,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
 
-          // ── Controls bar (bottom) ──
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            color: const Color(0xFF2B2D31),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Mic toggle
-                _ControlPill(
-                  icon: _isMicMuted ? Icons.mic_off : Icons.mic,
-                  active: _isMicMuted,
-                  onTap: _toggleMic,
-                  tooltip: _isMicMuted ? 'Unmute' : 'Mute',
-                ),
-                const SizedBox(width: 8),
-
-                if (isRinging) ...[
-                  // Answer button
-                  _ControlPill(
-                    icon: Icons.call,
-                    color: const Color(0xFF43A047),
-                    onTap: () => call.answer(),
-                    tooltip: 'Answer',
-                  ),
-                  const SizedBox(width: 8),
-                ],
-
-                // Hang up / Decline
-                _ControlPill(
-                  icon: Icons.call_end,
-                  color: const Color(0xFFE53935),
-                  onTap: isRinging ? () => call.reject() : _hangUp,
-                  tooltip: isRinging ? 'Decline' : 'Hang up',
-                ),
-              ],
+            // ── Controls ──
+            _ControlPill(
+              icon: _isMicMuted ? Icons.mic_off : Icons.mic,
+              active: _isMicMuted,
+              onTap: _toggleMic,
+              tooltip: _isMicMuted ? 'Unmute' : 'Mute',
             ),
-          ),
-        ],
+            const SizedBox(width: 8),
+
+            if (isRinging) ...[
+              _ControlPill(
+                icon: Icons.call,
+                color: const Color(0xFF43A047),
+                onTap: () => call.answer(),
+                tooltip: 'Answer',
+              ),
+              const SizedBox(width: 8),
+            ],
+
+            _ControlPill(
+              icon: Icons.call_end,
+              color: const Color(0xFFE53935),
+              onTap: isRinging ? () => call.reject() : _hangUp,
+              tooltip: isRinging ? 'Decline' : 'Hang up',
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-/// Large circular avatar for the Discord-style call area.
-/// Shows a green ring when the call is connected.
-class _CallAvatar extends StatelessWidget {
+/// Small circular avatar for the compact call bar.
+class _CallAvatarSmall extends StatelessWidget {
   final Uri? mxContent;
   final String name;
   final Client client;
   final bool isConnected;
 
-  const _CallAvatar({
+  const _CallAvatarSmall({
     required this.mxContent,
     required this.name,
     required this.client,
@@ -456,41 +472,25 @@ class _CallAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double size = 80;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: size + 6,
-          height: size + 6,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color:
-                  isConnected ? const Color(0xFF43A047) : Colors.transparent,
-              width: 3,
-            ),
-          ),
-          child: ClipOval(
-            child: Avatar(
-              mxContent: mxContent,
-              name: name,
-              size: size,
-              client: client,
-            ),
-          ),
+    const double size = 36;
+    return Container(
+      width: size + 4,
+      height: size + 4,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: isConnected ? const Color(0xFF43A047) : Colors.transparent,
+          width: 2,
         ),
-        const SizedBox(height: 8),
-        Text(
-          name,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-          overflow: TextOverflow.ellipsis,
+      ),
+      child: ClipOval(
+        child: Avatar(
+          mxContent: mxContent,
+          name: name,
+          size: size,
+          client: client,
         ),
-      ],
+      ),
     );
   }
 }
@@ -521,14 +521,21 @@ class _ControlPill extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: bg,
-        borderRadius: BorderRadius.circular(24),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Icon(icon, color: fg, size: 20),
+        color: Colors.transparent,
+        child: Ink(
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            hoverColor: Colors.white10,
+            splashColor: Colors.white12,
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              child: Icon(icon, color: fg, size: 18),
+            ),
           ),
         ),
       ),
