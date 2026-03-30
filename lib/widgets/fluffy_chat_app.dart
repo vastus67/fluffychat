@@ -8,11 +8,13 @@ import 'package:afterdamage/config/routes.dart';
 import 'package:afterdamage/config/setting_keys.dart';
 import 'package:afterdamage/config/themes.dart';
 import 'package:afterdamage/l10n/l10n.dart';
+import 'package:afterdamage/pages/dialer/call_screen.dart';
 import 'package:afterdamage/theme/dracula_accents.dart';
+import 'package:afterdamage/utils/voip_plugin.dart';
 import 'package:afterdamage/widgets/app_lock.dart';
+import 'package:afterdamage/widgets/matrix.dart';
 import 'package:afterdamage/widgets/theme_builder.dart';
 import '../utils/custom_scroll_behaviour.dart';
-import 'matrix.dart';
 
 class FluffyChatApp extends StatelessWidget {
   final Widget? testWidget;
@@ -77,11 +79,52 @@ class FluffyChatApp extends StatelessWidget {
             child: Matrix(
               clients: clients,
               store: store,
-              child: testWidget ?? child,
+              // _CallScreenRoot wraps the entire router so the call UI
+              // is always present regardless of which route is active.
+              child: _CallScreenRoot(child: testWidget ?? child),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+/// Wraps the entire app in a Stack so the [CallScreen] can be shown on top
+/// of any route. This widget lives inside [Matrix] so it can access the
+/// VoIP plugin and listen to [VoipPlugin.activeCallNotifier].
+class _CallScreenRoot extends StatelessWidget {
+  final Widget? child;
+  const _CallScreenRoot({this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final voipPlugin = Matrix.of(context).voipPlugin;
+
+    if (voipPlugin == null) return child ?? const SizedBox.shrink();
+
+    return ValueListenableBuilder<ActiveCallState?>(
+      valueListenable: voipPlugin.activeCallNotifier,
+      builder: (ctx, activeCall, appChild) {
+        if (activeCall == null) return appChild ?? const SizedBox.shrink();
+
+        return Stack(
+          children: [
+            if (appChild != null) appChild,
+            Positioned.fill(
+              child: CallScreen(
+                call: activeCall.call,
+                client: activeCall.client,
+                onClear: () {
+                  voipPlugin.activeCallNotifier.value = null;
+                  voipPlugin.callExpandedNotifier.value = false;
+                },
+              ),
+            ),
+          ],
+        );
+      },
+      child: child,
     );
   }
 }
