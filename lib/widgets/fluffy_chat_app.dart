@@ -92,67 +92,94 @@ class FluffyChatApp extends StatelessWidget {
 }
 
 /// Wraps the entire app so the call UI is always present on every route.
-/// Lives inside [Matrix] so it can subscribe to [MatrixState.activeCallNotifier],
-/// which is always non-null (it lives on MatrixState even before VoipPlugin
-/// is created). This fixes the receiver-side bug: previously, if VoipPlugin
-/// was null when this widget first built, it returned early without a listener
-/// and never saw incoming calls.
 ///
-/// * **Web / browser**: Discord-style top panel (full-width, ~410px, anchored
-///   at the top — chat still visible below).
-/// * **Native mobile / desktop / PWA**: full-screen overlay.
-class _CallScreenRoot extends StatelessWidget {
+/// MUST be a [StatefulWidget]. A [StatelessWidget]+[ValueListenableBuilder]
+/// only fires when the *parent* rebuilds, meaning any notification fired
+/// between parent rebuilds is silently missed — this was the root cause of
+/// the receiver never seeing a call UI. An explicit [addListener] subscription
+/// in [didChangeDependencies] reacts immediately on every notification,
+/// regardless of the parent's rebuild schedule.
+///
+/// * **Web / browser**: Discord-style full-width panel (~410px), anchored
+///   at the top — chat still visible below.
+/// * **Native / PWA** (`kIsWeb == false`): full-screen overlay.
+class _CallScreenRoot extends StatefulWidget {
   final Widget? child;
   const _CallScreenRoot({this.child});
 
   @override
+  State<_CallScreenRoot> createState() => _CallScreenRootState();
+}
+
+class _CallScreenRootState extends State<_CallScreenRoot> {
+  ValueNotifier<ActiveCallState?>? _notifier;
+  ActiveCallState? _activeCall;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newNotifier = Matrix.of(context).activeCallNotifier;
+    if (newNotifier != _notifier) {
+      _notifier?.removeListener(_onCallChanged);
+      _notifier = newNotifier;
+      _notifier!.addListener(_onCallChanged);
+      // Pick up any call that was already active when we first subscribed.
+      _activeCall = _notifier!.value;
+    }
+  }
+
+  void _onCallChanged() {
+    if (!mounted) return;
+    setState(() => _activeCall = _notifier?.value);
+  }
+
+  @override
+  void dispose() {
+    _notifier?.removeListener(_onCallChanged);
+    super.dispose();
+  }
+
+  void _onClear() {
+    final m = Matrix.of(context);
+    m.activeCallNotifier.value = null;
+    m.callExpandedNotifier.value = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // activeCallNotifier lives on MatrixState — always available, never null.
-    final matrixState = Matrix.of(context);
+    final activeCall = _activeCall;
+    final appChild = widget.child ?? const SizedBox.shrink();
 
-    return ValueListenableBuilder<ActiveCallState?>(
-      valueListenable: matrixState.activeCallNotifier,
-      builder: (ctx, activeCall, appChild) {
-        if (activeCall == null) return appChild ?? const SizedBox.shrink();
+    if (activeCall == null) return appChild;
 
-        void onClear() {
-          matrixState.activeCallNotifier.value = null;
-          matrixState.callExpandedNotifier.value = false;
-        }
+    if (kIsWeb) {
+      // Full-width panel anchored to the top — chat is visible below it.
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          appChild,
+          _WebCallPanel(activeCall: activeCall, onClear: _onClear),
+        ],
+      );
+    }
 
-        if (kIsWeb) {
-          // Discord-style top panel: full-width, fixed height, anchored at top.
-          // App content renders at full size behind/below — chat stays visible.
-          return Stack(
-            children: [
-              Positioned.fill(child: appChild ?? const SizedBox.shrink()),
-              _WebCallPanel(activeCall: activeCall, onClear: onClear),
-            ],
-          );
-        }
-
-        // Native (Android / iOS / desktop / PWA): full-screen overlay.
-        return Stack(
-          children: [
-            Positioned.fill(child: appChild ?? const SizedBox.shrink()),
-            Positioned.fill(
-              child: CallScreen(
-                call: activeCall.call,
-                client: activeCall.client,
-                onClear: onClear,
-              ),
-            ),
-          ],
-        );
-      },
-      child: child,
+    // Native (Android / iOS / desktop): full-screen overlay.
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        appChild,
+        CallScreen(
+          call: activeCall.call,
+          client: activeCall.client,
+          onClear: _onClear,
+        ),
+      ],
     );
   }
 }
 
 /// Full-width call panel anchored to the top of the screen on web/browser,
-/// matching Discord's "call above chat" layout. The chat content renders
-/// behind the Stack so messages are visible below the panel.
+/// matching Discord's "call above chat" layout.
 class _WebCallPanel extends StatelessWidget {
   static const double _kPanelHeight = 410;
 
