@@ -41,9 +41,9 @@ class DraculaTheme {
       colorScheme: colorScheme,
       textTheme: textTheme,
       primaryTextTheme: DraculaText.buildTextTheme(base.primaryTextTheme),
-      scaffoldBackgroundColor: DraculaColors.background,
-      canvasColor: DraculaColors.background,
-      cardColor: DraculaColors.currentLine,
+      scaffoldBackgroundColor: colorScheme.surface,
+      canvasColor: colorScheme.surface,
+      cardColor: colorScheme.surfaceContainerHighest,
     );
   }
 

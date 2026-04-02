@@ -118,7 +118,7 @@ class ChatInputRow extends StatelessWidget {
                                     children: <Widget>[
                                       Text(L10n.of(context).tryToSendAgain),
                                       const SizedBox(width: 4),
-                                      const FaIcon(FontAwesomeIcons.paperPlane, size: 16),
+                                      const FaIcon(FontAwesomeIcons.wind, size: 16),
                                     ],
                                   ),
                                 ),
@@ -435,7 +435,7 @@ class ChatInputRow extends StatelessWidget {
                               backgroundColor: theme.bubbleColor,
                               foregroundColor: theme.onBubbleColor,
                             ),
-                            icon: const FaIcon(FontAwesomeIcons.paperPlane),
+                            icon: const FaIcon(FontAwesomeIcons.wind),
                           ),
                   ),
                 ],

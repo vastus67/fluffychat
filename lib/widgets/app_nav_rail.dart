@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:afterdamage/l10n/l10n.dart';
-import 'package:afterdamage/theme/dracula_colors.dart';
 import 'package:afterdamage/ui/icons/afterdamage_icons.dart';
 
 import 'package:afterdamage/widgets/avatar.dart';
@@ -41,10 +40,10 @@ class AppNavRail extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: DraculaColors.background,
+        color: theme.colorScheme.surface,
         border: Border(
           right: BorderSide(
-            color: DraculaColors.currentLine,
+            color: theme.dividerColor,
             width: 1,
           ),
         ),
@@ -53,8 +52,8 @@ class AppNavRail extends StatelessWidget {
         children: [
           // User header (compact on rail)
           _buildUserHeader(context, client, theme, extended),
-          const Divider(
-            color: DraculaColors.currentLine,
+          Divider(
+            color: theme.dividerColor,
             height: 1,
           ),
 
@@ -91,8 +90,8 @@ class AppNavRail extends StatelessWidget {
                   ),
           ),
 
-          const Divider(
-            color: DraculaColors.currentLine,
+          Divider(
+            color: theme.dividerColor,
             height: 1,
           ),
 
@@ -100,19 +99,19 @@ class AppNavRail extends StatelessWidget {
           Expanded(
             child: NavigationRail(
               extended: extended,
-              backgroundColor: DraculaColors.background,
+              backgroundColor: theme.colorScheme.surface,
               selectedIconTheme: IconThemeData(
                 color: theme.colorScheme.primary,
               ),
-              unselectedIconTheme: const IconThemeData(
-                color: DraculaColors.foreground,
+              unselectedIconTheme: IconThemeData(
+                color: theme.colorScheme.onSurface,
               ),
               selectedLabelTextStyle: TextStyle(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
-              unselectedLabelTextStyle: const TextStyle(
-                color: DraculaColors.foreground,
+              unselectedLabelTextStyle: TextStyle(
+                color: theme.colorScheme.onSurface,
               ),
               indicatorColor: theme.colorScheme.primary.withValues(alpha: 0.15),
               selectedIndex: isOnSettings ? null : selectedIndex,
@@ -143,8 +142,8 @@ class AppNavRail extends StatelessWidget {
           ),
 
           // Panic Button
-          const Divider(
-            color: DraculaColors.currentLine,
+          Divider(
+            color: theme.dividerColor,
             height: 1,
           ),
           _NavRailPanicButton(
@@ -152,8 +151,8 @@ class AppNavRail extends StatelessWidget {
           ),
 
           // Settings gear at the bottom
-          const Divider(
-            color: DraculaColors.currentLine,
+          Divider(
+            color: theme.dividerColor,
             height: 1,
           ),
           _NavRailSettingsButton(
@@ -167,10 +166,10 @@ class AppNavRail extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: DraculaColors.currentLine,
+                    color: theme.dividerColor,
                     width: 1,
                   ),
                 ),
@@ -178,7 +177,7 @@ class AppNavRail extends StatelessWidget {
               child: Text(
                 'Afterdamage Chat',
                 style: TextStyle(
-                  color: DraculaColors.muted,
+                  color: theme.colorScheme.onSurface.withOpacity(0.5),
                   fontSize: 12,
                 ),
                 textAlign: TextAlign.center,
@@ -225,7 +224,7 @@ class AppNavRail extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
-            color: DraculaColors.currentLine,
+            color: theme.colorScheme.surfaceContainerHighest,
             border: Border(
               bottom: BorderSide(
                 color: theme.colorScheme.primary.withValues(alpha: 0.3),
@@ -247,8 +246,8 @@ class AppNavRail extends StatelessWidget {
                   children: [
                     Text(
                       displayName,
-                      style: const TextStyle(
-                        color: DraculaColors.foreground,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -259,7 +258,7 @@ class AppNavRail extends StatelessWidget {
                     Text(
                       client.userID ?? '',
                       style: TextStyle(
-                        color: DraculaColors.muted,
+                        color: theme.colorScheme.onSurface.withOpacity(0.5),
                         fontSize: 10,
                       ),
                       maxLines: 1,
@@ -290,7 +289,7 @@ class _NavRailSettingsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected ? accentColor : DraculaColors.foreground;
+    final color = isSelected ? accentColor : Theme.of(context).colorScheme.onSurface;
     return InkWell(
       onTap: () => context.go('/rooms/settings'),
       child: Container(
@@ -328,7 +327,7 @@ class _NavRailPanicButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const color = DraculaColors.foreground;
+    final color = Theme.of(context).colorScheme.onSurface;
     return InkWell(
       onTap: () async {
         final consent = await showOkCancelAlertDialog(
@@ -360,10 +359,10 @@ class _NavRailPanicButton extends StatelessWidget {
           mainAxisAlignment:
               extended ? MainAxisAlignment.start : MainAxisAlignment.center,
           children: [
-            const FaIcon(FontAwesomeIcons.radiation, color: color, size: 20),
+            FaIcon(FontAwesomeIcons.radiation, color: color, size: 20),
             if (extended) ...[
               const SizedBox(width: 12),
-              const Text(
+              Text(
                 'Panic',
                 style: TextStyle(
                   color: color,

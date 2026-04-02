@@ -65,10 +65,39 @@ abstract class FluffyThemes {
     // Apply custom background color if set
     final customBg = getCustomBackgroundColor(Brightness.dark);
     if (customBg != null) {
+      final hsl = HSLColor.fromColor(customBg);
+      final containerHighest = hsl.withLightness((hsl.lightness + 0.12).clamp(0.0, 1.0)).toColor();
       theme = theme.copyWith(
         scaffoldBackgroundColor: customBg,
         canvasColor: customBg,
-        colorScheme: theme.colorScheme.copyWith(surface: customBg),
+        cardColor: containerHighest,
+        dividerColor: containerHighest,
+        colorScheme: theme.colorScheme.copyWith(
+          surface: customBg,
+          surfaceContainerLowest: hsl.withLightness((hsl.lightness - 0.05).clamp(0.0, 1.0)).toColor(),
+          surfaceContainerLow: hsl.withLightness((hsl.lightness + 0.03).clamp(0.0, 1.0)).toColor(),
+          surfaceContainer: hsl.withLightness((hsl.lightness + 0.06).clamp(0.0, 1.0)).toColor(),
+          surfaceContainerHigh: hsl.withLightness((hsl.lightness + 0.09).clamp(0.0, 1.0)).toColor(),
+          surfaceContainerHighest: containerHighest,
+        ),
+        appBarTheme: theme.appBarTheme.copyWith(
+          backgroundColor: customBg,
+          systemOverlayStyle: theme.appBarTheme.systemOverlayStyle?.copyWith(
+            systemNavigationBarColor: customBg,
+          ),
+        ),
+        dialogTheme: theme.dialogTheme.copyWith(
+          backgroundColor: customBg,
+        ),
+        bottomSheetTheme: theme.bottomSheetTheme.copyWith(
+          backgroundColor: customBg,
+        ),
+        popupMenuTheme: theme.popupMenuTheme.copyWith(
+          color: containerHighest,
+        ),
+        snackBarTheme: theme.snackBarTheme.copyWith(
+          backgroundColor: containerHighest,
+        ),
       );
     }
     return theme;
@@ -215,10 +244,33 @@ abstract class FluffyThemes {
     // Apply custom background color if set
     final customBg = getCustomBackgroundColor(brightness);
     if (customBg != null) {
+      final hsl = HSLColor.fromColor(customBg);
+      final containerHighest = hsl.withLightness((hsl.lightness + (isDark ? 0.12 : -0.06)).clamp(0.0, 1.0)).toColor();
       finalTheme = finalTheme.copyWith(
         scaffoldBackgroundColor: customBg,
         canvasColor: customBg,
-        colorScheme: finalTheme.colorScheme.copyWith(surface: customBg),
+        cardColor: containerHighest,
+        dividerColor: containerHighest,
+        colorScheme: finalTheme.colorScheme.copyWith(
+          surface: customBg,
+          surfaceContainerLowest: hsl.withLightness((hsl.lightness + (isDark ? -0.05 : 0.03)).clamp(0.0, 1.0)).toColor(),
+          surfaceContainerLow: hsl.withLightness((hsl.lightness + (isDark ? 0.03 : -0.02)).clamp(0.0, 1.0)).toColor(),
+          surfaceContainer: hsl.withLightness((hsl.lightness + (isDark ? 0.06 : -0.03)).clamp(0.0, 1.0)).toColor(),
+          surfaceContainerHigh: hsl.withLightness((hsl.lightness + (isDark ? 0.09 : -0.05)).clamp(0.0, 1.0)).toColor(),
+          surfaceContainerHighest: containerHighest,
+        ),
+        appBarTheme: finalTheme.appBarTheme.copyWith(
+          backgroundColor: customBg,
+        ),
+        dialogTheme: finalTheme.dialogTheme?.copyWith(
+          backgroundColor: customBg,
+        ),
+        bottomSheetTheme: finalTheme.bottomSheetTheme.copyWith(
+          backgroundColor: customBg,
+        ),
+        popupMenuTheme: finalTheme.popupMenuTheme.copyWith(
+          color: containerHighest,
+        ),
       );
     }
     return finalTheme;

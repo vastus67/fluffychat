@@ -111,10 +111,10 @@ class DraculaBase {
       colorScheme: colorScheme,
       
       // Surfaces
-      scaffoldBackgroundColor: DraculaColors.background,
-      canvasColor: DraculaColors.background,
-      cardColor: DraculaColors.currentLine,
-      dividerColor: DraculaColors.currentLine,
+      scaffoldBackgroundColor: colorScheme.surface,
+      canvasColor: colorScheme.surface,
+      cardColor: colorScheme.surfaceContainerHighest,
+      dividerColor: colorScheme.surfaceContainerHighest,
       
       // Typography
       textTheme: textTheme,
@@ -123,19 +123,18 @@ class DraculaBase {
       // AppBar
       appBarTheme: AppBarTheme(
         toolbarHeight: isColumnMode ? 72 : 56,
-        backgroundColor: DraculaColors.background,
-        foregroundColor: DraculaColors.foreground,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        iconTheme: IconThemeData(color: DraculaColors.foreground),
-        actionsIconTheme: IconThemeData(color: DraculaColors.foreground),
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
+        actionsIconTheme: IconThemeData(color: colorScheme.onSurface),
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
           systemNavigationBarIconBrightness: Brightness.light,
-          systemNavigationBarColor: DraculaColors.background,
+          systemNavigationBarColor: colorScheme.surface,
         ),
       ),
       
@@ -228,10 +227,10 @@ class DraculaBase {
       
       // Chips
       chipTheme: ChipThemeData(
-        backgroundColor: DraculaColors.currentLine,
+        backgroundColor: colorScheme.surfaceContainerHighest,
         selectedColor: colorScheme.primaryContainer,
-        disabledColor: DraculaColors.currentLine.withOpacity(0.5),
-        labelStyle: TextStyle(color: DraculaColors.foreground),
+        disabledColor: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        labelStyle: TextStyle(color: colorScheme.onSurface),
         side: BorderSide.none,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
@@ -251,7 +250,7 @@ class DraculaBase {
           if (states.contains(WidgetState.selected)) {
             return colorScheme.primary.withOpacity(0.5);
           }
-          return DraculaColors.currentLine;
+          return colorScheme.surfaceContainerHighest;
         }),
       ),
       
@@ -260,7 +259,7 @@ class DraculaBase {
           if (states.contains(WidgetState.selected)) {
             return colorScheme.primary;
           }
-          return DraculaColors.currentLine;
+          return colorScheme.surfaceContainerHighest;
         }),
       ),
       
@@ -276,14 +275,14 @@ class DraculaBase {
       // Progress indicators
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: colorScheme.primary,
-        circularTrackColor: DraculaColors.currentLine,
-        linearTrackColor: DraculaColors.currentLine,
+        circularTrackColor: colorScheme.surfaceContainerHighest,
+        linearTrackColor: colorScheme.surfaceContainerHighest,
       ),
       
       // Snackbar
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: DraculaColors.currentLine,
-        contentTextStyle: TextStyle(color: DraculaColors.foreground),
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        contentTextStyle: TextStyle(color: colorScheme.onSurface),
         actionTextColor: colorScheme.primary,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
@@ -293,7 +292,6 @@ class DraculaBase {
       
       // Dialogs
       dialogTheme: DialogThemeData(
-        backgroundColor: DraculaColors.background,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLarge),
@@ -302,7 +300,6 @@ class DraculaBase {
       
       // Bottom sheet
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: DraculaColors.background,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -313,9 +310,9 @@ class DraculaBase {
       
       // Popup menu
       popupMenuTheme: PopupMenuThemeData(
-        color: DraculaColors.currentLine,
+        color: colorScheme.surfaceContainerHighest,
         surfaceTintColor: Colors.transparent,
-        textStyle: TextStyle(color: DraculaColors.foreground),
+        textStyle: TextStyle(color: colorScheme.onSurface),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMedium),
         ),
@@ -323,7 +320,7 @@ class DraculaBase {
       
       // List tile
       listTileTheme: ListTileThemeData(
-        textColor: DraculaColors.foreground,
+        textColor: colorScheme.onSurface,
         iconColor: colorScheme.primary,
         selectedColor: colorScheme.primary,
         selectedTileColor: colorScheme.primaryContainer,
@@ -331,7 +328,6 @@ class DraculaBase {
       
       // Navigation
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: DraculaColors.background,
         indicatorColor: colorScheme.primaryContainer,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
@@ -342,7 +338,6 @@ class DraculaBase {
       ),
       
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: DraculaColors.background,
         selectedIconTheme: IconThemeData(color: colorScheme.primary),
         unselectedIconTheme: IconThemeData(color: DraculaColors.muted),
         indicatorColor: colorScheme.primaryContainer,

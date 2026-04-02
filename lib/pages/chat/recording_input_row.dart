@@ -81,7 +81,7 @@ class RecordingInputRow extends StatelessWidget {
                   dimension: 24,
                   child: CircularProgressIndicator.adaptive(),
                 )
-              : const FaIcon(FontAwesomeIcons.paperPlane),
+              : const FaIcon(FontAwesomeIcons.wind),
           onPressed: state.isSending ? null : () => state.stopAndSend(onSend),
         ),
       ],
