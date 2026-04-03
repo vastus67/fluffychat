@@ -29,7 +29,15 @@
 
   <title>Afterdamage Chat</title>
   <link rel="manifest" href="manifest.json">
-  
+
+  <!-- Preload FontAwesome fonts to prevent fallback icon flicker -->
+  <link rel="preload" href="assets/packages/font_awesome_flutter/lib/fonts/Font-Awesome-7-Free-Solid-900.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="assets/packages/font_awesome_flutter/lib/fonts/Font-Awesome-7-Free-Regular-400.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="assets/packages/font_awesome_flutter/lib/fonts/Font-Awesome-7-Brands-Regular-400.otf" as="font" type="font/otf" crossorigin>
+
+  <!-- Preload Toss Face emoji font to prevent emoji fallback flicker -->
+  <link rel="preload" href="assets/assets/fonts/TossFace.ttf" as="font" type="font/ttf" crossorigin>
+
   <!-- <script src="Imaging.js"></script> -->
 
   <!-- This script adds the flutter initialization JS code -->
@@ -132,7 +140,7 @@
           serviceWorkerVersion: {{flutter_service_worker_version}},
         },
       onEntrypointLoaded: function (engineInitializer) {
-        engineInitializer.initializeEngine({ useColorEmoji: true }).then(function (appRunner) {
+        engineInitializer.initializeEngine().then(function (appRunner) {
           appRunner.runApp();
         });
       }

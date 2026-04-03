@@ -147,6 +147,9 @@ flutter:
     - family: Veilrune
       fonts:
         - asset: assets/fonts/Veilrune.ttf
+    - family: Tossface
+      fonts:
+        - asset: assets/fonts/TossFace.ttf
 
 # Guidelines for adding a dependency override:
 # 1. Don't do it if you can avoid it or fix it upstream in a manageable time

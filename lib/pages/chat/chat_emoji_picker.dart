@@ -41,6 +41,11 @@ class ChatEmojiPicker extends StatelessWidget {
                                   controller.emojiPickerBackspace,
                               config: Config(
                                 locale: Localizations.localeOf(context),
+                                checkPlatformCompatibility: false,
+                                emojiTextStyle: const TextStyle(
+                                  fontFamily: 'Tossface',
+                                  fontSize: 28.0,
+                                ),
                                 emojiViewConfig: EmojiViewConfig(
                                   noRecents: const NoRecent(),
                                   backgroundColor:

@@ -12,6 +12,7 @@ class DraculaText {
     'SF Pro Text',
     'system-ui',
     'Roboto',
+    'Tossface',
   ];
 
   static TextTheme buildTextTheme(TextTheme base) {
